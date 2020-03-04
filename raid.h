@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <map>
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -102,6 +103,9 @@ struct ChampionStats
 	int CDmg = 0;
 	int Res = 0;
 	int Acc = 0;
+
+	ChampionStats() = default;
+	ChampionStats(int hp, int atk, int def, int spd, int crate, int cdmg, int res, int acc);
 };
 
 struct ChampionArts
@@ -113,15 +117,17 @@ struct Champion
 {
 	const ChampionStats BasicStats;
 	ChampionStats BonusStats;
+
+	Champion(ChampionStats basic) : BasicStats(basic) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-void SetBonus(ArtSet, Champion);
+void ApplyBonus(ArtSet, Champion);
 
 /////////////////////////////////////////////////////////////////////////////
 
 namespace ChampionFactory
 {
-	Champion Lightsworn();		//Громобой
+	Champion Gromoboy();
 }
