@@ -53,27 +53,27 @@ enum class ArtSet
 	Speed,
 	Res,
 	Vamp,			//4
-	Destroy,
-	Retaliation,
+	Gibel,
+	Mest,
 	Fury,
 	Curing,
 	Reflex,
 	Cursed,
 	Toxic,
 	Frost,
-	Daze,
-	Avenging,
+	//Daze,			//Ступор
+	Immunitet,		//Avenging
 	Shield,
-	Stalwart,
+	//Stalwart,
 	CritDmg,		//2
-	Frenzy,			//4
+	Beshenstvo,		//4 Frenzy
 	Regeneration,
-	Relentless,
-	Savage,
-	Taunting,
-	Cruel,			//2
+	Svirepost,		//Relentless
+	Savage,			//Жестокость
+	Taunting,		//Насмешка
+	Cruel,			//2 Беспощадность
 	Immortal,
-	DivOffence,
+	DivAtk,
 	DivCritRate,
 	DivLife,
 	DivSpeed,
@@ -86,9 +86,13 @@ struct Artefact
 	ArtefactType Type = ArtefactType::Weapon;
 	ArtSet Set;
 	int Stars = 1;
+	int Level = 0;
 
-	Stat MainStat;
+	StatType MainStat;
 	std::vector<Stat> AddStats;
+	
+	Artefact() = default;
+	Artefact( ArtefactType, ArtSet, int stars, int level, StatType, std::vector<Stat> );
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -123,7 +127,7 @@ struct Champion
 
 /////////////////////////////////////////////////////////////////////////////
 
-void ApplyBonus(ArtSet, Champion);
+void ApplySetBonus(ArtSet, Champion&);
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -131,3 +135,7 @@ namespace ChampionFactory
 {
 	Champion Gromoboy();
 }
+
+/////////////////////////////////////////////////////////////////////////////
+
+extern std::vector<Artefact> _MyArts;

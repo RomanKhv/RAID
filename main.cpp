@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 {
 	{
 		Champion ch = ChampionFactory::Gromoboy();
-		ApplyBonus(ArtSet::HP, ch);
+		ApplySetBonus(ArtSet::HP, ch);
 		BOOST_CHECK_EQUAL(ch.BonusStats.HP, ch.BasicStats.HP * 115 / 100);
 	}
 }
