@@ -4,7 +4,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-enum class ArtefactType
+enum class ArtType
 {
 	None,
 
@@ -83,7 +83,7 @@ enum class ArtSet
 
 struct Artefact
 {
-	ArtefactType Type = ArtefactType::Weapon;
+	ArtType Type = ArtType::Weapon;
 	ArtSet Set;
 	int Stars = 1;
 	int Level = 0;
@@ -92,7 +92,7 @@ struct Artefact
 	std::vector<Stat> AddStats;
 	
 	Artefact() = default;
-	Artefact( ArtefactType, ArtSet, int stars, int level, StatType, std::vector<Stat> );
+	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat> );
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -112,9 +112,11 @@ struct ChampionStats
 	ChampionStats(int hp, int atk, int def, int spd, int crate, int cdmg, int res, int acc);
 };
 
+using Equipment = std::map<ArtType, Artefact>;
+
 struct ChampionArts
 {
-	std::map<ArtefactType, Artefact> Map;
+	Equipment Map;
 };
 
 struct Champion
@@ -127,7 +129,25 @@ struct Champion
 
 /////////////////////////////////////////////////////////////////////////////
 
-void ApplySetBonus(ArtSet, Champion&);
+std::vector<StatType> StatTypesForArt( ArtType );
+void ApplySetBonus( ArtSet, Champion& );
+int  StatValueForLevel( ArtType, StatType, int starRank, int level );
+
+/////////////////////////////////////////////////////////////////////////////
+
+struct MatchOptions
+{
+	enum class ArtFactor {
+		NotInterested,
+		Minor,
+		Magor,
+		Max,
+	};
+	std::map<ArtType, ArtFactor> Factors;
+	bool ConsiderMaxLevels = true;
+};
+
+void FindBestEquipment( Champion&, const MatchOptions&, Equipment& );
 
 /////////////////////////////////////////////////////////////////////////////
 

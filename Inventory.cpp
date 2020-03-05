@@ -3,8 +3,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-std::vector<Artefact> _MyArts = {
-	Artefact{ ArtefactType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} }
+std::vector<Artefact> _MyArts =
+{
+	// HP
+	Artefact{ ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} }
+
+	// Atk
 };
 
 /////////////////////////////////////////////////////////////////////////////
