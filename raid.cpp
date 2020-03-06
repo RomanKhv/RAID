@@ -153,42 +153,70 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 	starRank = boost::algorithm::clamp( starRank, 1, 6 );
 	level = boost::algorithm::clamp( level, 0, 16 );
 
-	switch ( art )
+	switch ( stat )
 	{
-		case ArtType::Weapon:
-		{
-			const int values[3][17] = {
-				//      0   1           4                8                  12                  16
-				/*4*/{ 16, 25, 33, 42, 51, 59,  0,  0,  85,  94,   0,   0, 120, 129,   0,   0, 190 },
-				/*5*/{ 25, 35, 45, 55, 64, 74, 84, 94, 104, 114, 124, 134, 143, 153, 164, 174, 225 },
-				/*6*/{ 35, 46,  0,  0,  0,  0,  0,  0, 125, 136,   0,   0,   0,   0,   0,   0, 265 },
-			};
-			return values[starRank - 4][level];
-		}
-		break;
-	case ArtType::Helmet:
-		break;
-	case ArtType::Shield:
-		break;
-	case ArtType::Gloves:
-		break;
-	case ArtType::Chest:
-		break;
-	case ArtType::Boots:
-		break;
-	case ArtType::Ring:
-		break;
-	case ArtType::Necklace:
-		break;
-	case ArtType::Banner:
-		break;
+		case StatType::Atk:
+		case StatType::Def:
+			{
+				const int values_Weapon_Shield[3][5] = {
+					//      0   4    8   12   16
+					/*4*/{ 16, 51,  85, 120, 190 },
+					/*5*/{ 25, 64, 104, 143, 225 },
+					/*6*/{ 35, 80, 125, 170, 265 }
+				};
+				return values_Weapon_Shield[starRank - 4][level / 4];
+			}
+		case StatType::HP:
+			{
+				const int values_Helmet[3][5] = {
+					//      0     4     8    12    16
+					/*4*/{ 260,    0, 1286, 1800, 2840 },
+					/*5*/{ 450, 1044, 1638, 2231, 3480 },
+					/*6*/{ 600, 1277, 1954, 2631, 4080 }
+				};
+				return values_Helmet[starRank - 4][level / 4];
+			}
+		case StatType::Atk_P:
+		case StatType::HP_P:
+		case StatType::Def_P:
+		case StatType::CritRate:
+			{
+				const int values_Atk_HP_Def_CR_p[3][5] = {
+					//      0   4   8  12  16
+					/*4*/{  6, 13, 19, 26, 40 },
+					/*5*/{  8, 16, 24, 33, 50 },
+					/*6*/{ 10, 20, 29, 39, 60 },
+				};
+				return values_Atk_HP_Def_CR_p[starRank - 4][level / 4];
+			}
+		case StatType::CritDmg:
+			{
+				const int values_CDmg[3][5] = {
+					//      0  4  8 12  16
+					/*4*/{  8, 0, 0, 0,  0 },
+					/*5*/{ 10, 0, 0, 0, 65 },
+					/*6*/{  0, 0, 0, 0,  0 },
+				};
+				return values_CDmg[starRank - 4][level / 4];
+			}
+		case StatType::Spd:
+			{
+				const int values_Spd[3][5] = {
+					//     0   4   8  12  16
+					/*4*/{ 4, 10, 16,  0, 35 },
+					/*5*/{ 5, 12, 19, 26, 40 },
+					/*6*/{ 0, 00, 00, 00, 00 },
+				};
+				return values_Spd[starRank - 4][level / 4];
+			}
+		case StatType::Acc:
+		case StatType::Res:
+			{
+			}
 	}
+
 	assert( false );
 	return 0;
-}
-
-void FindBestEquipment( Champion& ch, const MatchOptions& matching, Equipment& eq )
-{
 }
 
 /////////////////////////////////////////////////////////////////////////////

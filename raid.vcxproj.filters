@@ -5,6 +5,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="raid.cpp" />
     <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="suiter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
