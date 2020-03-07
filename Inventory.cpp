@@ -6,7 +6,7 @@
 std::vector<Artefact> _MyArts =
 {
 	// HP
-	Artefact{ ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} }
+	Artefact{ ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, { {StatType::Acc,10} } }
 
 	// Atk
 };

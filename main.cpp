@@ -16,8 +16,27 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 {
 	{
 		Champion ch = ChampionFactory::Gromoboy();
-		ApplySetBonus(ArtSet::HP, ch);
-		BOOST_CHECK_EQUAL(ch.BonusStats.HP, ch.BasicStats.HP * 115 / 100);
+		ApplySetBonus( ArtSet::HP, ch );
+		BOOST_CHECK_EQUAL( ch.BonusStats.HP, int(ch.BasicStats.HP * 0.15) );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
+{
+	{
+		Champion ch = ChampionFactory::Gromoboy();
+		const Equipment eq = {
+			Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
+			Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ),
+			Artefact( ArtType::Shield, ArtSet::Atk, 4, 8, StatType::Def, {} ),
+			Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_P, {} ),
+			Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
+		};
+		ApplySetsBonuses( eq, ch );
+		BOOST_CHECK( ch.BonusStats.HP > 0 );
+		BOOST_CHECK( ch.BonusStats.Spd > 0 );
+		BOOST_CHECK( ch.BonusStats.Atk == 0 );
+		BOOST_CHECK( ch.BonusStats.Def == 0 );
 	}
 }
 
