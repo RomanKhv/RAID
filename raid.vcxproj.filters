@@ -10,5 +10,9 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="raid.h" />
+    <ClInclude Include="stl_ext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="raid.natvis" />
   </ItemGroup>
 </Project>

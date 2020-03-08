@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="raid.h" />
+    <ClInclude Include="stl_ext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Inventory.cpp" />
@@ -106,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="raid.cpp" />
     <ClCompile Include="suiter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="raid.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

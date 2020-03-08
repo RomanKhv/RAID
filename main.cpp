@@ -53,10 +53,22 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 
 BOOST_AUTO_TEST_CASE( find_Best )
 {
+	const std::vector<Artefact> inventory = {
+		Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
+		Artefact( ArtType::Helmet, ArtSet::Def, 5, 8, StatType::HP, {} ),
+		Artefact( ArtType::Shield, ArtSet::Atk, 4, 8, StatType::Def, {} ),
+		Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_P, {} ),
+		Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
+	};
+	Champion ch = ChampionFactory::Gromoboy();
 	{
-		Champion ch = ChampionFactory::Gromoboy();
 		Equipment eq;
-		FindBestEquipment( ch, MatchOptions(), eq );
-		BOOST_CHECK( !eq.empty() );
+		FindBestEquipment( inventory, ch.BasicStats, MatchOptions(), eq );
+		BOOST_CHECK_EQUAL( eq.size(), 5 );
+	}
+	{
+		Equipment eq;
+		FindBestEquipment( inventory, ch.BasicStats, MatchOptions( {}, {ArtSet::HP} ), eq );
+		BOOST_CHECK_EQUAL( eq.size(), 1 );
 	}
 }

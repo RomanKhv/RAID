@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "raid.h"
 #include <boost/algorithm/clamp.hpp>
+#include "stl_ext.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,11 +16,11 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	assert( IsValidStatForArt( mainstat, type ) );
 }
 
-Stat Artefact::GetMainStat() const
+Stat Artefact::GetMainStat( bool consider_max_level ) const
 {
 	return {
 		MainStat,
-		StatValueForLevel( Type, MainStat, Stars, Level )
+		StatValueForLevel( Type, MainStat, Stars, consider_max_level ? 16 : Level )
 	};
 }
 
@@ -123,13 +124,14 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 {
 	starRank = boost::algorithm::clamp( starRank, 1, 6 );
 	level = boost::algorithm::clamp( level, 0, 16 );
+	level = (level / 4) * 4;
 
 	switch ( stat )
 	{
 		case StatType::Atk:
 		case StatType::Def:
 			{
-				const int values_Weapon_Shield[3][5] = {
+				static const int values_Weapon_Shield[3][5] = {
 					//      0   4    8   12   16
 					/*4*/{ 16, 51,  85, 120, 190 },
 					/*5*/{ 25, 64, 104, 143, 225 },
@@ -139,7 +141,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			}
 		case StatType::HP:
 			{
-				const int values_Helmet[3][5] = {
+				static const int values_Helmet[3][5] = {
 					//      0     4     8    12    16
 					/*4*/{ 260,    0, 1286, 1800, 2840 },
 					/*5*/{ 450, 1044, 1638, 2231, 3480 },
@@ -152,7 +154,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 		case StatType::Def_P:
 		case StatType::CritRate:
 			{
-				const int values_Atk_HP_Def_CR_p[3][5] = {
+				static const int values_Atk_HP_Def_CR_p[3][5] = {
 					//      0   4   8  12  16
 					/*4*/{  6, 13, 19, 26, 40 },
 					/*5*/{  8, 16, 24, 33, 50 },
@@ -162,7 +164,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			}
 		case StatType::CritDmg:
 			{
-				const int values_CDmg[3][5] = {
+				static const int values_CDmg[3][5] = {
 					//      0  4  8 12  16
 					/*4*/{  8, 0, 0, 0,  0 },
 					/*5*/{ 10, 0, 0, 0, 65 },
@@ -172,7 +174,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			}
 		case StatType::Spd:
 			{
-				const int values_Spd[3][5] = {
+				static const int values_Spd[3][5] = {
 					//     0   4   8  12  16
 					/*4*/{ 4, 10, 16,  0, 35 },
 					/*5*/{ 5, 12, 19, 26, 40 },
@@ -356,7 +358,7 @@ void ApplySetsBonuses( const Equipment& eq, Champion& ch )
 	}
 }
 
-void ApplyArtBonus( const Artefact& art, Champion& ch )
+void ApplyArtBonus( const Artefact& art, Champion& ch, bool consider_max_level )
 {
 	if ( !art.IsValid() )
 	{
@@ -364,7 +366,8 @@ void ApplyArtBonus( const Artefact& art, Champion& ch )
 		return;
 	}
 
-	ApplyStat( art.GetMainStat(), ch );
+	ApplyStat( art.GetMainStat(consider_max_level), ch );
+
 	for ( const Stat& stat : art.AddStats )
 		ApplyStat( stat, ch );
 }
@@ -380,6 +383,24 @@ void ApplyEquipment( const Equipment& eq, Champion& ch )
 			ApplyArtBonus( e.second, ch );
 		}
 	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+MatchOptions::MatchOptions( std::map<ArtType, ArtFactor> factors, std::vector<ArtSet> set_filter, bool consider_max_lvl, std::map<StatType, int> min_caps )
+	:Factors( std::move( factors ) )
+	,SetFilter( std::move( set_filter ) )
+	,ConsiderMaxLevels( consider_max_lvl )
+	,MinCap( std::move( min_caps ) )
+{
+}
+
+bool MatchOptions::SetAccepted( ArtSet set ) const
+{
+	if ( SetFilter.empty() )
+		return true;	//accept all
+
+	return stl::contains( SetFilter, set );
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -95,7 +95,7 @@ struct Artefact
 	Artefact() = default;
 	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat> );
 	bool IsValid() const { return Type != ArtType::None; }
-	Stat GetMainStat() const;
+	Stat GetMainStat( bool consider_max_level ) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ struct Champion
 	const ChampionStats BasicStats;
 	ChampionStats BonusStats;
 
-	Champion(ChampionStats basic) : BasicStats(basic) {}
+	Champion(const ChampionStats& basic) : BasicStats(basic) {}
 	ChampionStats TotalStats() const;
 };
 
@@ -146,7 +146,7 @@ bool IsValidStatForArt( StatType, ArtType );
 void ApplyStat( const Stat&, Champion& );
 void ApplySetBonus( ArtSet, Champion& );
 void ApplySetsBonuses( const Equipment&, Champion& );
-void ApplyArtBonus( const Artefact&, Champion& );
+void ApplyArtBonus( const Artefact&, Champion&, bool consider_max_level = false );
 void ApplyEquipment( const Equipment&, Champion& );
 
 /////////////////////////////////////////////////////////////////////////////
@@ -160,12 +160,20 @@ struct MatchOptions
 		Max,
 	};
 	std::map<ArtType, ArtFactor> Factors;
+	std::vector<ArtSet> SetFilter;
 	bool ConsiderMaxLevels = true;
-
 	std::map<StatType,int> MinCap;
+
+	MatchOptions() = default;
+	MatchOptions( std::map<ArtType, ArtFactor>,
+				  std::vector<ArtSet> set_filter = {},
+				  bool consider_max_lvl=true,
+				  std::map<StatType,int> min_caps = {} );
+	bool SetAccepted( ArtSet ) const;
 };
 
-void FindBestEquipment( Champion&, const MatchOptions&, Equipment& );
+void FindRealBestEquipment( Champion&, const MatchOptions&, Equipment& );
+void FindBestEquipment( const std::vector<Artefact>&, const ChampionStats& basic_stats, const MatchOptions&, Equipment& );
 
 /////////////////////////////////////////////////////////////////////////////
 
