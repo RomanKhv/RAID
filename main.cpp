@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 			Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
 			Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ),
 			Artefact( ArtType::Shield, ArtSet::Atk, 4, 8, StatType::Def, {} ),
-			Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_P, {} ),
+			Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
 			Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
 		};
 		ApplySetsBonuses( eq, ch );
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE( find_Best )
 		Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
 		Artefact( ArtType::Helmet, ArtSet::Def, 5, 8, StatType::HP, {} ),
 		Artefact( ArtType::Shield, ArtSet::Atk, 4, 8, StatType::Def, {} ),
-		Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_P, {} ),
+		Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
 		Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
 	};
 	Champion ch = ChampionFactory::Gromoboy();

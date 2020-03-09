@@ -23,14 +23,14 @@ enum class ArtType
 enum class StatType
 {
 	Atk,
-	Atk_P,
+	Atk_p,
 	HP,
-	HP_P,
+	HP_p,
 	Def,
-	Def_P,
+	Def_p,
 
-	CritRate,
-	CritDmg,
+	CRate,
+	CDmg,
 
 	Spd,
 	Acc,
@@ -49,7 +49,7 @@ enum class ArtSet
 	HP,
 	Atk,
 	Def,
-	CritRate,
+	CRate,
 	Acc,
 	Speed,
 	Res,
@@ -66,7 +66,7 @@ enum class ArtSet
 	Immunitet,		//Avenging
 	Shield,
 	//Stalwart,
-	CritDmg,		//2
+	CDmg,		//2
 	Beshenstvo,		//4 Frenzy
 	Regeneration,
 	Svirepost,		//Relentless
@@ -143,6 +143,7 @@ std::vector<StatType> StatTypesForArt( ArtType );
 int  StatValueForLevel( ArtType, StatType, int starRank, int level );
 int  SetSize( ArtSet );
 bool IsValidStatForArt( StatType, ArtType );
+bool IsGoodStatForArt( StatType, ArtType );
 void ApplyStat( const Stat&, Champion& );
 void ApplySetBonus( ArtSet, Champion& );
 void ApplySetsBonuses( const Equipment&, Champion& );
@@ -160,7 +161,10 @@ struct MatchOptions
 		Max,
 	};
 	std::map<ArtType, ArtFactor> Factors;
+
+	std::vector<ArtSet> RequiedSets;
 	std::vector<ArtSet> SetFilter;
+
 	bool ConsiderMaxLevels = true;
 	std::map<StatType,int> MinCap;
 
@@ -179,7 +183,13 @@ void FindBestEquipment( const std::vector<Artefact>&, const ChampionStats& basic
 
 namespace ChampionFactory
 {
+	Champion ColdHeart();
 	Champion Gromoboy();
+	Champion Kael();
+	Champion Lekar();
+	Champion Yuliana();
+	Champion Krisk();
+	Champion Hatun();
 }
 
 /////////////////////////////////////////////////////////////////////////////

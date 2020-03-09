@@ -14,6 +14,7 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	,AddStats(addstats)
 {
 	assert( IsValidStatForArt( mainstat, type ) );
+	assert( IsGoodStatForArt( mainstat, type ) );
 }
 
 Stat Artefact::GetMainStat( bool consider_max_level ) const
@@ -99,13 +100,13 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 		valid_stats = { StatType::Def };
 		break;
 	case ArtType::Gloves:
-		valid_stats = { StatType::Atk, StatType::Atk_P, StatType::HP, StatType::HP_P, StatType::Def, StatType::Def_P, StatType::CritRate, StatType::CritDmg };
+		valid_stats = { StatType::Atk, StatType::Atk_p, StatType::HP, StatType::HP_p, StatType::Def, StatType::Def_p, StatType::CRate, StatType::CDmg };
 		break;
 	case ArtType::Chest:
-		valid_stats = { StatType::Atk, StatType::Atk_P, StatType::HP, StatType::HP_P, StatType::Def, StatType::Def_P, StatType::Acc, StatType::Res };
+		valid_stats = { StatType::Atk, StatType::Atk_p, StatType::HP, StatType::HP_p, StatType::Def, StatType::Def_p, StatType::Acc, StatType::Res };
 		break;
 	case ArtType::Boots:
-		valid_stats = { StatType::Atk, StatType::Atk_P, StatType::HP, StatType::HP_P, StatType::Def, StatType::Def_P, StatType::Spd };
+		valid_stats = { StatType::Atk, StatType::Atk_p, StatType::HP, StatType::HP_p, StatType::Def, StatType::Def_p, StatType::Spd };
 		break;
 	case ArtType::Ring:
 		assert( !"not implemented" );
@@ -149,10 +150,10 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 				};
 				return values_Helmet[starRank - 4][level / 4];
 			}
-		case StatType::Atk_P:
-		case StatType::HP_P:
-		case StatType::Def_P:
-		case StatType::CritRate:
+		case StatType::Atk_p:
+		case StatType::HP_p:
+		case StatType::Def_p:
+		case StatType::CRate:
 			{
 				static const int values_Atk_HP_Def_CR_p[3][5] = {
 					//      0   4   8  12  16
@@ -162,7 +163,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 				};
 				return values_Atk_HP_Def_CR_p[starRank - 4][level / 4];
 			}
-		case StatType::CritDmg:
+		case StatType::CDmg:
 			{
 				static const int values_CDmg[3][5] = {
 					//      0  4  8 12  16
@@ -199,8 +200,8 @@ int SetSize( ArtSet set )
 		case ArtSet::HP:
 		case ArtSet::Atk:
 		case ArtSet::Def:
-		case ArtSet::CritRate:
-		case ArtSet::CritDmg:
+		case ArtSet::CRate:
+		case ArtSet::CDmg:
 		case ArtSet::Speed:
 		case ArtSet::Cruel:
 		case ArtSet::Immortal:
@@ -219,6 +220,26 @@ bool IsValidStatForArt( StatType stat, ArtType art )
 	return std::find( valid_stats.begin(), valid_stats.end(), stat ) != valid_stats.end();
 }
 
+bool IsGoodStatForArt( StatType stat, ArtType art )
+{
+	switch ( art )
+	{
+		case ArtType::Gloves:
+		case ArtType::Chest:
+		case ArtType::Boots:
+		{
+			switch ( stat )
+			{
+				case StatType::Atk:
+				case StatType::HP:
+				case StatType::Def:
+					return false;
+			}
+		}
+	}
+	return true;
+}
+
 #define ApplyStatBonus( bonusStats, basicStats, stat, factor )			bonusStats.stat += basicStats.stat * (factor) / 100;
 
 void ApplyStat( const Stat& stat, Champion& ch )
@@ -234,19 +255,19 @@ void ApplyStat( const Stat& stat, Champion& ch )
 		case StatType::Def:
 			ch.BonusStats.Def += stat.Value;
 			return;
-		case StatType::Atk_P:
+		case StatType::Atk_p:
 			member_fraction<&ChampionStats::Atk>( ch.BonusStats, ch.BasicStats, stat.Value );
 			return;
-		case StatType::HP_P:
+		case StatType::HP_p:
 			member_fraction<&ChampionStats::HP>( ch.BonusStats, ch.BasicStats, stat.Value );
 			return;
-		case StatType::Def_P:
+		case StatType::Def_p:
 			member_fraction<&ChampionStats::Def>( ch.BonusStats, ch.BasicStats, stat.Value );
 			return;
-		case StatType::CritRate:
+		case StatType::CRate:
 			member_fraction<&ChampionStats::CRate>( ch.BonusStats, ch.BasicStats, stat.Value );
 			return;
-		case StatType::CritDmg:
+		case StatType::CDmg:
 			member_fraction<&ChampionStats::CDmg>( ch.BonusStats, ch.BasicStats, stat.Value );
 			return;
 		case StatType::Spd:
@@ -302,7 +323,7 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, Def, 15 );
 			}
 			break;
-		case ArtSet::CritRate:
+		case ArtSet::CRate:
 			{
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, CRate, 12 );
 			}
@@ -313,7 +334,7 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
 			}
 			break;
-		case ArtSet::CritDmg:
+		case ArtSet::CDmg:
 			{
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, CDmg, 20 );
 			}
@@ -405,7 +426,37 @@ bool MatchOptions::SetAccepted( ArtSet set ) const
 
 /////////////////////////////////////////////////////////////////////////////
 
+Champion ChampionFactory::ColdHeart()
+{
+	return Champion({ 13710, 1376, 738,  94,  15, 57,  30, 0 });
+}
+
+Champion ChampionFactory::Kael()
+{
+	return Champion({ 13710, 1200, 914,  103,  15, 57,  30, 0 });
+}
+
 Champion ChampionFactory::Gromoboy()
 {
 	return Champion({ 15855, 727, 1443,  97,  15, 50,  30, 0 });
+}
+
+Champion ChampionFactory::Lekar()
+{
+	return Champion({ 16680, 859, 969,  101,  15, 50,  30, 0 });
+}
+
+Champion ChampionFactory::Yuliana()
+{
+	return Champion({ 15195, 1354, 870,  103,  15, 50,  30, 0 });
+}
+
+Champion ChampionFactory::Krisk()
+{
+	return Champion({ 18660, 727, 1465,  94,  15, 50,  30, 0 });
+}
+
+Champion ChampionFactory::Hatun()
+{
+	return Champion({ 15555, 971, 1146,  97,  15, 50,  30, 0 });
 }
