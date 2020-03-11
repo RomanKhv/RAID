@@ -157,23 +157,29 @@ struct MatchOptions
 	enum class ArtFactor {
 		NotInterested,
 		Minor,
+		Moderate,
 		Magor,
+		MinCap,
 		Max,
 	};
-	std::map<ArtType, ArtFactor> Factors;
+	std::map<StatType, ArtFactor> Factors;
 
 	std::vector<ArtSet> RequiedSets;
 	std::vector<ArtSet> SetFilter;
 
 	bool ConsiderMaxLevels = true;
-	std::map<StatType,int> MinCap;
+	std::map<StatType,int> MinCap;	//TODO:
+	std::map<ArtType,StatType> RequiredArtStats;	//TODO
 
 	MatchOptions() = default;
-	MatchOptions( std::map<ArtType, ArtFactor>,
+	MatchOptions( std::map<StatType, ArtFactor>,
+				  std::vector<ArtSet> req_filter = {},
 				  std::vector<ArtSet> set_filter = {},
-				  bool consider_max_lvl=true,
+				  bool consider_max_lvl = true,
 				  std::map<StatType,int> min_caps = {} );
-	bool SetAccepted( ArtSet ) const;
+	bool IsSetAccepted( ArtSet ) const;
+	bool IsEqHasRequiredSets( const Equipment& ) const;
+	//bool IsEqAccepted( const Equipment& ) const;
 };
 
 void FindRealBestEquipment( Champion&, const MatchOptions&, Equipment& );
@@ -195,3 +201,5 @@ namespace ChampionFactory
 /////////////////////////////////////////////////////////////////////////////
 
 extern std::vector<Artefact> _MyArts;
+
+/////////////////////////////////////////////////////////////////////////////

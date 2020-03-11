@@ -51,7 +51,45 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 //				}
 //}
 
-BOOST_AUTO_TEST_CASE( find_Best )
+BOOST_AUTO_TEST_CASE( find_RequiredSets )
+{
+	{
+		const Equipment eq = {
+			Artefact( ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} ),
+			Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ),
+			Artefact( ArtType::Shield, ArtSet::Atk, 5, 8, StatType::Def, {} ),
+			Artefact( ArtType::Chest, ArtSet::Speed, 5, 8, StatType::Def_p, {} ),
+			Artefact( ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, {} ),
+		};
+		BOOST_CHECK( MatchOptions( {}, {} ).IsEqHasRequiredSets( eq ) );
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Speed } ).IsEqHasRequiredSets( eq ) );
+		BOOST_CHECK( !MatchOptions( {}, { ArtSet::HP, ArtSet::Atk } ).IsEqHasRequiredSets( eq ) );
+	}
+	{
+		const Equipment eq = {
+			Artefact( ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} ),
+			Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ),
+			Artefact( ArtType::Shield, ArtSet::Atk, 5, 8, StatType::Def, {} ),
+			Artefact( ArtType::Chest, ArtSet::HP, 5, 8, StatType::Def_p, {} ),
+			Artefact( ArtType::Boots, ArtSet::HP, 5, 8, StatType::Spd, {} ),
+		};
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::HP } ).IsEqHasRequiredSets( eq ) );
+	}
+	{
+		const Equipment eq = {
+			Artefact( ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} ),
+			Artefact( ArtType::Helmet, ArtSet::Vamp, 5, 8, StatType::HP, {} ),
+			Artefact( ArtType::Shield, ArtSet::Vamp, 5, 8, StatType::Def, {} ),
+			Artefact( ArtType::Gloves, ArtSet::Vamp, 5, 8, StatType::Def_p, {} ),
+			Artefact( ArtType::Chest, ArtSet::HP, 5, 8, StatType::Def_p, {} ),
+			Artefact( ArtType::Boots, ArtSet::Vamp, 5, 8, StatType::Spd, {} ),
+		};
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::Vamp } ).IsEqHasRequiredSets( eq ) );
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Vamp } ).IsEqHasRequiredSets( eq ) );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( test_Best )
 {
 	const std::vector<Artefact> inventory = {
 		Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
@@ -71,4 +109,26 @@ BOOST_AUTO_TEST_CASE( find_Best )
 		FindBestEquipment( inventory, ch.BasicStats, MatchOptions( {}, {ArtSet::HP} ), eq );
 		BOOST_CHECK_EQUAL( eq.size(), 1 );
 	}
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			//{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
+			{ StatType::Def, MatchOptions::ArtFactor::Magor },
+			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::Spd, MatchOptions::ArtFactor::MinCap },
+			{ StatType::Acc, MatchOptions::ArtFactor::MinCap },
+		},
+		{}
+	);
+	Champion ch = ChampionFactory::Gromoboy();
+	Equipment eq;
+	FindRealBestEquipment( ch, matching, eq );
+	BOOST_CHECK_EQUAL( eq.size(), 6 );
+
+	BOOST_TEST_MESSAGE( "\nGromoboy:\n" );
 }

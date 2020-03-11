@@ -39,7 +39,7 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionSt
 	for ( const Artefact& art : inventory )
 	{
 		assert( art.Type != ArtType::None );
-		if ( matching.SetAccepted( art.Set ) )
+		if ( matching.IsSetAccepted( art.Set ) )
 			arts_by_type[art.Type].push_back( art );
 	}
 
@@ -50,6 +50,10 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionSt
 		for ( const Artefact& art : at.second )
 		{
 			eq[at.first] = art;
+
+			if ( !matching.IsEqHasRequiredSets( eq ) )
+				continue;
+
 			Champion ch( basic_ch_stats );
 			ApplyEquipment( eq, ch );
 

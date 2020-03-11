@@ -186,6 +186,13 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 		case StatType::Acc:
 		case StatType::Res:
 			{
+				static const int values_Acc_Res[3][5] = {
+					//      0   4   8  12  16
+					/*4*/{  8, 0, 0, 0, 0 },
+					/*5*/{ 12, 0, 0, 0, 78 },
+					/*6*/{ 16, 0, 0, 0, 0 },
+				};
+				return values_Acc_Res[starRank - 4][level / 4];
 			}
 	}
 
@@ -408,21 +415,64 @@ void ApplyEquipment( const Equipment& eq, Champion& ch )
 
 /////////////////////////////////////////////////////////////////////////////
 
-MatchOptions::MatchOptions( std::map<ArtType, ArtFactor> factors, std::vector<ArtSet> set_filter, bool consider_max_lvl, std::map<StatType, int> min_caps )
+MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::vector<ArtSet> set_filter,
+							bool consider_max_lvl, std::map<StatType, int> min_caps )
 	:Factors( std::move( factors ) )
+	,RequiedSets( std::move( req_filter ) )
 	,SetFilter( std::move( set_filter ) )
 	,ConsiderMaxLevels( consider_max_lvl )
 	,MinCap( std::move( min_caps ) )
 {
 }
 
-bool MatchOptions::SetAccepted( ArtSet set ) const
+bool MatchOptions::IsSetAccepted( ArtSet set ) const
 {
 	if ( SetFilter.empty() )
 		return true;	//accept all
 
 	return stl::contains( SetFilter, set );
 }
+
+bool MatchOptions::IsEqHasRequiredSets( const Equipment& eq ) const
+{
+	if ( RequiedSets.empty() )
+		return true;
+
+	std::map<ArtSet,int> req_sets;
+	int total_req_art_count = 0;
+	for ( ArtSet set : RequiedSets )
+	{
+		req_sets[set] ++;
+		total_req_art_count += SetSize( set );
+	}
+	assert( total_req_art_count <= 6 );
+	if ( total_req_art_count > 6 )
+		return false;
+
+	std::map<ArtSet,int> eq_sets;
+	for ( const auto& a : eq )
+		eq_sets[a.second.Set] ++;
+
+	for ( const auto rs : req_sets )
+	{
+		const int n_req_arts = SetSize( rs.first ) * rs.second;
+		const int n_eq_arts = stl::get_value( eq_sets, rs.first, 0 );
+		if ( n_eq_arts < n_req_arts )
+			return false;
+	}
+
+	return true;
+}
+
+//bool MatchOptions::IsEqAccepted( const Equipment& eq ) const
+//{
+//	for ( const auto a : eq )
+//	{
+//		if ( !IsSetAccepted( a.second.Set ) )
+//			return false;
+//	}
+//	return IsEqHasRequiredSets( eq );
+//}
 
 /////////////////////////////////////////////////////////////////////////////
 
