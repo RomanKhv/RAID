@@ -97,6 +97,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="raid.h" />
     <ClInclude Include="stl_ext.h" />
+    <ClInclude Include="to_string.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Inventory.cpp" />
@@ -107,6 +108,7 @@
     </ClCompile>
     <ClCompile Include="raid.cpp" />
     <ClCompile Include="suiter.cpp" />
+    <ClCompile Include="to_string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="raid.natvis" />

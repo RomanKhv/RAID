@@ -13,8 +13,8 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	,MainStat(mainstat)
 	,AddStats(addstats)
 {
-	assert( IsValidStatForArt( mainstat, type ) );
-	assert( IsGoodStatForArt( mainstat, type ) );
+	_ASSERTE( IsValidStatForArt( mainstat, type ) );
+	_ASSERTE( IsGoodStatForArt( mainstat, type ) );
 }
 
 Stat Artefact::GetMainStat( bool consider_max_level ) const
@@ -31,7 +31,7 @@ Equipment::Equipment( std::initializer_list<Artefact> il )
 {
 	for ( const Artefact& a : il )
 	{
-		assert( this->count( a.Type ) == 0 );
+		_ASSERTE( this->count( a.Type ) == 0 );
 		this->operator[]( a.Type ) = a;
 	}
 }
@@ -109,13 +109,13 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 		valid_stats = { StatType::Atk, StatType::Atk_p, StatType::HP, StatType::HP_p, StatType::Def, StatType::Def_p, StatType::Spd };
 		break;
 	case ArtType::Ring:
-		assert( !"not implemented" );
+		_ASSERTE( !"not implemented" );
 		break;
 	case ArtType::Necklace:
-		assert( !"not implemented" );
+		_ASSERTE( !"not implemented" );
 		break;
 	case ArtType::Banner:
-		assert( !"not implemented" );
+		_ASSERTE( !"not implemented" );
 		break;
 	}
 	return valid_stats;
@@ -196,7 +196,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			}
 	}
 
-	assert( false );
+	_ASSERTE( false );
 	return 0;
 }
 
@@ -287,7 +287,7 @@ void ApplyStat( const Stat& stat, Champion& ch )
 			ch.BonusStats.Res += stat.Value;
 			return;
 	}
-	assert( !"unreachable code" );
+	_ASSERTE( !"unreachable code" );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -390,7 +390,7 @@ void ApplyArtBonus( const Artefact& art, Champion& ch, bool consider_max_level )
 {
 	if ( !art.IsValid() )
 	{
-		assert( !"invalid art" );
+		_ASSERTE( !"invalid art" );
 		return;
 	}
 
@@ -445,7 +445,7 @@ bool MatchOptions::IsEqHasRequiredSets( const Equipment& eq ) const
 		req_sets[set] ++;
 		total_req_art_count += SetSize( set );
 	}
-	assert( total_req_art_count <= 6 );
+	_ASSERTE( total_req_art_count <= 6 );
 	if ( total_req_art_count > 6 )
 		return false;
 

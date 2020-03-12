@@ -174,7 +174,7 @@ std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Gloves, ArtSet::Vamp, 4, 8, StatType::Def_p, { {StatType::HP_p,9}, {StatType::Spd,4} } },
 	Artefact{ ArtType::Gloves, ArtSet::Vamp, 4, 8, StatType::CRate, { {StatType::Atk_p,7}, {StatType::CDmg,5} } },
 
-	Artefact{ ArtType::Gloves, ArtSet::Vamp, 5, 0, StatType::Res, { {StatType::Acc,9}, {StatType::CDmg,4}, {StatType::CRate,4} } },
+	//Artefact{ ArtType::Gloves, ArtSet::Vamp, 5, 0, StatType::Res, { {StatType::Acc,9}, {StatType::CDmg,4}, {StatType::CRate,4} } },
 	Artefact{ ArtType::Gloves, ArtSet::Vamp, 5, 16, StatType::Def_p, { {StatType::CDmg,11}, {StatType::HP_p,4}, {StatType::Spd,4}, {StatType::Atk_p,4} } },
 	Artefact{ ArtType::Gloves, ArtSet::Vamp, 5, 8, StatType::HP_p, { {StatType::Atk_p,10}, {StatType::CRate,6} } },
 	Artefact{ ArtType::Gloves, ArtSet::Vamp, 5, 8, StatType::Def_p, { {StatType::Spd,9}, {StatType::Def,16} } },

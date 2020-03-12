@@ -1,16 +1,19 @@
 #include "pch.h"
 #include <boost/test/unit_test.hpp>
+#include "raid.h"
+#include "to_string.h"
+
+/////////////////////////////////////////////////////////////////////////////
 
 using boost::unit_test::test_suite;
 
 test_suite* init_unit_test_suite( int argc, char* argv[] )
 {
+	boost::unit_test::unit_test_log.set_threshold_level( boost::unit_test::log_messages );
 	return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-
-#include "raid.h"
 
 BOOST_AUTO_TEST_CASE( test_SetBonus )
 {
@@ -130,5 +133,9 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 	FindRealBestEquipment( ch, matching, eq );
 	BOOST_CHECK_EQUAL( eq.size(), 6 );
 
-	BOOST_TEST_MESSAGE( "\nGromoboy:\n" );
+	BOOST_TEST_MESSAGE( "\nGromoboy:" );
+	for ( const auto& e : eq )
+	{
+		BOOST_TEST_MESSAGE( to_string( e.second ) );
+	}
 }

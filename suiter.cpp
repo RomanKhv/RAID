@@ -38,7 +38,7 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionSt
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
 	for ( const Artefact& art : inventory )
 	{
-		assert( art.Type != ArtType::None );
+		_ASSERTE( art.Type != ArtType::None );
 		if ( matching.IsSetAccepted( art.Set ) )
 			arts_by_type[art.Type].push_back( art );
 	}
