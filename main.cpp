@@ -1,7 +1,6 @@
 #include "pch.h"
 #include <boost/test/unit_test.hpp>
 #include "raid.h"
-#include "to_string.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +18,7 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 {
 	{
 		Champion ch = ChampionFactory::Gromoboy();
-		ApplySetBonus( ArtSet::HP, ch );
+		ApplySetBonus( ArtSet::HP, ch, false );
 		BOOST_CHECK_EQUAL( ch.BonusStats.HP, int(ch.BasicStats.HP * 0.15) );
 	}
 }
@@ -35,7 +34,7 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 			Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
 			Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
 		};
-		ApplySetsBonuses( eq, ch );
+		ApplySetsBonuses( eq, ch, false );
 		BOOST_CHECK( ch.BonusStats.HP > 0 );
 		BOOST_CHECK( ch.BonusStats.Spd > 0 );
 		BOOST_CHECK( ch.BonusStats.Atk == 0 );
@@ -99,7 +98,7 @@ BOOST_AUTO_TEST_CASE( test_Best )
 		Artefact( ArtType::Helmet, ArtSet::Def, 5, 8, StatType::HP, {} ),
 		Artefact( ArtType::Shield, ArtSet::Atk, 4, 8, StatType::Def, {} ),
 		Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
-		Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
+		Artefact( ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, {} ),
 	};
 	Champion ch = ChampionFactory::Gromoboy();
 	{
@@ -114,28 +113,38 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
+BOOST_AUTO_TEST_CASE( test_Gromoboy )
 {
-	const MatchOptions matching(
-		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
-			{ StatType::Def, MatchOptions::ArtFactor::Magor },
-			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
-			{ StatType::Spd, MatchOptions::ArtFactor::MinCap },
-			{ StatType::Acc, MatchOptions::ArtFactor::MinCap },
-		},
-		{}
-	);
 	Champion ch = ChampionFactory::Gromoboy();
 	Equipment eq;
-	FindRealBestEquipment( ch, matching, eq );
-	BOOST_CHECK_EQUAL( eq.size(), 6 );
+	const std::vector<Artefact> current_eq = {
+		Artefact( ArtType::Weapon, ArtSet::Def, 4, 12, StatType::Atk,   { {StatType::CRate,11}, {StatType::Acc,15+1}, {StatType::HP_p,4+1} } ),
+		Artefact( ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP,    { {StatType::Def_p,9+1}, {StatType::Spd,4+1}, {StatType::Res,28+2}, {StatType::CRate,9} } ),
+		Artefact( ArtType::Shield, ArtSet::Acc, 5, 16, StatType::Def,   { {StatType::HP_p,6+1}, {StatType::Def_p,5+2}, {StatType::CDmg,15}, {StatType::CRate,16} } ),
+		Artefact( ArtType::Gloves, ArtSet::Def, 5, 16, StatType::Def_p, { {StatType::Spd,13+1}, {StatType::Acc,9+2}, {StatType::CRate,6}, {StatType::Res,8+2} } ),
+		Artefact( ArtType::Chest,  ArtSet::Def, 5, 12, StatType::HP_p,  { {StatType::Def,43+10}, {StatType::CDmg,12}, {StatType::Res,10+2} } ),
+		Artefact( ArtType::Boots,  ArtSet::Def, 4, 16, StatType::Spd,   { {StatType::Def_p,9+1}, {StatType::Atk,6+5}, {StatType::Res,9+2}, {StatType::Def,10+5} } ),
+		Artefact( ArtType::Ring,   ArtSet::None, 5, 12, StatType::HP,   { {StatType::Def,46+5}, {StatType::Def_p,5+1}, {StatType::HP_p,5+1} } ),
+	};
+	FindBestEquipment( current_eq, ch.BasicStats, MatchOptions(), eq );
+	ApplyEquipment( eq, ch, false );
 
-	BOOST_TEST_MESSAGE( "\nGromoboy:" );
-	for ( const auto& e : eq )
-	{
-		BOOST_TEST_MESSAGE( to_string( e.second ) );
-	}
+	BOOST_CHECK_EQUAL( ch.BonusStats.HP, 13797 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.Atk, 131 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.Def, 1960 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.Spd, 54 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.CRate, 42 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.CDmg, 27 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.Res, 63 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.Acc, 67 );
+
+	//const ChampionStats final_stats = ch.TotalStats();
+	//BOOST_CHECK_EQUAL( final_stats.HP, 32506 );
+	//BOOST_CHECK_EQUAL( final_stats.Atk, 989 );
+	//BOOST_CHECK_EQUAL( final_stats.Def, 3742 );
+	//BOOST_CHECK_EQUAL( final_stats.Spd, 151 );
+	//BOOST_CHECK_EQUAL( final_stats.CRate, 62 );
+	//BOOST_CHECK_EQUAL( final_stats.CDmg, 89 );
+	//BOOST_CHECK_EQUAL( final_stats.Res, 98 );
+	//BOOST_CHECK_EQUAL( final_stats.Acc, 103 );
 }

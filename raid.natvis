@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
+<Type Name="Stat">
+    <DisplayString Condition="Type==StatType::HP_p || Type==StatType::Atk_p || Type==StatType::Def_p">{Type,en}: {Value}%</DisplayString>
+    <DisplayString>{Type,en}: {Value}</DisplayString>
+</Type>
+
 <Type Name="Artefact">
+    <DisplayString>{Type,en}({Set,en}) - {Stars}*({Level}) - {MainStat,en}</DisplayString>
     <DisplayString>{Type,en}({Set,en}) - {Stars}*({Level}) - {MainStat,en}</DisplayString>
 </Type>
     

@@ -109,17 +109,19 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 		valid_stats = { StatType::Atk, StatType::Atk_p, StatType::HP, StatType::HP_p, StatType::Def, StatType::Def_p, StatType::Spd };
 		break;
 	case ArtType::Ring:
-		_ASSERTE( !"not implemented" );
+		valid_stats = { StatType::HP, StatType::Atk, StatType::Def };
 		break;
 	case ArtType::Necklace:
-		_ASSERTE( !"not implemented" );
+		valid_stats = { StatType::CDmg, StatType::HP, StatType::Atk, StatType::Def };
 		break;
 	case ArtType::Banner:
-		_ASSERTE( !"not implemented" );
+		valid_stats = { StatType::Acc, StatType::Res, StatType::HP, StatType::Atk, StatType::Def };
 		break;
 	}
 	return valid_stats;
 }
+
+/////////////////////////////////////////////////////////////////////////////
 
 int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 {
@@ -127,29 +129,54 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 	level = boost::algorithm::clamp( level, 0, 16 );
 	level = (level / 4) * 4;
 
+	int value = 0;
 	switch ( stat )
 	{
 		case StatType::Atk:
 		case StatType::Def:
+			if ( art != ArtType::Banner )
 			{
-				static const int values_Weapon_Shield[3][5] = {
+				static const int weapon_shield[3][5] = {
 					//      0   4    8   12   16
 					/*4*/{ 16, 51,  85, 120, 190 },
 					/*5*/{ 25, 64, 104, 143, 225 },
 					/*6*/{ 35, 80, 125, 170, 265 }
 				};
-				return values_Weapon_Shield[starRank - 4][level / 4];
+				value = weapon_shield[starRank - 4][level / 4];
 			}
+			else {
+				static const int banner[3][5] = {
+					//      0   4    8   12   16
+					/*4*/{ 24, 0,  0, 0, 0 },
+					/*5*/{ 38, 0, 0, 0, 0 },
+					/*6*/{ 53, 0, 0, 0, 0 }
+				};
+				value = banner[starRank - 4][level / 4];
+			}
+			break;
+
 		case StatType::HP:
+			if ( art != ArtType::Banner )
 			{
-				static const int values_Helmet[3][5] = {
+				static const int helmet[3][5] = {
 					//      0     4     8    12    16
 					/*4*/{ 260,    0, 1286, 1800, 2840 },
 					/*5*/{ 450, 1044, 1638, 2231, 3480 },
 					/*6*/{ 600, 1277, 1954, 2631, 4080 }
 				};
-				return values_Helmet[starRank - 4][level / 4];
+				value = helmet[starRank - 4][level / 4];
 			}
+			else {
+				static const int banner[3][5] = {
+					//      0     4     8    12    16
+					/*4*/{ 390,    0, 0, 0, 0 },
+					/*5*/{ 675, 0, 0, 0, 0 },
+					/*6*/{ 900, 0, 0, 0, 0 }
+				};
+				value = banner[starRank - 4][level / 4];
+			}
+			break;
+
 		case StatType::Atk_p:
 		case StatType::HP_p:
 		case StatType::Def_p:
@@ -161,9 +188,12 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 					/*5*/{  8, 16, 24, 33, 50 },
 					/*6*/{ 10, 20, 29, 39, 60 },
 				};
-				return values_Atk_HP_Def_CR_p[starRank - 4][level / 4];
+				value = values_Atk_HP_Def_CR_p[starRank - 4][level / 4];
 			}
+			break;
+
 		case StatType::CDmg:
+			if ( art != ArtType::Necklace )
 			{
 				static const int values_CDmg[3][5] = {
 					//      0  4  8 12  16
@@ -171,8 +201,19 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 					/*5*/{ 10, 0, 0, 0, 65 },
 					/*6*/{  0, 0, 0, 0,  0 },
 				};
-				return values_CDmg[starRank - 4][level / 4];
+				value = values_CDmg[starRank - 4][level / 4];
 			}
+			else {
+				static const int necklace[3][5] = {
+					//     0  4  8 12  16
+					/*4*/{ 4, 0, 0, 0, 0 },
+					/*5*/{ 5, 0, 0, 0, 0 },
+					/*6*/{ 6, 0, 0, 0, 0 },
+				};
+				value = necklace[starRank - 4][level / 4];
+			}
+			break;
+
 		case StatType::Spd:
 			{
 				static const int values_Spd[3][5] = {
@@ -181,24 +222,29 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 					/*5*/{ 5, 12, 19, 26, 40 },
 					/*6*/{ 0, 00, 00, 00, 00 },
 				};
-				return values_Spd[starRank - 4][level / 4];
+				value = values_Spd[starRank - 4][level / 4];
 			}
+			break;
+
 		case StatType::Acc:
 		case StatType::Res:
 			{
 				static const int values_Acc_Res[3][5] = {
 					//      0   4   8  12  16
-					/*4*/{  8, 0, 0, 0, 0 },
+					/*4*/{  8, 0, 0, 0, 60 },
 					/*5*/{ 12, 0, 0, 0, 78 },
-					/*6*/{ 16, 0, 0, 0, 0 },
+					/*6*/{ 16, 0, 0, 0, 96 },
 				};
-				return values_Acc_Res[starRank - 4][level / 4];
+				value = values_Acc_Res[starRank - 4][level / 4];
 			}
+			break;
 	}
 
-	_ASSERTE( false );
-	return 0;
+	_ASSERTE( value > 0 );
+	return value;
 }
+
+/////////////////////////////////////////////////////////////////////////////
 
 int SetSize( ArtSet set )
 {
@@ -247,6 +293,8 @@ bool IsGoodStatForArt( StatType stat, ArtType art )
 	return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
 #define ApplyStatBonus( bonusStats, basicStats, stat, factor )			bonusStats.stat += basicStats.stat * (factor) / 100;
 
 void ApplyStat( const Stat& stat, Champion& ch )
@@ -294,7 +342,7 @@ void ApplyStat( const Stat& stat, Champion& ch )
 
 const int DivHPCompensation = 2;
 
-void ApplySetBonus( ArtSet set, Champion& ch )
+void ApplySetBonus( ArtSet set, Champion& ch, bool compensation )
 {
 	switch ( set )
 	{
@@ -305,12 +353,12 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 			break;
 		case ArtSet::Immortal:
 			{
-				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, 15+3 );
+				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, 15 + (compensation ? 3 : 0) );
 			}
 			break;
 		case ArtSet::DivLife:
 			{
-				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, 15+DivHPCompensation );
+				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, 15 + (compensation ? DivHPCompensation : 0) );
 			}
 			break;
 		case ArtSet::Atk:
@@ -322,7 +370,8 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 		case ArtSet::DivAtk:
 			{
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, Atk, 15 );
-				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
+				if ( compensation )
+					ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
 			}
 			break;
 		case ArtSet::Def:
@@ -338,7 +387,8 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 		case ArtSet::DivCritRate:
 			{
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, CRate, 12 );
-				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
+				if ( compensation )
+					ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
 			}
 			break;
 		case ArtSet::CDmg:
@@ -354,7 +404,8 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 		case ArtSet::DivSpeed:
 			{
 				ApplyStatBonus( ch.BonusStats, ch.BasicStats, Spd, 12 );
-				ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
+				if ( compensation )
+					ApplyStatBonus( ch.BonusStats, ch.BasicStats, HP, DivHPCompensation );
 			}
 			break;
 		case ArtSet::Res:
@@ -370,7 +421,7 @@ void ApplySetBonus( ArtSet set, Champion& ch )
 	}
 }
 
-void ApplySetsBonuses( const Equipment& eq, Champion& ch )
+void ApplySetsBonuses( const Equipment& eq, Champion& ch, bool compensation )
 {
 	std::map<ArtSet, int> n_arts_by_set;
 	for ( auto e : eq )
@@ -382,7 +433,7 @@ void ApplySetsBonuses( const Equipment& eq, Champion& ch )
 	{
 		const int count = set.second / SetSize( set.first );
 		for ( int i = 0; i < count; ++i )
-			ApplySetBonus( set.first, ch );
+			ApplySetBonus( set.first, ch, compensation );
 	}
 }
 
@@ -400,15 +451,15 @@ void ApplyArtBonus( const Artefact& art, Champion& ch, bool consider_max_level )
 		ApplyStat( stat, ch );
 }
 
-void ApplyEquipment( const Equipment& eq, Champion& ch )
+void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating )
 {
-	ApplySetsBonuses( eq, ch );
+	ApplySetsBonuses( eq, ch, estimating );
 
 	for ( auto e : eq )
 	{
 		if ( e.second.IsValid() )
 		{
-			ApplyArtBonus( e.second, ch );
+			ApplyArtBonus( e.second, ch, estimating );
 		}
 	}
 }

@@ -84,16 +84,17 @@ std::string to_string( const ArtSet& set )
 std::string to_string( const Artefact& art )
 {
 	std::stringstream ss;
-	ss << to_string(art.Type) << ": ";
+	ss << to_string(art.Type) << ":\t[" << to_string(art.Set) << "]\t";
 	ss << art.Stars << "* (" << art.Level << ") ";
 	switch ( art.Type )
 	{
 		case ArtType::Weapon:
 		case ArtType::Helmet:
 		case ArtType::Shield:
+			ss << "\t\t\t";
 			break;
 		default:
-			ss << to_string( art.MainStat ) << " ";
+			ss << "\t" << to_string( art.MainStat ) << "\t";
 			break;
 	};
 	if ( !art.AddStats.empty() )
@@ -105,5 +106,19 @@ std::string to_string( const Artefact& art )
 		}
 		ss << "}";
 	}
+	return ss.str();
+}
+
+std::string to_string( const ChampionStats& stats )
+{
+	std::stringstream ss;
+	ss << to_string(StatType::HP) << ":\t " << stats.HP << "\n";
+	ss << to_string(StatType::Atk) << ":\t " << stats.Atk << "\n";
+	ss << to_string(StatType::Def) << ":\t " << stats.Def << "\n";
+	ss << to_string(StatType::Spd) << ":\t " << stats.Spd << "\n";
+	ss << to_string(StatType::CRate) << ": " << stats.CRate << "\n";
+	ss << to_string(StatType::CDmg) << ":\t " << stats.CDmg << "\n";
+	ss << to_string(StatType::Res) << ":\t " << stats.Res << "\n";
+	ss << to_string(StatType::Acc) << ":\t " << stats.Acc /*<< "\n"*/;
 	return ss.str();
 }

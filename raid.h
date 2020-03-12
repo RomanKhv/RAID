@@ -84,8 +84,8 @@ enum class ArtSet
 
 struct Artefact
 {
-	ArtType Type = ArtType::Weapon;
-	ArtSet Set = ArtSet::HP;
+	ArtType Type = ArtType::Ring;
+	ArtSet Set = ArtSet::None;
 	int Stars = 1;
 	int Level = 0;
 
@@ -145,10 +145,10 @@ int  SetSize( ArtSet );
 bool IsValidStatForArt( StatType, ArtType );
 bool IsGoodStatForArt( StatType, ArtType );
 void ApplyStat( const Stat&, Champion& );
-void ApplySetBonus( ArtSet, Champion& );
-void ApplySetsBonuses( const Equipment&, Champion& );
-void ApplyArtBonus( const Artefact&, Champion&, bool consider_max_level = false );
-void ApplyEquipment( const Equipment&, Champion& );
+void ApplySetBonus( ArtSet, Champion&, bool compensation );
+void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
+void ApplyArtBonus( const Artefact&, Champion&, bool consider_max_level /*= false*/ );
+void ApplyEquipment( const Equipment&, Champion&, bool estimating );
 
 /////////////////////////////////////////////////////////////////////////////
 

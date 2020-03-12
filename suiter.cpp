@@ -31,6 +31,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 void FindRealBestEquipment( Champion& ch, const MatchOptions& matching, Equipment& best_eq )
 {
 	FindBestEquipment( _MyArts, ch.BasicStats, matching, best_eq );
+	ApplyEquipment( best_eq, ch, false );
 }
 
 void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionStats& basic_ch_stats, const MatchOptions& matching, Equipment& best_eq )
@@ -55,7 +56,7 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionSt
 				continue;
 
 			Champion ch( basic_ch_stats );
-			ApplyEquipment( eq, ch );
+			ApplyEquipment( eq, ch, true );
 
 			const float est = EstimateEquipment( ch.TotalStats(), matching );
 			if ( est > best_eq_estimation )
