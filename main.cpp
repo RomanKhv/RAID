@@ -123,15 +123,15 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 		Artefact( ArtType::Shield, ArtSet::Acc, 5, 16, StatType::Def,   { {StatType::HP_p,6+1}, {StatType::Def_p,5+2}, {StatType::CDmg,15}, {StatType::CRate,16} } ),
 		Artefact( ArtType::Gloves, ArtSet::Def, 5, 16, StatType::Def_p, { {StatType::Spd,13+1}, {StatType::Acc,9+2}, {StatType::CRate,6}, {StatType::Res,8+2} } ),
 		Artefact( ArtType::Chest,  ArtSet::Def, 5, 12, StatType::HP_p,  { {StatType::Def,43+10}, {StatType::CDmg,12}, {StatType::Res,10+2} } ),
-		Artefact( ArtType::Boots,  ArtSet::Def, 4, 16, StatType::Spd,   { {StatType::Def_p,9+1}, {StatType::Atk,6+5}, {StatType::Res,9+2}, {StatType::Def,10+5} } ),
+		Artefact( ArtType::Boots,  ArtSet::Def, 4, 16, StatType::Spd,   { {StatType::Def_p,8+1}, {StatType::Atk,6+5}, {StatType::Res,9+2}, {StatType::Def,10+5} } ),
 		Artefact( ArtType::Ring,   ArtSet::None, 5, 12, StatType::HP,   { {StatType::Def,46+5}, {StatType::Def_p,5+1}, {StatType::HP_p,5+1} } ),
 	};
 	FindBestEquipment( current_eq, ch.BasicStats, MatchOptions(), eq );
 	ApplyEquipment( eq, ch, false );
 
-	BOOST_CHECK_EQUAL( ch.BonusStats.HP, 13797 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.HP, 13797 - 2 );
 	BOOST_CHECK_EQUAL( ch.BonusStats.Atk, 131 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.Def, 1960 );
+	BOOST_CHECK_EQUAL( ch.BonusStats.Def, 1960 - 3 );
 	BOOST_CHECK_EQUAL( ch.BonusStats.Spd, 54 );
 	BOOST_CHECK_EQUAL( ch.BonusStats.CRate, 42 );
 	BOOST_CHECK_EQUAL( ch.BonusStats.CDmg, 27 );

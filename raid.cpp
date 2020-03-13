@@ -78,6 +78,17 @@ void member_fraction( ChampionStats& dest, const ChampionStats& ref, int factor_
 
 /////////////////////////////////////////////////////////////////////////////
 
+inline Champion::Champion( const ChampionStats& basic, Element e )
+	: BasicStats( basic )
+	, Elem( e )
+{
+}
+
+bool Champion::IsReal() const
+{
+	return Elem != Element::none;
+}
+
 ChampionStats Champion::TotalStats() const
 {
 	return BasicStats + BonusStats;
@@ -256,6 +267,7 @@ int SetSize( ArtSet set )
 		case ArtSet::CRate:
 		case ArtSet::CDmg:
 		case ArtSet::Speed:
+		case ArtSet::Acc:
 		case ArtSet::Cruel:
 		case ArtSet::Immortal:
 		case ArtSet::DivAtk:
@@ -320,10 +332,10 @@ void ApplyStat( const Stat& stat, Champion& ch )
 			member_fraction<&ChampionStats::Def>( ch.BonusStats, ch.BasicStats, stat.Value );
 			return;
 		case StatType::CRate:
-			member_fraction<&ChampionStats::CRate>( ch.BonusStats, ch.BasicStats, stat.Value );
+			ch.BonusStats.CRate += stat.Value;
 			return;
 		case StatType::CDmg:
-			member_fraction<&ChampionStats::CDmg>( ch.BonusStats, ch.BasicStats, stat.Value );
+			ch.BonusStats.CDmg += stat.Value;
 			return;
 		case StatType::Spd:
 			ch.BonusStats.Spd += stat.Value;

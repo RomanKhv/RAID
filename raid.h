@@ -100,6 +100,17 @@ struct Artefact
 
 /////////////////////////////////////////////////////////////////////////////
 
+enum class Element {
+	none,
+	Red, Blue, Green, Void
+};
+
+using Hall = std::map< Element, std::map<StatType, int> >;
+
+extern const Hall _MyHall;
+
+/////////////////////////////////////////////////////////////////////////////
+
 struct ChampionStats
 {
 	int HP = 0;
@@ -132,8 +143,10 @@ struct Champion
 {
 	const ChampionStats BasicStats;
 	ChampionStats BonusStats;
+	const Element Elem;
 
-	Champion(const ChampionStats& basic) : BasicStats(basic) {}
+	explicit Champion( const ChampionStats& basic, Element e = Element::none );
+	bool IsReal() const;
 	ChampionStats TotalStats() const;
 };
 
