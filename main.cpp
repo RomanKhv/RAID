@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 	{
 		Champion ch = ChampionFactory::Gromoboy();
 		ApplySetBonus( ArtSet::HP, ch, false );
-		BOOST_CHECK_EQUAL( ch.BonusStats.HP, int(ch.BasicStats.HP * 0.15) );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, int(ch.BasicStats.HP * 0.15) );
 	}
 }
 
@@ -35,10 +35,10 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 			Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
 		};
 		ApplySetsBonuses( eq, ch, false );
-		BOOST_CHECK( ch.BonusStats.HP > 0 );
-		BOOST_CHECK( ch.BonusStats.Spd > 0 );
-		BOOST_CHECK( ch.BonusStats.Atk == 0 );
-		BOOST_CHECK( ch.BonusStats.Def == 0 );
+		BOOST_CHECK( ch.ArtsBonusStats.HP > 0 );
+		BOOST_CHECK( ch.ArtsBonusStats.Spd > 0 );
+		BOOST_CHECK( ch.ArtsBonusStats.Atk == 0 );
+		BOOST_CHECK( ch.ArtsBonusStats.Def == 0 );
 	}
 }
 
@@ -103,12 +103,12 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	Champion ch = ChampionFactory::Gromoboy();
 	{
 		Equipment eq;
-		FindBestEquipment( inventory, ch.BasicStats, MatchOptions(), eq );
+		FindBestEquipment( inventory, ch, MatchOptions(), eq );
 		BOOST_CHECK_EQUAL( eq.size(), 5 );
 	}
 	{
 		Equipment eq;
-		FindBestEquipment( inventory, ch.BasicStats, MatchOptions( {}, {ArtSet::HP} ), eq );
+		FindBestEquipment( inventory, ch, MatchOptions( {}, {ArtSet::HP} ), eq );
 		BOOST_CHECK_EQUAL( eq.size(), 1 );
 	}
 }
@@ -116,29 +116,30 @@ BOOST_AUTO_TEST_CASE( test_Best )
 BOOST_AUTO_TEST_CASE( test_Gromoboy )
 {
 	Champion ch = ChampionFactory::Gromoboy();
-	Equipment eq;
-	const std::vector<Artefact> current_eq = {
-		Artefact( ArtType::Weapon, ArtSet::Def, 4, 12, StatType::Atk,   { {StatType::CRate,11}, {StatType::Acc,15+1}, {StatType::HP_p,4+1} } ),
-		Artefact( ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP,    { {StatType::Def_p,9+1}, {StatType::Spd,4+1}, {StatType::Res,28+2}, {StatType::CRate,9} } ),
-		Artefact( ArtType::Shield, ArtSet::Acc, 5, 16, StatType::Def,   { {StatType::HP_p,6+1}, {StatType::Def_p,5+2}, {StatType::CDmg,15}, {StatType::CRate,16} } ),
-		Artefact( ArtType::Gloves, ArtSet::Def, 5, 16, StatType::Def_p, { {StatType::Spd,13+1}, {StatType::Acc,9+2}, {StatType::CRate,6}, {StatType::Res,8+2} } ),
-		Artefact( ArtType::Chest,  ArtSet::Def, 5, 12, StatType::HP_p,  { {StatType::Def,43+10}, {StatType::CDmg,12}, {StatType::Res,10+2} } ),
-		Artefact( ArtType::Boots,  ArtSet::Def, 4, 16, StatType::Spd,   { {StatType::Def_p,8+1}, {StatType::Atk,6+5}, {StatType::Res,9+2}, {StatType::Def,10+5} } ),
-		Artefact( ArtType::Ring,   ArtSet::None, 5, 12, StatType::HP,   { {StatType::Def,46+5}, {StatType::Def_p,5+1}, {StatType::HP_p,5+1} } ),
-	};
-	FindBestEquipment( current_eq, ch.BasicStats, MatchOptions(), eq );
+	const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
 	ApplyEquipment( eq, ch, false );
 
-	BOOST_CHECK_EQUAL( ch.BonusStats.HP, 13797 - 2 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.Atk, 131 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.Def, 1960 - 3 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.Spd, 54 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.CRate, 42 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.CDmg, 27 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.Res, 63 );
-	BOOST_CHECK_EQUAL( ch.BonusStats.Acc, 67 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 13797 - 2 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 131 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 1960 - 3 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 54 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 42 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 27 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 63 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 67 );
 
-	//const ChampionStats final_stats = ch.TotalStats();
+	ChampionStats hall_stats;
+	ApplyHallBonus( ch, hall_stats );
+	BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
+	BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
+	BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
+	BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
+	BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
+	BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
+	BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
+	BOOST_CHECK_EQUAL( hall_stats.Acc, 20 );
+
+	//const ChampionStats final_stats = ch.TotalStats( true );
 	//BOOST_CHECK_EQUAL( final_stats.HP, 32506 );
 	//BOOST_CHECK_EQUAL( final_stats.Atk, 989 );
 	//BOOST_CHECK_EQUAL( final_stats.Def, 3742 );

@@ -122,3 +122,19 @@ std::string to_string( const ChampionStats& stats )
 	ss << to_string(StatType::Acc) << ":\t " << stats.Acc /*<< "\n"*/;
 	return ss.str();
 }
+
+std::string stats_progress( const ChampionStats& new_stats, const ChampionStats& prev_stats )
+{
+	std::stringstream ss;
+	for ( StatType st : ChampionStats::TypeList )
+	{
+		ss << to_string(st) << ":\t" << new_stats[st];
+		const int delta = new_stats[st] - prev_stats[st];
+		if ( delta > 0 )
+			ss << ":\t(+";
+		else
+			ss << ":\t(";
+		ss << delta << ")\n";
+	}
+	return ss.str();
+}

@@ -80,6 +80,14 @@ enum class ArtSet
 	DivSpeed,
 };
 
+enum class ChampionName
+{
+	none,
+	Kael,
+	Gromoboy,
+	Krisk,
+};
+
 /////////////////////////////////////////////////////////////////////////////
 
 struct Artefact
@@ -91,9 +99,11 @@ struct Artefact
 
 	StatType MainStat = StatType::Atk;
 	std::vector<Stat> AddStats;
+
+	ChampionName Owner = ChampionName::none;
 	
 	Artefact() = default;
-	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat> );
+	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat>, ChampionName owner = ChampionName::none );
 	bool IsValid() const { return Type != ArtType::None; }
 	Stat GetMainStat( bool consider_max_level ) const;
 };
@@ -102,12 +112,13 @@ struct Artefact
 
 enum class Element {
 	none,
-	Red, Blue, Green, Void
+	Blue, Green, Red, Void
 };
 
 using Hall = std::map< Element, std::map<StatType, int> >;
-
 extern const Hall _MyHall;
+
+extern std::map<StatType, int> _MyLeage;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -125,6 +136,10 @@ struct ChampionStats
 	ChampionStats() = default;
 	ChampionStats(int hp, int atk, int def, int spd, int crate, int cdmg, int res, int acc);
 	ChampionStats operator+( const ChampionStats& ) const;
+	int operator[](StatType) const;
+
+	typedef const StatType StatList[8];
+	static const StatList TypeList;
 };
 
 struct Equipment
@@ -142,12 +157,12 @@ struct ChampionArts
 struct Champion
 {
 	const ChampionStats BasicStats;
-	ChampionStats BonusStats;
+	ChampionStats ArtsBonusStats;
 	const Element Elem;
 
 	explicit Champion( const ChampionStats& basic, Element e = Element::none );
 	bool IsReal() const;
-	ChampionStats TotalStats() const;
+	ChampionStats TotalStats( bool apply_hall_bonus = true ) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -162,6 +177,7 @@ void ApplySetBonus( ArtSet, Champion&, bool compensation );
 void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
 void ApplyArtBonus( const Artefact&, Champion&, bool consider_max_level /*= false*/ );
 void ApplyEquipment( const Equipment&, Champion&, bool estimating );
+void ApplyHallBonus( const Champion&, ChampionStats& );
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -195,8 +211,8 @@ struct MatchOptions
 	//bool IsEqAccepted( const Equipment& ) const;
 };
 
-void FindRealBestEquipment( Champion&, const MatchOptions&, Equipment& );
-void FindBestEquipment( const std::vector<Artefact>&, const ChampionStats& basic_stats, const MatchOptions&, Equipment& );
+Equipment FindRealBestEquipment( Champion&, const MatchOptions& );
+void FindBestEquipment( const std::vector<Artefact>&, const Champion&, const MatchOptions&, Equipment& );
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -211,8 +227,7 @@ namespace ChampionFactory
 	Champion Hatun();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
 extern std::vector<Artefact> _MyArts;
+Equipment GetCurrentEquipmentFor( ChampionName );
 
 /////////////////////////////////////////////////////////////////////////////

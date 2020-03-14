@@ -20,13 +20,22 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 		{}
 	);
 	Champion ch = ChampionFactory::Gromoboy();
-	Equipment eq;
-	FindRealBestEquipment( ch, matching, eq );
+	const Equipment eq = FindRealBestEquipment( ch, matching );
 	BOOST_CHECK_EQUAL( eq.size(), 6 );
 
 	BOOST_TEST_MESSAGE( "\n  Gromoboy:" );
+
+	// Report: new stats
 	const ChampionStats final_stats = ch.TotalStats();
-	BOOST_TEST_MESSAGE( to_string( final_stats ) );
+	//BOOST_TEST_MESSAGE( to_string( final_stats ) );
+	{
+		Champion old_ch = ChampionFactory::Gromoboy();
+		const Equipment current_eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
+		ApplyEquipment( current_eq, old_ch, false );
+		BOOST_TEST_MESSAGE( stats_progress( final_stats, old_ch.TotalStats() ) );
+	}
+
+	// Report: equipment
 	for ( const auto& e : eq )
 	{
 		BOOST_TEST_MESSAGE( to_string( e.second ) );

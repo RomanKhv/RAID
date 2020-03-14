@@ -28,13 +28,15 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	return est;
 }
 
-void FindRealBestEquipment( Champion& ch, const MatchOptions& matching, Equipment& best_eq )
+Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
 {
-	FindBestEquipment( _MyArts, ch.BasicStats, matching, best_eq );
+	Equipment best_eq;
+	FindBestEquipment( _MyArts, ch, matching, best_eq );
 	ApplyEquipment( best_eq, ch, false );
+	return best_eq;
 }
 
-void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionStats& basic_ch_stats, const MatchOptions& matching, Equipment& best_eq )
+void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& target_champ, const MatchOptions& matching, Equipment& best_eq )
 {
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
 	for ( const Artefact& art : inventory )
@@ -55,7 +57,7 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const ChampionSt
 			if ( !matching.IsEqHasRequiredSets( eq ) )
 				continue;
 
-			Champion ch( basic_ch_stats );
+			Champion ch( target_champ.BasicStats, target_champ.Elem );
 			ApplyEquipment( eq, ch, true );
 
 			const float est = EstimateEquipment( ch.TotalStats(), matching );
