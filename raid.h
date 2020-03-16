@@ -172,6 +172,7 @@ int  StatValueForLevel( ArtType, StatType, int starRank, int level );
 int  SetSize( ArtSet );
 bool IsValidStatForArt( StatType, ArtType );
 bool IsGoodStatForArt( StatType, ArtType );
+void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus );
 void ApplyStat( const Stat&, Champion& );
 void ApplySetBonus( ArtSet, Champion&, bool compensation );
 void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
@@ -188,8 +189,8 @@ struct MatchOptions
 		Minor,
 		Moderate,
 		Magor,
-		MinCap,
 		Max,
+		MinCap,
 	};
 	std::map<StatType, ArtFactor> Factors;
 
@@ -227,7 +228,7 @@ namespace ChampionFactory
 	Champion Hatun();
 }
 
-extern std::vector<Artefact> _MyArts;
+extern const std::vector<Artefact> _MyArts;
 Equipment GetCurrentEquipmentFor( ChampionName );
 
 /////////////////////////////////////////////////////////////////////////////

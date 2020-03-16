@@ -14,7 +14,7 @@ const Hall _MyHall = {
 
 /////////////////////////////////////////////////////////////////////////////
 
-std::vector<Artefact> _MyArts =
+const std::vector<Artefact> _MyArts =
 {
 	// HP
 	Artefact{ ArtType::Weapon, ArtSet::HP, 6, 16, StatType::Atk, { {StatType::CDmg,13}, {StatType::Spd,12}, {StatType::CRate,11}, {StatType::Atk_p,7} } },

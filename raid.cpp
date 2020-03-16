@@ -351,45 +351,83 @@ bool IsGoodStatForArt( StatType stat, ArtType art )
 
 #define ApplyStatBonus( bonusStats, basicStats, stat, factor )			bonusStats.stat += basicStats.stat * (factor) / 100;
 
-void ApplyStat( const Stat& stat, Champion& ch )
+void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus )
 {
+	//switch ( stat.Type )
+	//{
+	//	case StatType::Atk_p:
+	//	case StatType::HP_p:
+	//	case StatType::Def_p:
+	//		//arts_bonus[stat.Type] += ref.*member * factor_percent / 100;
+	//		member_fraction<&ChampionStats::Def>( arts_bonus, basic_stats, stat.Value );
+	//		return;
+	//	case StatType::Atk:
+	//		arts_bonus.Atk += stat.Value;
+	//		return;
+	//	case StatType::HP:
+	//		arts_bonus.HP += stat.Value;
+	//		return;
+	//	case StatType::Def:
+	//		arts_bonus.Def += stat.Value;
+	//		return;
+	//	case StatType::CRate:
+	//		arts_bonus.CRate += stat.Value;
+	//		return;
+	//	case StatType::CDmg:
+	//		arts_bonus.CDmg += stat.Value;
+	//		return;
+	//	case StatType::Spd:
+	//		arts_bonus.Spd += stat.Value;
+	//		return;
+	//	case StatType::Acc:
+	//		arts_bonus.Acc += stat.Value;
+	//		return;
+	//	case StatType::Res:
+	//		arts_bonus.Res += stat.Value;
+	//		return;
+	//}
 	switch ( stat.Type )
 	{
 		case StatType::Atk:
-			ch.ArtsBonusStats.Atk += stat.Value;
+			arts_bonus.Atk += stat.Value;
 			return;
 		case StatType::HP:
-			ch.ArtsBonusStats.HP += stat.Value;
+			arts_bonus.HP += stat.Value;
 			return;
 		case StatType::Def:
-			ch.ArtsBonusStats.Def += stat.Value;
+			arts_bonus.Def += stat.Value;
 			return;
 		case StatType::Atk_p:
-			member_fraction<&ChampionStats::Atk>( ch.ArtsBonusStats, ch.BasicStats, stat.Value );
+			member_fraction<&ChampionStats::Atk>( arts_bonus, basic_stats, stat.Value );
 			return;
 		case StatType::HP_p:
-			member_fraction<&ChampionStats::HP>( ch.ArtsBonusStats, ch.BasicStats, stat.Value );
+			member_fraction<&ChampionStats::HP>( arts_bonus, basic_stats, stat.Value );
 			return;
 		case StatType::Def_p:
-			member_fraction<&ChampionStats::Def>( ch.ArtsBonusStats, ch.BasicStats, stat.Value );
+			member_fraction<&ChampionStats::Def>( arts_bonus, basic_stats, stat.Value );
 			return;
 		case StatType::CRate:
-			ch.ArtsBonusStats.CRate += stat.Value;
+			arts_bonus.CRate += stat.Value;
 			return;
 		case StatType::CDmg:
-			ch.ArtsBonusStats.CDmg += stat.Value;
+			arts_bonus.CDmg += stat.Value;
 			return;
 		case StatType::Spd:
-			ch.ArtsBonusStats.Spd += stat.Value;
+			arts_bonus.Spd += stat.Value;
 			return;
 		case StatType::Acc:
-			ch.ArtsBonusStats.Acc += stat.Value;
+			arts_bonus.Acc += stat.Value;
 			return;
 		case StatType::Res:
-			ch.ArtsBonusStats.Res += stat.Value;
+			arts_bonus.Res += stat.Value;
 			return;
 	}
 	_ASSERTE( !"unreachable code" );
+}
+
+void ApplyStat( const Stat& stat, Champion& ch )
+{
+	ApplyStat( stat, ch.BasicStats, ch.ArtsBonusStats );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -522,12 +560,10 @@ void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 {
 	const std::map<StatType, int>& hall_bonus = _MyHall.at( ch.Elem );
 
-	member_fraction<&ChampionStats::HP> ( stats, ch.BasicStats, hall_bonus.at(StatType::HP_p) );
-	member_fraction<&ChampionStats::Atk>( stats, ch.BasicStats, hall_bonus.at(StatType::Atk_p) );
-	member_fraction<&ChampionStats::Def>( stats, ch.BasicStats, hall_bonus.at(StatType::Def_p) );
-	stats.CDmg += hall_bonus.at(StatType::CDmg);
-	stats.Res += hall_bonus.at(StatType::Res);
-	stats.Acc += hall_bonus.at(StatType::Acc);
+	for ( StatType st : { StatType::HP_p, StatType::Atk_p, StatType::Def_p, StatType::CDmg, StatType::Res, StatType::Acc } )
+	{
+		ApplyStat( { st, hall_bonus.at(st) }, ch.BasicStats, stats );
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -573,7 +609,7 @@ bool MatchOptions::IsEqHasRequiredSets( const Equipment& eq ) const
 	for ( const auto rs : req_sets )
 	{
 		const int n_req_arts = SetSize( rs.first ) * rs.second;
-		const int n_eq_arts = stl::get_value( eq_sets, rs.first, 0 );
+		const int n_eq_arts = stl::get_value_or( eq_sets, rs.first, 0 );
 		if ( n_eq_arts < n_req_arts )
 			return false;
 	}

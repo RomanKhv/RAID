@@ -1,30 +1,67 @@
 #include "pch.h"
 #include "raid.h"
+#include "stl_ext.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
 const std::map<StatType, int> ref_stat_values = {
-	{ StatType::HP, 50000 },
-	{ StatType::Atk, 4000 },
-	{ StatType::Def, 4000 },
+	{ StatType::HP, 40000 },
+	{ StatType::Atk, 3000 },
+	{ StatType::Def, 3000 },
 	{ StatType::CRate, 100 },
 	{ StatType::CDmg, 100 },
 	{ StatType::Spd, 150 },
+	{ StatType::Res, 80 },
 	{ StatType::Acc, 150 },
-	{ StatType::Res, 100 }
 };
+
+bool FloatEstimationFactor( MatchOptions::ArtFactor f, float& fk )
+{
+	switch ( f )
+	{
+		case MatchOptions::ArtFactor::NotInterested:
+			fk = 0;
+			return false;
+		case MatchOptions::ArtFactor::Minor:
+			fk = 0.25f;
+			return true;
+		case MatchOptions::ArtFactor::Moderate:
+			fk = 0.5f;
+			return true;
+		case MatchOptions::ArtFactor::Magor:
+			fk = 0.75f;
+			return true;
+		case MatchOptions::ArtFactor::Max:
+			fk = 1;
+			return true;
+	}
+	return false;
+}
 
 float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matching )
 {
 	float est = 0;
-	est += (float)ch_stats.HP / ref_stat_values.at( StatType::HP );
-	est += (float)ch_stats.Atk / ref_stat_values.at( StatType::Atk );
-	est += (float)ch_stats.Def / ref_stat_values.at( StatType::Def );
-	est += (float)ch_stats.CRate / ref_stat_values.at( StatType::CRate );
-	est += (float)ch_stats.CDmg / ref_stat_values.at( StatType::CDmg );
-	est += (float)ch_stats.Spd / ref_stat_values.at( StatType::Spd );
-	est += (float)ch_stats.Acc / ref_stat_values.at( StatType::Acc );
-	est += (float)ch_stats.Res / ref_stat_values.at( StatType::Res );
+	for ( StatType st : ChampionStats::TypeList )
+	{
+		float fk = 0;
+		const MatchOptions::ArtFactor f = stl::get_value_or( matching.Factors, st, MatchOptions::ArtFactor::NotInterested );
+		if ( FloatEstimationFactor( f, fk ) )
+		{
+			est += fk * (float)ch_stats[st] / ref_stat_values.at( st );
+		}
+		else {
+			switch ( f )
+			{
+				case MatchOptions::ArtFactor::MinCap:
+					{
+						_ASSERTE( stl::contains( matching.MinCap, st ) );
+						const int min_stat_cap = matching.MinCap.at( st );
+						if ( ch_stats[st] < min_stat_cap )
+							return 0.f;
+					}
+			}
+		}
+	}
 	return est;
 }
 

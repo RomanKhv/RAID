@@ -10,14 +10,15 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
+			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
 			{ StatType::Def, MatchOptions::ArtFactor::Magor },
 			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 			{ StatType::Spd, MatchOptions::ArtFactor::MinCap },
 			{ StatType::Acc, MatchOptions::ArtFactor::MinCap },
 		},
-		{}
+		{}, {}, true,
+		{ {StatType::Spd,100}, {StatType::Acc,120} }
 	);
 	Champion ch = ChampionFactory::Gromoboy();
 	const Equipment eq = FindRealBestEquipment( ch, matching );
