@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "raid.h"
+#include "iterator.h"
 #include "stl_ext.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -83,26 +84,23 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& 
 			arts_by_type[art.Type].push_back( art );
 	}
 
-	Equipment eq;
 	float best_eq_estimation = 0;
-	for ( const auto& at : arts_by_type )
+	arts_by_type_iterator eq_i( arts_by_type );
+	for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
 	{
-		for ( const Artefact& art : at.second )
+		const Equipment eq = eq_i.get();
+
+		if ( !matching.IsEqHasRequiredSets( eq ) )
+			continue;
+
+		Champion ch( target_champ.BasicStats, target_champ.Elem );
+		ApplyEquipment( eq, ch, true );
+
+		const float est = EstimateEquipment( ch.TotalStats(), matching );
+		if ( est > best_eq_estimation )
 		{
-			eq[at.first] = art;
-
-			if ( !matching.IsEqHasRequiredSets( eq ) )
-				continue;
-
-			Champion ch( target_champ.BasicStats, target_champ.Elem );
-			ApplyEquipment( eq, ch, true );
-
-			const float est = EstimateEquipment( ch.TotalStats(), matching );
-			if ( est > best_eq_estimation )
-			{
-				best_eq = eq;
-				best_eq_estimation = est;
-			}
+			best_eq = eq;
+			best_eq_estimation = est;
 		}
 	}
 }

@@ -149,11 +149,6 @@ struct Equipment
 	Equipment( std::initializer_list<Artefact> il );
 };
 
-struct ChampionArts
-{
-	Equipment Map;
-};
-
 struct Champion
 {
 	const ChampionStats BasicStats;

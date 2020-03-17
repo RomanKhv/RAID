@@ -30,7 +30,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Shield, ArtSet::HP, 6, 8, StatType::Def, { {StatType::CRate,7}, {StatType::Acc,22}, {StatType::Def_p,10}, {StatType::Res,11} } },
 	Artefact{ ArtType::Shield, ArtSet::HP, 6, 8, StatType::Def, { {StatType::Spd,6}, {StatType::Acc,18}, {StatType::Res,21} } },
 	Artefact{ ArtType::Shield, ArtSet::HP, 5, 8, StatType::Def, { {StatType::Spd,5}, {StatType::CRate,10}, {StatType::HP,594} } },
-	Artefact{ ArtType::Shield, ArtSet::HP, 5, 8, StatType::Def, { {StatType::HP_p,9}, {StatType::CRate,10}, {StatType::CDmg,6} } },
+	Artefact{ ArtType::Shield, ArtSet::HP, 5, 11, StatType::Def, { {StatType::HP_p,9}, {StatType::CRate,10}, {StatType::CDmg,6} } },
 	Artefact{ ArtType::Shield, ArtSet::HP, 5, 8, StatType::Def, { {StatType::HP_p,5}, {StatType::CRate,17} } },
 
 	Artefact{ ArtType::Gloves, ArtSet::HP, 6, 1, StatType::Def_p, { {StatType::Atk_p,5}, {StatType::Acc,11}, {StatType::HP,343}, {StatType::CDmg,6} } },
