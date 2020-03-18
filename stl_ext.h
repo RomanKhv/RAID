@@ -34,4 +34,10 @@ typename MAP::mapped_type get_value_or( const MAP& m, typename const MAP::key_ty
 	return i->second;
 }
 
+template <typename ENUM>
+constexpr int enum_to_int( ENUM e )
+{
+	return static_cast<int>(e);
+}
+
 }

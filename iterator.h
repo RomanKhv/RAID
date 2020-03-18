@@ -71,7 +71,7 @@ public:
 
 	bool get( Equipment& eq ) const
 	{
-		eq.clear();
+		eq.Clear();
 		//for ( const auto& i : _curr_iterators )
 		for ( size_t i = 0; i < _curr_iterators.size(); ++i )
 			eq[ _vectors[i]->first ] = *_curr_iterators[i];

@@ -15,6 +15,7 @@
     <ClInclude Include="stl_ext.h" />
     <ClInclude Include="to_string.h" />
     <ClInclude Include="iterator.h" />
+    <ClInclude Include="profiler.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="raid.natvis" />

@@ -2,6 +2,7 @@
 #include "raid.h"
 #include "iterator.h"
 #include "stl_ext.h"
+#include "profiler.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -66,29 +67,18 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	return est;
 }
 
-Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
+void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, Equipment& best_eq )
 {
-	Equipment best_eq;
-	FindBestEquipment( _MyArts, ch, matching, best_eq );
-	ApplyEquipment( best_eq, ch, false );
-	return best_eq;
-}
-
-void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& target_champ, const MatchOptions& matching, Equipment& best_eq )
-{
-	std::map<ArtType, std::vector<Artefact>> arts_by_type;
-	for ( const Artefact& art : inventory )
-	{
-		_ASSERTE( art.Type != ArtType::None );
-		if ( matching.IsSetAccepted( art.Set ) )
-			arts_by_type[art.Type].push_back( art );
-	}
+	scope_profile_time prof_time( "FindBestEquipment" );
 
 	float best_eq_estimation = 0;
 	arts_by_type_iterator eq_i( arts_by_type );
+	std::cout << eq_i.count() << " combinations\n";
+	Equipment eq;
 	for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
 	{
-		const Equipment eq = eq_i.get();
+		//const Equipment eq = eq_i.get();
+		eq_i.get( eq );
 
 		if ( !matching.IsEqHasRequiredSets( eq ) )
 			continue;
@@ -103,4 +93,36 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& 
 			best_eq_estimation = est;
 		}
 	}
+}
+
+void SeparateInventory( const std::vector<Artefact>& inventory, const MatchOptions& matching,
+						std::map<ArtType, std::vector<Artefact>>& arts_by_type )
+{
+	for ( const Artefact& art : inventory )
+	{
+		_ASSERTE( art.Type != ArtType::None );
+		if ( matching.IsSetAccepted( art.Set ) )
+			arts_by_type[art.Type].push_back( art );
+	}
+}
+
+void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& ch, const MatchOptions& matching, Equipment& best_eq )
+{
+	std::map<ArtType, std::vector<Artefact>> arts_by_type;
+	SeparateInventory( inventory, matching, arts_by_type );
+	FindBestEquipment( arts_by_type, ch, matching, best_eq );
+}
+
+Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
+{
+	scope_profile_time prof_time( "FindRealBestEquipment" );
+	Equipment best_eq;
+
+	std::map<ArtType, std::vector<Artefact>> arts_by_type;
+	SeparateInventory( _MyArts, matching, arts_by_type );
+	FindBestEquipment( arts_by_type, ch, matching, best_eq );
+
+	ApplyEquipment( best_eq, ch, false );
+
+	return best_eq;
 }

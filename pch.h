@@ -1,6 +1,3 @@
-#ifndef PCH_H
-#define PCH_H
+#pragma once
 
 #include "boost/test/test_tools.hpp"
-
-#endif //PCH_H

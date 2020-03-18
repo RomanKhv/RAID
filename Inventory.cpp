@@ -3,12 +3,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const Hall _MyHall = {
+const Hall _MyHall({
 	{ Element::Blue,  { {StatType::HP_p,2}, {StatType::Atk_p,2}, {StatType::Def_p,2}, {StatType::CDmg,2}, {StatType::Res,5}, {StatType::Acc,30} }, },
 	{ Element::Green, { {StatType::HP_p,2}, {StatType::Atk_p,0}, {StatType::Def_p,2}, {StatType::CDmg,0}, {StatType::Res,0}, {StatType::Acc,10} }, },
 	{ Element::Red,   { {StatType::HP_p,2}, {StatType::Atk_p,2}, {StatType::Def_p,2}, {StatType::CDmg,2}, {StatType::Res,0}, {StatType::Acc,10} }, },
 	{ Element::Void,  { {StatType::HP_p,2}, {StatType::Atk_p,2}, {StatType::Def_p,3}, {StatType::CDmg,2}, {StatType::Res,5}, {StatType::Acc,20} }, },
-};
+});
 
 //std::map<StatType, int> _MyLeage
 
@@ -73,6 +73,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Gloves, ArtSet::Atk, 5, 8, StatType::Def_p, { {StatType::Atk_p,11}, {StatType::Acc,9} } },
 	Artefact{ ArtType::Gloves, ArtSet::Atk, 5, 0, StatType::CDmg, { {StatType::CRate,4} } },
 
+#ifndef DEBUG_SMALL_INVENTORY
 	Artefact{ ArtType::Chest, ArtSet::Atk, 6, 0, StatType::HP_p, { {StatType::Spd,6}, {StatType::Def_p,6}, {StatType::CRate,6}, {StatType::HP,402} } },
 	Artefact{ ArtType::Chest, ArtSet::Atk, 5, 0, StatType::HP_p, { {StatType::Atk,22}, {StatType::Atk_p,5}, {StatType::Def_p,6} } },
 	Artefact{ ArtType::Chest, ArtSet::Atk, 5, 4, StatType::HP_p, { {StatType::CRate,11} } },
@@ -215,7 +216,8 @@ const std::vector<Artefact> _MyArts =
 
 	// Rings
 	Artefact( ArtType::Ring,  ArtSet::None, 5, 12, StatType::HP, { {StatType::Def,46+5}, {StatType::Def_p,5+1}, {StatType::HP_p,5+1} }, ChampionName::Gromoboy ),
-
+*/
+#endif
 };
 
 /////////////////////////////////////////////////////////////////////////////

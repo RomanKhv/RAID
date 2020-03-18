@@ -3,6 +3,8 @@
 #include "raid.h"
 #include "iterator.h"
 
+#define GENERAL_TESTS
+
 /////////////////////////////////////////////////////////////////////////////
 
 using boost::unit_test::test_suite;
@@ -15,12 +17,110 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
 
 /////////////////////////////////////////////////////////////////////////////
 
+#ifdef GENERAL_TESTS
+
+BOOST_AUTO_TEST_CASE( test_basics )
+{
+	BOOST_CHECK( !Artefact().Initialized() );
+
+	{
+		const ChampionStats stats( 1, 2, 3, 4, 5, 6, 7, 8 );
+		BOOST_CHECK( stats[StatType::HP] == 1 );
+		BOOST_CHECK( stats[StatType::Atk] == 2 );
+		BOOST_CHECK( stats[StatType::Def] == 3 );
+		BOOST_CHECK( stats[StatType::Spd] == 4 );
+		BOOST_CHECK( stats[StatType::CRate] == 5 );
+		BOOST_CHECK( stats[StatType::CDmg] == 6 );
+		BOOST_CHECK( stats[StatType::Res] == 7 );
+		BOOST_CHECK( stats[StatType::Acc] == 8 );
+	}
+
+	//for ( ArtSet set = static_cast<ArtSet>(0); stl::enum_to_int( set ) < stl::enum_to_int( ArtSet::Count ); ++static_cast<int&>(set) )
+	for ( int s = 0; s < stl::enum_to_int( ArtSet::Count ); ++s )
+	{
+		const ArtSet set = static_cast<ArtSet>(s);
+		BOOST_CHECK_EQUAL( SetSize_fast(set), SetSize(set) );
+	}
+}
+
+static const Champion TestChamp( { 10000, 1000, 1000,  100,  100, 100,  0, 0 }, Element::Void );
+
+#define CHECK_SET_BONUS( set, stat, bonus_value ) { \
+		Champion ch = TestChamp; \
+		ApplySetBonus( set, ch, false ); \
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.stat, bonus_value ); }
+
 BOOST_AUTO_TEST_CASE( test_SetBonus )
 {
+	CHECK_SET_BONUS( ArtSet::HP,       HP, 1500 );
+	CHECK_SET_BONUS( ArtSet::Immortal, HP, 1500 );
+	CHECK_SET_BONUS( ArtSet::DivLife,  HP, 1500 );
+	CHECK_SET_BONUS( ArtSet::Atk,    Atk, 150 );
+	CHECK_SET_BONUS( ArtSet::Cruel,  Atk, 150 );
+	CHECK_SET_BONUS( ArtSet::DivAtk, Atk, 150 );
+	CHECK_SET_BONUS( ArtSet::Def,    Def, 150 );
+	CHECK_SET_BONUS( ArtSet::Speed,    Spd, 12 );
+	CHECK_SET_BONUS( ArtSet::DivSpeed, Spd, 12 );
+	CHECK_SET_BONUS( ArtSet::Res, Res, 40 );
+	CHECK_SET_BONUS( ArtSet::Acc, Acc, 40 );
+}
+
+BOOST_AUTO_TEST_CASE( test_ApplyStat )
+{
 	{
-		Champion ch = ChampionFactory::Gromoboy();
-		ApplySetBonus( ArtSet::HP, ch, false );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, int(ch.BasicStats.HP * 0.15) );
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::HP,100 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 100 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Atk,100 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 100 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Def,100 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 100 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Spd,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 10 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::CRate,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 10 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::CDmg,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 10 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Res,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 10 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Acc,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 10 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::HP_p,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 1000 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Atk_p,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 100 );
+	}
+	{
+		Champion ch = TestChamp;
+		ApplyStat( { StatType::Def_p,10 }, ch );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 100 );
 	}
 }
 
@@ -108,39 +208,39 @@ BOOST_AUTO_TEST_CASE( test_Iterator )
 		};
 		arts_by_type_iterator i( arts_by_type );
 		BOOST_CHECK( i.finished() );
-		BOOST_CHECK_EQUAL( i.get().size(), 0 );
+		BOOST_CHECK_EQUAL( i.get().Size(), 0 );
 
 		i.begin();
 		BOOST_CHECK( !i.finished() );
 		Equipment eq = i.get();
-		BOOST_CHECK_EQUAL( eq.size(), 2 );
-		BOOST_CHECK_EQUAL( eq.cbegin()->second.Stars, 1 );
-		BOOST_CHECK_EQUAL( eq.crbegin()->second.Stars, 3 );
+		BOOST_CHECK_EQUAL( eq.Size(), 2 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 1 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 3 );
 
 		i.next();
 		BOOST_CHECK( !i.finished() );
 		eq = i.get();
-		BOOST_CHECK_EQUAL( eq.size(), 2 );
-		BOOST_CHECK_EQUAL( eq.cbegin()->second.Stars, 1 );
-		BOOST_CHECK_EQUAL( eq.crbegin()->second.Stars, 4 );
+		BOOST_CHECK_EQUAL( eq.Size(), 2 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 1 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 4 );
 
 		i.next();
 		BOOST_CHECK( !i.finished() );
 		eq = i.get();
-		BOOST_CHECK_EQUAL( eq.size(), 2 );
-		BOOST_CHECK_EQUAL( eq.cbegin()->second.Stars, 2 );
-		BOOST_CHECK_EQUAL( eq.crbegin()->second.Stars, 3 );
+		BOOST_CHECK_EQUAL( eq.Size(), 2 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 2 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 3 );
 
 		i.next();
 		BOOST_CHECK( !i.finished() );
 		eq = i.get();
-		BOOST_CHECK_EQUAL( eq.size(), 2 );
-		BOOST_CHECK_EQUAL( eq.cbegin()->second.Stars, 2 );
-		BOOST_CHECK_EQUAL( eq.crbegin()->second.Stars, 4 );
+		BOOST_CHECK_EQUAL( eq.Size(), 2 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 2 );
+		BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 4 );
 
 		i.next();
 		BOOST_CHECK( i.finished() );
-		BOOST_CHECK_EQUAL( i.get().size(), 0 );
+		BOOST_CHECK_EQUAL( i.get().Size(), 0 );
 	}
 }
 
@@ -202,3 +302,4 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 	//BOOST_CHECK_EQUAL( final_stats.Res, 98 );
 	//BOOST_CHECK_EQUAL( final_stats.Acc, 103 );
 }
+#endif

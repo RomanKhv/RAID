@@ -7,8 +7,14 @@
 </Type>
 
 <Type Name="Artefact">
+    <DisplayString Condition="Type==ArtType::None">{Type,en}</DisplayString>
     <DisplayString>{Type,en}({Set,en}) - {Stars}*({Level}) - {MainStat,en}</DisplayString>
-    <DisplayString>{Type,en}({Set,en}) - {Stars}*({Level}) - {MainStat,en}</DisplayString>
+</Type>
+
+<Type Name="Equipment">
+    <Expand>
+        <ExpandedItem>Arts</ExpandedItem>
+    </Expand>
 </Type>
     
 </AutoVisualizer>
