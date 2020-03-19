@@ -6,15 +6,16 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const std::map<StatType, int> ref_stat_values = {
-	{ StatType::HP, 40000 },
-	{ StatType::Atk, 3000 },
-	{ StatType::Def, 3000 },
-	{ StatType::CRate, 100 },
-	{ StatType::CDmg, 100 },
-	{ StatType::Spd, 150 },
-	{ StatType::Res, 80 },
-	{ StatType::Acc, 150 },
+//const std::map<StatType, int> ref_stat_values = {
+const int ref_stat_values[ChampionStats::Count] = {
+	/*StatType::HP*/ 40000,
+	/*StatType::Atk*/ 3000,
+	/*StatType::Def*/ 3000,
+	/*StatType::CRate*/ 100,
+	/*StatType::CDmg*/ 100,
+	/*StatType::Spd*/ 150,
+	/*StatType::Res*/ 80,
+	/*StatType::Acc*/ 150,
 };
 
 bool FloatEstimationFactor( MatchOptions::ArtFactor f, float& fk )
@@ -46,18 +47,17 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	for ( StatType st : ChampionStats::TypeList )
 	{
 		float fk = 0;
-		const MatchOptions::ArtFactor f = stl::get_value_or( matching.Factors, st, MatchOptions::ArtFactor::NotInterested );
+		const MatchOptions::ArtFactor f = matching.Factors[ stl::enum_to_int(st) ];
 		if ( FloatEstimationFactor( f, fk ) )
 		{
-			est += fk * (float)ch_stats[st] / ref_stat_values.at( st );
+			est += fk * (float)ch_stats[st] / ref_stat_values[ stl::enum_to_int(st) ];
 		}
 		else {
 			switch ( f )
 			{
 				case MatchOptions::ArtFactor::MinCap:
 					{
-						_ASSERTE( stl::contains( matching.MinCap, st ) );
-						const int min_stat_cap = matching.MinCap.at( st );
+						const int min_stat_cap = matching.MinCap[ stl::enum_to_int(st) ];
 						if ( ch_stats[st] < min_stat_cap )
 							return 0.f;
 					}
@@ -71,16 +71,18 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 {
 	scope_profile_time prof_time( "FindBestEquipment" );
 
+	EquipmentRef eq, better_eq;
 	float best_eq_estimation = 0;
+
 	arts_by_type_iterator eq_i( arts_by_type );
 	std::cout << eq_i.count() << " combinations\n";
-	Equipment eq;
 	for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
 	{
-		//const Equipment eq = eq_i.get();
 		eq_i.get( eq );
+		_ASSERTE( eq.CheckValidMapping() );
 
-		if ( !matching.IsEqHasRequiredSets( eq ) )
+		if ( !matching.RequiedSets.empty() &&
+			 !matching.IsEqHasRequiredSets( eq ) )
 			continue;
 
 		Champion ch( target_champ.BasicStats, target_champ.Elem );
@@ -89,10 +91,13 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 		const float est = EstimateEquipment( ch.TotalStats(), matching );
 		if ( est > best_eq_estimation )
 		{
-			best_eq = eq;
+			better_eq = eq;
 			best_eq_estimation = est;
 		}
 	}
+
+	for ( ArtType at : Equipment::AllTypesArr )
+		best_eq[at] = better_eq[at];
 }
 
 void SeparateInventory( const std::vector<Artefact>& inventory, const MatchOptions& matching,

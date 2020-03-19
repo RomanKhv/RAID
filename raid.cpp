@@ -29,6 +29,16 @@ Stat Artefact::GetMainStat( bool consider_max_level ) const
 
 /////////////////////////////////////////////////////////////////////////////
 
+const ArtType Equipment::BasicTypesArr[Equipment::BasicSize] = {
+	ArtType::Weapon,  ArtType::Helmet,   ArtType::Shield,
+	ArtType::Gloves,  ArtType::Chest,    ArtType::Boots
+};
+const ArtType Equipment::AllTypesArr[Equipment::TotalSize] = {
+	ArtType::Weapon,  ArtType::Helmet,   ArtType::Shield,
+	ArtType::Gloves,  ArtType::Chest,    ArtType::Boots,
+	ArtType::Ring,    ArtType::Necklace, ArtType::Banner
+};
+
 Equipment::Equipment( std::initializer_list<Artefact> il )
 {
 	for ( const Artefact& a : il )
@@ -51,6 +61,51 @@ size_t Equipment::Size() const
 		if ( art.Initialized() )
 			n_arts++;
 	return n_arts;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+EquipmentRef::EquipmentRef( const Equipment& ref_eq )
+{
+	for ( const Artefact& ref_art : ref_eq.Arts )
+	{
+		if ( ref_art.Initialized() )
+			Arts[ref_art.Type] = &ref_art;
+		else
+			Arts[ref_art.Type] = nullptr;
+	}
+}
+
+void EquipmentRef::Clear()
+{
+	for ( art_ref& art : Arts )
+		art = nullptr;
+}
+
+size_t EquipmentRef::Size() const
+{
+	size_t n_arts = 0;
+	for ( const art_ref& art : Arts )
+	{
+		if ( art )
+		{
+			_ASSERTE( Initialized(art->Type) );
+			_ASSERTE( art->Initialized() );
+			n_arts++;
+		}
+	}
+	return n_arts;
+}
+
+bool EquipmentRef::CheckValidMapping() const
+{
+	for ( ArtType at : Equipment::AllTypesArr )
+	{
+		art_ref art = Arts[at];
+		if ( art && art->Type!=at )
+			return false;
+	}
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -523,7 +578,26 @@ void ApplySetsBonuses( const Equipment& eq, Champion& ch, bool compensation )
 	}
 	for ( int set = 0; set < Artefact::SetCount; ++set )
 	{
-		const int count = n_arts_by_set[set] / SetSize( static_cast<ArtSet>(set) );
+		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
+		for ( int i = 0; i < count; ++i )
+			ApplySetBonus( static_cast<ArtSet>(set), ch, compensation );
+	}
+}
+
+void ApplySetsBonuses( const EquipmentRef& eq, Champion& ch, bool compensation )
+{
+	int n_arts_by_set[Artefact::SetCount] = {0};
+	for ( const Artefact* art : eq.Arts )
+	{
+		if ( art )
+		{
+			_ASSERTE( art->Initialized() );
+			n_arts_by_set[stl::enum_to_int( art->Set )]++;
+		}
+	}
+	for ( int set = 0; set < Artefact::SetCount; ++set )
+	{
+		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
 		for ( int i = 0; i < count; ++i )
 			ApplySetBonus( static_cast<ArtSet>(set), ch, compensation );
 	}
@@ -556,6 +630,20 @@ void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating )
 	}
 }
 
+void ApplyEquipment( const EquipmentRef& eq, Champion& ch, bool estimating )
+{
+	ApplySetsBonuses( eq, ch, estimating );
+
+	for ( const Artefact* art : eq.Arts )
+	{
+		if ( art )
+		{
+			_ASSERTE( art->Initialized() );
+			ApplyArtBonus( *art, ch, estimating );
+		}
+	}
+}
+
 void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 {
 	const std::map<StatType, int>& hall_bonus = _MyHall.Table[ stl::enum_to_int(ch.Elem) ];
@@ -579,14 +667,14 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 
 /////////////////////////////////////////////////////////////////////////////
 
-MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::vector<ArtSet> set_filter,
+MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> set_filter,
 							bool consider_max_lvl, std::map<StatType, int> min_caps )
-	:Factors( std::move( factors ) )
-	,RequiedSets( std::move( req_filter ) )
+	:RequiedSets( std::move( req_filter ) )
 	,SetFilter( std::move( set_filter ) )
 	,ConsiderMaxLevels( consider_max_lvl )
-	,MinCap( std::move( min_caps ) )
 {
+	stl::copy_map_to_array( factors, Factors );
+	stl::copy_map_to_array( min_caps, MinCap );
 }
 
 bool MatchOptions::IsSetAccepted( ArtSet set ) const
@@ -594,10 +682,10 @@ bool MatchOptions::IsSetAccepted( ArtSet set ) const
 	if ( SetFilter.empty() )
 		return true;	//accept all
 
-	return stl::contains( SetFilter, set );
+	return SetFilter.count( set ) > 0;
 }
 
-bool MatchOptions::IsEqHasRequiredSets( const Equipment& eq ) const
+bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 {
 	if ( RequiedSets.empty() )
 		return true;
@@ -607,19 +695,20 @@ bool MatchOptions::IsEqHasRequiredSets( const Equipment& eq ) const
 	for ( ArtSet set : RequiedSets )
 	{
 		req_sets[set] ++;
-		total_req_art_count += SetSize( set );
+		total_req_art_count += SetSize_fast( set );
 	}
 	_ASSERTE( total_req_art_count <= 6 );
 	if ( total_req_art_count > 6 )
 		return false;
 
 	std::map<ArtSet,int> eq_sets;
-	for ( const Artefact& art : eq.Arts )
-		eq_sets[art.Set] ++;
+	for ( const Artefact* art : eq.Arts )
+		if ( art )
+			eq_sets[art->Set] ++;
 
 	for ( const auto& rs : req_sets )
 	{
-		const int n_req_arts = SetSize( rs.first ) * rs.second;
+		const int n_req_arts = SetSize_fast( rs.first ) * rs.second;
 		const int n_eq_arts = stl::get_value_or( eq_sets, rs.first, 0 );
 		if ( n_eq_arts < n_req_arts )
 			return false;

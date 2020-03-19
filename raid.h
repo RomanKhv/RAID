@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
+#include <set>
 #include <boost/container/static_vector.hpp>
 #include "stl_ext.h"
 
@@ -168,14 +169,19 @@ struct Equipment
 	bool Initialized( ArtType t ) const { return operator[](t).Initialized(); }
 	void Clear();
 	size_t Size() const;
+
+	static const ArtType BasicTypesArr[BasicSize];
+	static const ArtType AllTypesArr[TotalSize];
 };
 
-struct Equipment2
+struct EquipmentRef
 {
 	using art_ref = const Artefact*;
 	art_ref Arts[Equipment::TotalSize] = {nullptr};
 
-	Equipment2() = default;
+	EquipmentRef() = default;
+	EquipmentRef( const Equipment& );
+
 	const Artefact& operator[]( ArtType t ) const {
 		art_ref art = Arts[ static_cast<int>(t) ];
 		if ( art )
@@ -191,7 +197,10 @@ struct Equipment2
 	}
 	void Clear();
 	size_t Size() const;
+	bool CheckValidMapping() const;
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 struct Champion
 {
@@ -218,6 +227,7 @@ void ApplySetBonus( ArtSet, Champion&, bool compensation );
 void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
 void ApplyArtBonus( const Artefact&, Champion&, bool consider_max_level /*= false*/ );
 void ApplyEquipment( const Equipment&, Champion&, bool estimating );
+void ApplyEquipment( const EquipmentRef&, Champion&, bool estimating );
 void ApplyHallBonus( const Champion&, ChampionStats& );
 
 /////////////////////////////////////////////////////////////////////////////
@@ -245,23 +255,28 @@ struct MatchOptions
 		Max,
 		MinCap,
 	};
-	std::map<StatType, ArtFactor> Factors;
+	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
 
 	std::vector<ArtSet> RequiedSets;
-	std::vector<ArtSet> SetFilter;
+	std::set<ArtSet> SetFilter;
 
 	bool ConsiderMaxLevels = true;
-	std::map<StatType,int> MinCap;	//TODO:
-	std::map<ArtType,StatType> RequiredArtStats;	//TODO
+	int MinCap[ChampionStats::Count] = {0};				//StatType -> value
+//TODO:	StatType RequiredArtStats[Equipment::TotalSize] = {0};	//ArtType -> StatType
 
 	MatchOptions() = default;
 	MatchOptions( std::map<StatType, ArtFactor>,
 				  std::vector<ArtSet> req_filter = {},
-				  std::vector<ArtSet> set_filter = {},
+				  std::set<ArtSet> set_filter = {},
 				  bool consider_max_lvl = true,
 				  std::map<StatType,int> min_caps = {} );
+
+	ArtFactor Factor( StatType st ) const
+	{
+		return Factors[ stl::enum_to_int(st) ];
+	}
 	bool IsSetAccepted( ArtSet ) const;
-	bool IsEqHasRequiredSets( const Equipment& ) const;
+	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
 	//bool IsEqAccepted( const Equipment& ) const;
 };
 

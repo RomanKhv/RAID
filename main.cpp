@@ -41,6 +41,14 @@ BOOST_AUTO_TEST_CASE( test_basics )
 		const ArtSet set = static_cast<ArtSet>(s);
 		BOOST_CHECK_EQUAL( SetSize_fast(set), SetSize(set) );
 	}
+
+	{
+		const MatchOptions m;
+		for ( StatType st : ChampionStats::TypeList )
+		{
+			BOOST_CHECK( m.Factor(st) == MatchOptions::ArtFactor::NotInterested );
+		}
+	}
 }
 
 static const Champion TestChamp( { 10000, 1000, 1000,  100,  100, 100,  0, 0 }, Element::Void );
@@ -266,6 +274,8 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	}
 }
 
+#ifndef DEBUG_SMALL_INVENTORY
+
 BOOST_AUTO_TEST_CASE( test_Gromoboy )
 {
 	Champion ch = ChampionFactory::Gromoboy();
@@ -302,4 +312,6 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 	//BOOST_CHECK_EQUAL( final_stats.Res, 98 );
 	//BOOST_CHECK_EQUAL( final_stats.Acc, 103 );
 }
+#endif
+
 #endif

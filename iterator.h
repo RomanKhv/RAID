@@ -19,7 +19,7 @@ public:
 
 	bool begin()
 	{
-		_progress = 0;
+		//_progress = 0;
 		for ( const auto& p : _map )
 		{
 			_vectors.push_back( &p );
@@ -38,7 +38,6 @@ public:
 		const size_t last_index = _curr_iterators.size() - 1;
 		size_t iter_index = last_index;
 		for ( bool accepted = false; !accepted; )
-		//while ( true )
 		{
 			auto& i = _curr_iterators[iter_index];
 			i++;
@@ -52,12 +51,10 @@ public:
 				else {
 					i = _vectors[iter_index]->second.begin();
 					iter_index--;
-					//continue;
 				}
 			}
 			else
 				accepted = true;
-				//break;
 		}
 
 		_ASSERTE( _map.size() == _vectors.size() );
@@ -72,9 +69,16 @@ public:
 	bool get( Equipment& eq ) const
 	{
 		eq.Clear();
-		//for ( const auto& i : _curr_iterators )
 		for ( size_t i = 0; i < _curr_iterators.size(); ++i )
 			eq[ _vectors[i]->first ] = *_curr_iterators[i];
+		return !finished();
+	}
+
+	bool get( EquipmentRef& eq ) const
+	{
+		eq.Clear();
+		for ( size_t i = 0; i < _curr_iterators.size(); ++i )
+			eq.Arts[ _vectors[i]->first ] = &(*_curr_iterators[i]);
 		return !finished();
 	}
 
@@ -99,6 +103,6 @@ private:
 	std::vector<const arts_map_t::value_type*> _vectors;
 	std::vector<arts_vec_t::const_iterator> _curr_iterators;
 	size_t _count = 0;
-	size_t _progress = 0;
+	//size_t _progress = 0;
 };
 

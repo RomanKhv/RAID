@@ -21,7 +21,9 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 			{ StatType::Spd, MatchOptions::ArtFactor::MinCap },
 			{ StatType::Acc, MatchOptions::ArtFactor::MinCap },
 		},
-		{}, {}, true,
+		{},
+		{ /*ArtSet::HP, ArtSet::Def, ArtSet::Acc, ArtSet::Speed, ArtSet::Immortal, ArtSet::DivLife, ArtSet::DivSpeed*/ },
+		true,
 		{ {StatType::Spd,100}, {StatType::Acc,120} }
 	);
 	Champion ch = ChampionFactory::Gromoboy();
