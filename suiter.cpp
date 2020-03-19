@@ -1,8 +1,18 @@
 #include "pch.h"
 #include "raid.h"
 #include "iterator.h"
+#include "iterator2.h"
 #include "stl_ext.h"
 #include "profiler.h"
+
+#define USE_TBB
+#ifdef USE_TBB
+struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error: 'identifier' was unexpected here" when using /permissive-
+#include "tbb/enumerable_thread_specific.h"
+#include "tbb/parallel_for_each.h"
+#include "tbb/parallel_reduce.h"
+#include "tbb/blocked_range.h"
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -67,46 +77,94 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	return est;
 }
 
+struct EqEst
+{
+	float _Est = 0;
+	EquipmentRef _Eq;
+
+	void join( const EqEst& rhs )
+	{
+		if ( rhs._Est > _Est )
+		{
+			_Est = rhs._Est;
+			_Eq = rhs._Eq;
+		}
+	}
+};
+
+void ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, const MatchOptions& matching, EqEst& best_combination )
+{
+	if ( !matching.RequiedSets.empty() &&
+		!matching.IsEqHasRequiredSets( eq ) )
+		return;
+
+	ChampionStats art_bonus_stats;
+	ApplyEquipment( eq, target_champ.BasicStats, art_bonus_stats, true );
+
+	const float est = EstimateEquipment( target_champ.TotalStats( art_bonus_stats ), matching );
+
+	if ( est > best_combination._Est )
+	{
+		best_combination._Est = est;
+		best_combination._Eq = eq;
+	}
+}
+
 void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, Equipment& best_eq )
 {
 	scope_profile_time prof_time( "FindBestEquipment" );
+	std::cout << arts_by_type_iterator::n_combinations(arts_by_type) << " combinations\n";
 
-	EquipmentRef eq, better_eq;
-	float best_eq_estimation = 0;
+	EqEst best;
 
+#ifdef USE_TBB
+	best =
+	tbb::parallel_reduce( tbb::blocked_range<size_t>( 0, arts_by_type.cbegin()->second.size() ), EqEst(), 
+		[&arts_by_type, &target_champ, &matching]( const tbb::blocked_range<size_t>& r, EqEst better )
+		{
+			for ( size_t root_index = r.begin(); root_index < r.end(); ++root_index )
+			{
+				arts_by_type_iterator2 eq_i( arts_by_type, root_index );
+				EquipmentRef eq;
+				for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
+				{
+					eq_i.get( eq );
+					_ASSERTE( eq.CheckValidMapping() );
+
+					ProcessCombination( eq, target_champ, matching, better );
+				}
+			}
+			return better;
+		},
+		[]( EqEst lhs, const EqEst& rhs )
+		{
+			lhs.join( rhs );
+			return lhs;
+		}
+	);
+#else
 	arts_by_type_iterator eq_i( arts_by_type );
-	std::cout << eq_i.count() << " combinations\n";
+	EquipmentRef eq;
 	for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
 	{
 		eq_i.get( eq );
 		_ASSERTE( eq.CheckValidMapping() );
 
-		if ( !matching.RequiedSets.empty() &&
-			 !matching.IsEqHasRequiredSets( eq ) )
-			continue;
-
-		Champion ch( target_champ.BasicStats, target_champ.Elem );
-		ApplyEquipment( eq, ch, true );
-
-		const float est = EstimateEquipment( ch.TotalStats(), matching );
-		if ( est > best_eq_estimation )
-		{
-			better_eq = eq;
-			best_eq_estimation = est;
-		}
+		ProcessCombination( eq, target_champ, matching, best );
 	}
+#endif
 
 	for ( ArtType at : Equipment::AllTypesArr )
-		best_eq[at] = better_eq[at];
+		best_eq[at] = best._Eq[at];
 }
 
-void SeparateInventory( const std::vector<Artefact>& inventory, const MatchOptions& matching,
+void SeparateInventory( const std::vector<Artefact>& inventory, const MatchOptions& matching, ChampionName ch_name,
 						std::map<ArtType, std::vector<Artefact>>& arts_by_type )
 {
 	for ( const Artefact& art : inventory )
 	{
-		_ASSERTE( art.Type != ArtType::None );
-		if ( matching.IsSetAccepted( art.Set ) )
+		_ASSERTE( art.Initialized() );
+		if ( matching.IsArtAccepted( art, ch_name ) )
 			arts_by_type[art.Type].push_back( art );
 	}
 }
@@ -114,7 +172,7 @@ void SeparateInventory( const std::vector<Artefact>& inventory, const MatchOptio
 void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& ch, const MatchOptions& matching, Equipment& best_eq )
 {
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
-	SeparateInventory( inventory, matching, arts_by_type );
+	SeparateInventory( inventory, matching, ch.Name, arts_by_type );
 	FindBestEquipment( arts_by_type, ch, matching, best_eq );
 }
 
@@ -124,7 +182,7 @@ Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
 	Equipment best_eq;
 
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
-	SeparateInventory( _MyArts, matching, arts_by_type );
+	SeparateInventory( _MyArts, matching, ch.Name, arts_by_type );
 	FindBestEquipment( arts_by_type, ch, matching, best_eq );
 
 	ApplyEquipment( best_eq, ch, false );

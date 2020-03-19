@@ -184,20 +184,29 @@ void member_fraction( ChampionStats& dest, const ChampionStats& ref, int factor_
 
 /////////////////////////////////////////////////////////////////////////////
 
-inline Champion::Champion( const ChampionStats& basic, Element e )
+inline Champion::Champion( const ChampionStats& basic, Element e, ChampionName name )
 	: BasicStats( basic )
 	, Elem( e )
+	, Name( name )
 {
 }
 
 bool Champion::IsReal() const
 {
+	_ASSERTE( (Elem==Element::none) == (Name==ChampionName::none) );
 	return Elem != Element::none;
 }
 
 ChampionStats Champion::TotalStats(bool apply_hall_bonus) const
 {
-	ChampionStats stats = BasicStats + ArtsBonusStats;
+	return TotalStats( ArtsBonusStats, apply_hall_bonus );
+}
+
+ChampionStats Champion::TotalStats( const ChampionStats& art_bonus_stats, bool apply_hall_bonus ) const
+{
+	_ASSERTE( ArtsBonusStats.HP==0 );
+
+	ChampionStats stats = BasicStats + art_bonus_stats;
 
 	if ( apply_hall_bonus )
 	{
@@ -404,6 +413,11 @@ bool IsValidStatForArt( StatType stat, ArtType art )
 	return std::find( valid_stats.begin(), valid_stats.end(), stat ) != valid_stats.end();
 }
 
+bool IsValidStatForChampion( StatType st )
+{
+	return st!=StatType::HP_p && st!=StatType::Atk_p && st!=StatType::Def_p;
+}
+
 bool IsGoodStatForArt( StatType stat, ArtType art )
 {
 	switch ( art )
@@ -489,80 +503,80 @@ void ApplyStat( const Stat& stat, Champion& ch )
 
 const int DivHPCompensation = 2;
 
-void ApplySetBonus( ArtSet set, Champion& ch, bool compensation )
+void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation )
 {
 	switch ( set )
 	{
 		case ArtSet::HP:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, HP, 15 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, HP, 15 );
 			}
 			break;
 		case ArtSet::Immortal:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, HP, 15 + (compensation ? 3 : 0) );
+				ApplyStatBonus( art_bonus_stats, basic_stats, HP, 15 + (compensation ? 3 : 0) );
 			}
 			break;
 		case ArtSet::DivLife:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, HP, 15 + (compensation ? DivHPCompensation : 0) );
+				ApplyStatBonus( art_bonus_stats, basic_stats, HP, 15 + (compensation ? DivHPCompensation : 0) );
 			}
 			break;
 		case ArtSet::Atk:
 		case ArtSet::Cruel:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, Atk, 15 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, Atk, 15 );
 			}
 			break;
 		case ArtSet::DivAtk:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, Atk, 15 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, Atk, 15 );
 				if ( compensation )
-					ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, HP, DivHPCompensation );
+					ApplyStatBonus( art_bonus_stats, basic_stats, HP, DivHPCompensation );
 			}
 			break;
 		case ArtSet::Def:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, Def, 15 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, Def, 15 );
 			}
 			break;
 		case ArtSet::CRate:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, CRate, 12 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, CRate, 12 );
 			}
 			break;
 		case ArtSet::DivCritRate:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, CRate, 12 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, CRate, 12 );
 				if ( compensation )
-					ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, HP, DivHPCompensation );
+					ApplyStatBonus( art_bonus_stats, basic_stats, HP, DivHPCompensation );
 			}
 			break;
 		case ArtSet::CDmg:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, CDmg, 20 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, CDmg, 20 );
 			}
 			break;
 		case ArtSet::Speed:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, Spd, 12 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, Spd, 12 );
 			}
 			break;
 		case ArtSet::DivSpeed:
 			{
-				ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, Spd, 12 );
+				ApplyStatBonus( art_bonus_stats, basic_stats, Spd, 12 );
 				if ( compensation )
-					ApplyStatBonus( ch.ArtsBonusStats, ch.BasicStats, HP, DivHPCompensation );
+					ApplyStatBonus( art_bonus_stats, basic_stats, HP, DivHPCompensation );
 			}
 			break;
 		case ArtSet::Res:
 			{
-				ch.ArtsBonusStats.Res += 40;
+				art_bonus_stats.Res += 40;
 			}
 			break;
 		case ArtSet::Acc:
 			{
-				ch.ArtsBonusStats.Acc += 40;
+				art_bonus_stats.Acc += 40;
 			}
 			break;
 	}
@@ -580,11 +594,11 @@ void ApplySetsBonuses( const Equipment& eq, Champion& ch, bool compensation )
 	{
 		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
 		for ( int i = 0; i < count; ++i )
-			ApplySetBonus( static_cast<ArtSet>(set), ch, compensation );
+			ApplySetBonus( static_cast<ArtSet>(set), ch.BasicStats, ch.ArtsBonusStats, compensation );
 	}
 }
 
-void ApplySetsBonuses( const EquipmentRef& eq, Champion& ch, bool compensation )
+void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation )
 {
 	int n_arts_by_set[Artefact::SetCount] = {0};
 	for ( const Artefact* art : eq.Arts )
@@ -599,11 +613,11 @@ void ApplySetsBonuses( const EquipmentRef& eq, Champion& ch, bool compensation )
 	{
 		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
 		for ( int i = 0; i < count; ++i )
-			ApplySetBonus( static_cast<ArtSet>(set), ch, compensation );
+			ApplySetBonus( static_cast<ArtSet>(set), basic_stats, art_bonus_stats, compensation );
 	}
 }
 
-void ApplyArtBonus( const Artefact& art, Champion& ch, bool consider_max_level )
+void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool consider_max_level )
 {
 	if ( !art.Initialized() )
 	{
@@ -611,10 +625,10 @@ void ApplyArtBonus( const Artefact& art, Champion& ch, bool consider_max_level )
 		return;
 	}
 
-	ApplyStat( art.GetMainStat(consider_max_level), ch );
+	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, art_bonus_stats );
 
 	for ( const Stat& stat : art.AddStats )
-		ApplyStat( stat, ch );
+		ApplyStat( stat, basic_stats, art_bonus_stats );
 }
 
 void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating )
@@ -625,21 +639,21 @@ void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating )
 	{
 		if ( art.Initialized() )
 		{
-			ApplyArtBonus( art, ch, estimating );
+			ApplyArtBonus( art, ch.BasicStats, ch.ArtsBonusStats, estimating );
 		}
 	}
 }
 
-void ApplyEquipment( const EquipmentRef& eq, Champion& ch, bool estimating )
+void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating )
 {
-	ApplySetsBonuses( eq, ch, estimating );
+	ApplySetsBonuses( eq, basic_stats, art_bonus_stats, estimating );
 
 	for ( const Artefact* art : eq.Arts )
 	{
 		if ( art )
 		{
 			_ASSERTE( art->Initialized() );
-			ApplyArtBonus( *art, ch, estimating );
+			ApplyArtBonus( *art, basic_stats, art_bonus_stats, estimating );
 		}
 	}
 }
@@ -673,8 +687,16 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 	,SetFilter( std::move( set_filter ) )
 	,ConsiderMaxLevels( consider_max_lvl )
 {
-	stl::copy_map_to_array( factors, Factors );
-	stl::copy_map_to_array( min_caps, MinCap );
+	for ( const auto& p : factors )
+	{
+		IsValidStatForChampion( p.first );
+		Factors[stl::enum_to_int( p.first )] = p.second;
+	}
+	for ( const auto& p : min_caps )
+	{
+		IsValidStatForChampion( p.first );
+		MinCap[stl::enum_to_int( p.first )] = p.second;
+	}
 }
 
 bool MatchOptions::IsSetAccepted( ArtSet set ) const
@@ -683,6 +705,18 @@ bool MatchOptions::IsSetAccepted( ArtSet set ) const
 		return true;	//accept all
 
 	return SetFilter.count( set ) > 0;
+}
+
+bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) const
+{
+	if ( art.Owner != ChampionName::none &&
+		 art.Owner != ch_name )
+		return false;
+
+	if ( !IsSetAccepted( art.Set ) )
+		return false;
+
+	return true;
 }
 
 bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const

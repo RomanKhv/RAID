@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 #include "raid.h"
 #include "iterator.h"
+#include "iterator2.h"
 
 #define GENERAL_TESTS
 
@@ -55,7 +56,7 @@ static const Champion TestChamp( { 10000, 1000, 1000,  100,  100, 100,  0, 0 }, 
 
 #define CHECK_SET_BONUS( set, stat, bonus_value ) { \
 		Champion ch = TestChamp; \
-		ApplySetBonus( set, ch, false ); \
+		ApplySetBonus( set, ch.BasicStats, ch.ArtsBonusStats, false ); \
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.stat, bonus_value ); }
 
 BOOST_AUTO_TEST_CASE( test_SetBonus )
@@ -252,6 +253,95 @@ BOOST_AUTO_TEST_CASE( test_Iterator )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( test_Iterator2 )
+{
+	{
+		std::map<ArtType, std::vector<Artefact>> arts_by_type;
+		arts_by_type_iterator2 i( arts_by_type, 0 );
+		BOOST_CHECK( i.finished() );
+		BOOST_CHECK_EQUAL( i.get().Size(), 0 );
+		i.begin();
+		BOOST_CHECK( i.finished() );
+	}
+	{
+		std::map<ArtType, std::vector<Artefact>> arts_by_type = {
+			{ ArtType::Weapon, { {ArtType::Weapon,{},1,{},StatType::Atk,{}}, {ArtType::Weapon,{},2,{},StatType::Atk,{}} } },
+			{ ArtType::Shield, { {ArtType::Shield,{},3,{},StatType::Def,{}}, {ArtType::Shield,{},4,{},StatType::Def,{}} } },
+		};
+
+		int n_iterations = 0;
+		for ( size_t ri = 0; ri < arts_by_type.cbegin()->second.size(); ++ri )
+		{
+			arts_by_type_iterator2 i( arts_by_type, ri );
+			BOOST_CHECK( i.finished() );
+
+			for ( i.begin(); !i.finished(); i.next() )
+			{
+				n_iterations++;
+				Equipment eq = i.get();
+				BOOST_CHECK_EQUAL( eq.Size(), 2 );
+			}
+		}
+		BOOST_CHECK_EQUAL( n_iterations, 4 );
+
+		{
+			arts_by_type_iterator2 i( arts_by_type, 0 );
+			BOOST_CHECK( i.finished() );
+
+			i.begin();
+			BOOST_CHECK( !i.finished() );
+			Equipment eq = i.get();
+			BOOST_CHECK_EQUAL( eq.Size(), 2 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 1 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 3 );
+
+			i.next();
+			BOOST_CHECK( !i.finished() );
+			eq = i.get();
+			BOOST_CHECK_EQUAL( eq.Size(), 2 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 1 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 4 );
+
+			i.next();
+			BOOST_CHECK( i.finished() );
+			BOOST_CHECK_EQUAL( i.get().Size(), 0 );
+		}
+		{
+			arts_by_type_iterator2 i( arts_by_type, 1 );
+			BOOST_CHECK( i.finished() );
+
+			i.begin();
+			BOOST_CHECK( !i.finished() );
+			Equipment eq = i.get();
+			BOOST_CHECK_EQUAL( eq.Size(), 2 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 2 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 3 );
+
+			i.next();
+			BOOST_CHECK( !i.finished() );
+			eq = i.get();
+			BOOST_CHECK_EQUAL( eq.Size(), 2 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Weapon].Stars, 2 );
+			BOOST_CHECK_EQUAL( eq[ArtType::Shield].Stars, 4 );
+
+			i.next();
+			BOOST_CHECK( i.finished() );
+			BOOST_CHECK_EQUAL( i.get().Size(), 0 );
+		}
+	}
+}
+
+const std::map<StatType, MatchOptions::ArtFactor> All_Stats_Moderate = {
+	{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+	{ StatType::Atk, MatchOptions::ArtFactor::Moderate },
+	{ StatType::Def, MatchOptions::ArtFactor::Moderate },
+	{ StatType::Spd, MatchOptions::ArtFactor::Moderate },
+	{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+	{ StatType::CDmg, MatchOptions::ArtFactor::Moderate },
+	{ StatType::Res, MatchOptions::ArtFactor::Moderate },
+	{ StatType::Acc, MatchOptions::ArtFactor::Moderate }
+};
+
 BOOST_AUTO_TEST_CASE( test_Best )
 {
 	const std::vector<Artefact> inventory = {
@@ -261,16 +351,23 @@ BOOST_AUTO_TEST_CASE( test_Best )
 		Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
 		Artefact( ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, {} ),
 	};
-	Champion ch = ChampionFactory::Gromoboy();
 	{
+		Champion ch = TestChamp;
 		Equipment eq;
-		FindBestEquipment( inventory, ch, MatchOptions(), eq );
-		//TODO: BOOST_CHECK_EQUAL( eq.size(), 5 );
+		FindBestEquipment( inventory, ch, MatchOptions( All_Stats_Moderate ), eq );
+		BOOST_CHECK_EQUAL( eq.Size(), 5 );
 	}
 	{
+		Champion ch = TestChamp;
 		Equipment eq;
-		FindBestEquipment( inventory, ch, MatchOptions( {}, {ArtSet::HP} ), eq );
-		//TODO: BOOST_CHECK_EQUAL( eq.size(), 1 );
+		FindBestEquipment( inventory, ch, MatchOptions( All_Stats_Moderate, {ArtSet::Speed} ), eq );
+		BOOST_CHECK_EQUAL( eq.Size(), 5 );
+	}
+	{
+		Champion ch = TestChamp;
+		Equipment eq;
+		FindBestEquipment( inventory, ch, MatchOptions( All_Stats_Moderate, {ArtSet::Atk} ), eq );
+		BOOST_CHECK_EQUAL( eq.Size(), 0 );
 	}
 }
 

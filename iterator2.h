@@ -1,33 +1,35 @@
 #pragma once
 #include "raid.h"
 
-class arts_by_type_iterator
+class arts_by_type_iterator2
 {
 public:
 	using arts_vec_t = std::vector<Artefact>;
 	using arts_map_t = std::map<ArtType, arts_vec_t>;
 
-	arts_by_type_iterator( const arts_map_t& m )
+	arts_by_type_iterator2( const arts_map_t& m, size_t root_index )
 		: _map(m)
+		, _root_index( root_index )
 	{
 	}
 
 	bool begin()
 	{
+		if ( _map.empty() )
+			return false;
 		//_progress = 0;
-		for ( const auto& p : _map )
+		auto i = _map.begin();
+		for ( ++i; i != _map.end(); ++i )
 		{
-			_vectors.push_back( &p );
-			_curr_iterators.push_back( p.second.begin() );
+			_vectors.push_back( &(*i) );
+			_curr_iterators.push_back( i->second.begin() );
 		}
-		_ASSERTE( _map.size() == _vectors.size() );
-		_ASSERTE( _map.size() == _curr_iterators.size() );
 		return !finished();
 	}
 
 	void next()
 	{
-		if ( _curr_iterators.empty() )
+		if ( finished() )
 			return;
 
 		const size_t last_index = _curr_iterators.size() - 1;
@@ -52,8 +54,8 @@ public:
 				accepted = true;
 		}
 
-		_ASSERTE( _map.size() == _vectors.size() );
-		_ASSERTE( _map.size() == _curr_iterators.size() );
+		_ASSERTE( _map.size() == (1 + _vectors.size()) );
+		_ASSERTE( _map.size() == (1 + _curr_iterators.size()) );
 	}
 
 	bool finished() const
@@ -64,16 +66,26 @@ public:
 	bool get( Equipment& eq ) const
 	{
 		eq.Clear();
-		for ( size_t i = 0; i < _curr_iterators.size(); ++i )
-			eq[ _vectors[i]->first ] = *_curr_iterators[i];
+		if ( !finished() )
+		{
+			eq.Arts[_map.cbegin()->first] = front_vec()[_root_index];
+
+			for ( size_t i = 0; i < _curr_iterators.size(); ++i )
+				eq[_vectors[i]->first] = *_curr_iterators[i];
+		}
 		return !finished();
 	}
 
 	bool get( EquipmentRef& eq ) const
 	{
 		eq.Clear();
-		for ( size_t i = 0; i < _curr_iterators.size(); ++i )
-			eq.Arts[ _vectors[i]->first ] = &(*_curr_iterators[i]);
+		if ( !finished() )
+		{
+			eq.Arts[_map.cbegin()->first] = &(front_vec()[_root_index]);
+
+			for ( size_t i = 0; i < _curr_iterators.size(); ++i )
+				eq.Arts[_vectors[i]->first] = &(*_curr_iterators[i]);
+		}
 		return !finished();
 	}
 
@@ -84,17 +96,11 @@ public:
 		return eq;
 	}
 
-	static size_t n_combinations( const arts_map_t& m )
-	{
-		size_t _count = 1;
-		for ( const auto& p : m )
-		{
-			_count *= p.second.size();
-		}
-		return _count;
-	}
-
 private:
+	const arts_vec_t& front_vec() const
+	{
+		return _map.cbegin()->second;
+	}
 	void reset()
 	{
 		_vectors.clear();
@@ -103,6 +109,7 @@ private:
 
 private:
 	const arts_map_t& _map;
+	const size_t _root_index;
 	std::vector<const arts_map_t::value_type*> _vectors;
 	std::vector<arts_vec_t::const_iterator> _curr_iterators;
 };

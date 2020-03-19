@@ -183,7 +183,7 @@ struct EquipmentRef
 	EquipmentRef( const Equipment& );
 
 	const Artefact& operator[]( ArtType t ) const {
-		art_ref art = Arts[ static_cast<int>(t) ];
+		const art_ref art = Arts[ static_cast<int>(t) ];
 		if ( art )
 			return *art;
 		else {
@@ -207,10 +207,12 @@ struct Champion
 	const ChampionStats BasicStats;
 	ChampionStats ArtsBonusStats;
 	const Element Elem;
+	const ChampionName Name = ChampionName::none;
 
-	explicit Champion( const ChampionStats& basic, Element e = Element::none );
+	explicit Champion( const ChampionStats& basic, Element e = Element::none, ChampionName name = ChampionName::none );
 	bool IsReal() const;
 	ChampionStats TotalStats( bool apply_hall_bonus = true ) const;
+	ChampionStats TotalStats( const ChampionStats& art_bonus_stats, bool apply_hall_bonus = true ) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -220,14 +222,15 @@ int  StatValueForLevel( ArtType, StatType, int starRank, int level );
 int  SetSize( ArtSet );
 inline int SetSize_fast( ArtSet set ) { return (stl::enum_to_int(set) < stl::enum_to_int(ArtSet::_FourBegin)) ? 2 : 4; }
 bool IsValidStatForArt( StatType, ArtType );
+bool IsValidStatForChampion( StatType );
 bool IsGoodStatForArt( StatType, ArtType );
 void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus );
 void ApplyStat( const Stat&, Champion& );
-void ApplySetBonus( ArtSet, Champion&, bool compensation );
+void ApplySetBonus( ArtSet, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
 void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
-void ApplyArtBonus( const Artefact&, Champion&, bool consider_max_level /*= false*/ );
+void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool consider_max_level /*= false*/ );
 void ApplyEquipment( const Equipment&, Champion&, bool estimating );
-void ApplyEquipment( const EquipmentRef&, Champion&, bool estimating );
+void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating );
 void ApplyHallBonus( const Champion&, ChampionStats& );
 
 /////////////////////////////////////////////////////////////////////////////
@@ -276,6 +279,7 @@ struct MatchOptions
 		return Factors[ stl::enum_to_int(st) ];
 	}
 	bool IsSetAccepted( ArtSet ) const;
+	bool IsArtAccepted( const Artefact&, ChampionName ) const;
 	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
 	//bool IsEqAccepted( const Equipment& ) const;
 };
