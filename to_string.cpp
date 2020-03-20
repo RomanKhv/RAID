@@ -3,6 +3,12 @@
 
 #define CASE_RETURN_STRING( et, ei )	case et::ei: return #ei;
 
+void suppress_last_symbol( std::stringstream& ss, char substitution = ' ' )
+{
+	ss.seekp( -1, std::ios_base::end );
+	ss << substitution;
+}
+
 std::string to_string( const StatType& t )
 {
 	switch ( t )
@@ -120,6 +126,34 @@ std::string to_string( const ChampionStats& stats )
 	ss << to_string(StatType::CDmg) << ":\t " << stats.CDmg << "\n";
 	ss << to_string(StatType::Res) << ":\t " << stats.Res << "\n";
 	ss << to_string(StatType::Acc) << ":\t " << stats.Acc /*<< "\n"*/;
+	return ss.str();
+}
+
+std::string to_string( const Equipment& eq )
+{
+	std::stringstream ss;
+	for ( const Artefact& art : eq.Arts )
+	{
+		if ( art.Initialized() )
+		{
+			ss << to_string( art ) << "\n";
+		}
+	}
+	//suppress_last_symbol( ss );
+	return ss.str();
+}
+
+std::string to_string( const EquipmentRef& eq )
+{
+	std::stringstream ss;
+	for ( const Artefact* art : eq.Arts )
+	{
+		if ( art && art->Initialized() )
+		{
+			ss << to_string( *art ) << "\n";
+		}
+	}
+	//suppress_last_symbol( ss );
 	return ss.str();
 }
 

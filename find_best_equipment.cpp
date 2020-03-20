@@ -37,18 +37,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 	{
 		Champion old_ch = ChampionFactory::Gromoboy();
 		const Equipment current_eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
-		ApplyEquipment( current_eq, old_ch, false );
+		ApplyEquipment( current_eq, old_ch, false, matching.ConsiderMaxLevels );
 		BOOST_TEST_MESSAGE( stats_progress( final_stats, old_ch.TotalStats() ) );
 	}
 
 	// Report: equipment
-	for ( const Artefact& art : eq.Arts )
-	{
-		if ( art.Initialized() )
-		{
-			BOOST_TEST_MESSAGE( to_string( art ) );
-		}
-	}
+	BOOST_TEST_MESSAGE( to_string( eq ) );
 }
 
 #endif

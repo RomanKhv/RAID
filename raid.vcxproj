@@ -118,7 +118,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>_boost\lib64-msvc-14.0</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>_boost\lib64-msvc-14.0;.\tbb\tbb-2020.1-win\tbb\lib\intel64\vc14\</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetPath)</Command>

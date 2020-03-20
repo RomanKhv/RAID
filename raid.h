@@ -90,9 +90,13 @@ enum class ArtSet
 enum class ChampionName
 {
 	none,
-	Kael,
+	ColdHeart,
 	Gromoboy,
+	Hatun,
+	Kael,
 	Krisk,
+	Lekar,
+	Yuliana,
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -158,7 +162,7 @@ struct ChampionStats
 
 struct Equipment
 {
-	static const int BasicSize = 6;
+	//static const int BasicSize = 6;
 	static const int TotalSize = 9;
 	Artefact Arts[TotalSize];
 
@@ -170,7 +174,7 @@ struct Equipment
 	void Clear();
 	size_t Size() const;
 
-	static const ArtType BasicTypesArr[BasicSize];
+	//static const ArtType BasicTypesArr[BasicSize];
 	static const ArtType AllTypesArr[TotalSize];
 };
 
@@ -229,8 +233,8 @@ void ApplyStat( const Stat&, Champion& );
 void ApplySetBonus( ArtSet, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
 void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
 void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool consider_max_level /*= false*/ );
-void ApplyEquipment( const Equipment&, Champion&, bool estimating );
-void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating );
+void ApplyEquipment( const Equipment&, Champion&, bool estimating, bool consider_max_level );
+void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
 void ApplyHallBonus( const Champion&, ChampionStats& );
 
 /////////////////////////////////////////////////////////////////////////////

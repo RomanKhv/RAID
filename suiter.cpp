@@ -8,8 +8,6 @@
 #define USE_TBB
 #ifdef USE_TBB
 struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error: 'identifier' was unexpected here" when using /permissive-
-#include "tbb/enumerable_thread_specific.h"
-#include "tbb/parallel_for_each.h"
 #include "tbb/parallel_reduce.h"
 #include "tbb/blocked_range.h"
 #endif
@@ -56,8 +54,17 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	float est = 0;
 	for ( StatType st : ChampionStats::TypeList )
 	{
+		const int min_stat_cap = matching.MinCap[ stl::enum_to_int(st) ];
+		if ( min_stat_cap <= 0 )
+			continue;
+		_ASSERTE( matching.Factor(st) == MatchOptions::ArtFactor::MinCap );
+		if ( ch_stats[st] < min_stat_cap )
+			return 0.f;
+	}
+	for ( StatType st : ChampionStats::TypeList )
+	{
+		const MatchOptions::ArtFactor f = matching.Factor( st );
 		float fk = 0;
-		const MatchOptions::ArtFactor f = matching.Factors[ stl::enum_to_int(st) ];
 		if ( FloatEstimationFactor( f, fk ) )
 		{
 			est += fk * (float)ch_stats[st] / ref_stat_values[ stl::enum_to_int(st) ];
@@ -67,9 +74,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 			{
 				case MatchOptions::ArtFactor::MinCap:
 					{
-						const int min_stat_cap = matching.MinCap[ stl::enum_to_int(st) ];
-						if ( ch_stats[st] < min_stat_cap )
-							return 0.f;
+						_ASSERTE( matching.MinCap[ stl::enum_to_int(st) ] > 0 );
 					}
 			}
 		}
@@ -98,10 +103,10 @@ void ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 		!matching.IsEqHasRequiredSets( eq ) )
 		return;
 
-	ChampionStats art_bonus_stats;
-	ApplyEquipment( eq, target_champ.BasicStats, art_bonus_stats, true );
+	ChampionStats arts_bonus_stats;
+	ApplyEquipment( eq, target_champ.BasicStats, arts_bonus_stats, true, matching.ConsiderMaxLevels );
 
-	const float est = EstimateEquipment( target_champ.TotalStats( art_bonus_stats ), matching );
+	const float est = EstimateEquipment( target_champ.TotalStats( arts_bonus_stats ), matching );
 
 	if ( est > best_combination._Est )
 	{
@@ -185,7 +190,7 @@ Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
 	SeparateInventory( _MyArts, matching, ch.Name, arts_by_type );
 	FindBestEquipment( arts_by_type, ch, matching, best_eq );
 
-	ApplyEquipment( best_eq, ch, false );
+	ApplyEquipment( best_eq, ch, false, matching.ConsiderMaxLevels );
 
 	return best_eq;
 }

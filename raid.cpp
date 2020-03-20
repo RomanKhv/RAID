@@ -17,6 +17,7 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 {
 	_ASSERTE( IsValidStatForArt( mainstat, type ) );
 	_ASSERTE( IsGoodStatForArt( mainstat, type ) );
+	_ASSERTE( addstats.size() <= 4 );
 }
 
 Stat Artefact::GetMainStat( bool consider_max_level ) const
@@ -29,10 +30,10 @@ Stat Artefact::GetMainStat( bool consider_max_level ) const
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ArtType Equipment::BasicTypesArr[Equipment::BasicSize] = {
-	ArtType::Weapon,  ArtType::Helmet,   ArtType::Shield,
-	ArtType::Gloves,  ArtType::Chest,    ArtType::Boots
-};
+//const ArtType Equipment::BasicTypesArr[Equipment::BasicSize] = {
+//	ArtType::Weapon,  ArtType::Helmet,   ArtType::Shield,
+//	ArtType::Gloves,  ArtType::Chest,    ArtType::Boots
+//};
 const ArtType Equipment::AllTypesArr[Equipment::TotalSize] = {
 	ArtType::Weapon,  ArtType::Helmet,   ArtType::Shield,
 	ArtType::Gloves,  ArtType::Chest,    ArtType::Boots,
@@ -177,7 +178,7 @@ ChampionStats ChampionStats::operator+( const ChampionStats& rhs ) const
 //}
 
 template <int ChampionStats::* member>
-void member_fraction( ChampionStats& dest, const ChampionStats& ref, int factor_percent )
+void add_percent_bonus( ChampionStats& dest, const ChampionStats& ref, int factor_percent )
 {
 	dest.*member += ref.*member * factor_percent / 100;
 }
@@ -193,7 +194,7 @@ inline Champion::Champion( const ChampionStats& basic, Element e, ChampionName n
 
 bool Champion::IsReal() const
 {
-	_ASSERTE( (Elem==Element::none) == (Name==ChampionName::none) );
+	_ASSERTE( (Name==ChampionName::none) || (Elem!=Element::none) );
 	return Elem != Element::none;
 }
 
@@ -202,11 +203,9 @@ ChampionStats Champion::TotalStats(bool apply_hall_bonus) const
 	return TotalStats( ArtsBonusStats, apply_hall_bonus );
 }
 
-ChampionStats Champion::TotalStats( const ChampionStats& art_bonus_stats, bool apply_hall_bonus ) const
+ChampionStats Champion::TotalStats( const ChampionStats& arts_bonus_stats, bool apply_hall_bonus ) const
 {
-	_ASSERTE( ArtsBonusStats.HP==0 );
-
-	ChampionStats stats = BasicStats + art_bonus_stats;
+	ChampionStats stats = BasicStats + arts_bonus_stats;
 
 	if ( apply_hall_bonus )
 	{
@@ -440,55 +439,59 @@ bool IsGoodStatForArt( StatType stat, ArtType art )
 
 /////////////////////////////////////////////////////////////////////////////
 
-#define ApplyStatBonus( bonusStats, basicStats, stat, factor )			bonusStats.stat += basicStats.stat * (factor) / 100;
-
-void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus )
+inline void apply_stat_absolute( StatType st, int value, ChampionStats& arts_bonus_stats )
 {
+	arts_bonus_stats[st] += value;
+}
+
+void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats )
+{
+	_ASSERTE( stat.Value > 0 );
 	switch ( stat.Type )
 	{
 		case StatType::HP_p:
 		case StatType::Atk_p:
 		case StatType::Def_p:
-			arts_bonus.p_stat(stat.Type) = basic_stats.p_stat(stat.Type) * stat.Value / 100;
+			arts_bonus_stats.p_stat(stat.Type) += basic_stats.p_stat(stat.Type) * stat.Value / 100;
 			return;
 		default:
-			arts_bonus[stat.Type] += stat.Value;
+			apply_stat_absolute( stat.Type, stat.Value, arts_bonus_stats );
 			return;
 	}
 	//switch ( stat.Type )
 	//{
 	//	case StatType::Atk:
-	//		arts_bonus.Atk += stat.Value;
+	//		arts_bonus_stats.Atk += stat.Value;
 	//		return;
 	//	case StatType::HP:
-	//		arts_bonus.HP += stat.Value;
+	//		arts_bonus_stats.HP += stat.Value;
 	//		return;
 	//	case StatType::Def:
-	//		arts_bonus.Def += stat.Value;
+	//		arts_bonus_stats.Def += stat.Value;
 	//		return;
 	//	case StatType::Atk_p:
-	//		member_fraction<&ChampionStats::Atk>( arts_bonus, basic_stats, stat.Value );
+	//		member_fraction<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, stat.Value );
 	//		return;
 	//	case StatType::HP_p:
-	//		member_fraction<&ChampionStats::HP>( arts_bonus, basic_stats, stat.Value );
+	//		member_fraction<&ChampionStats::HP>( arts_bonus_stats, basic_stats, stat.Value );
 	//		return;
 	//	case StatType::Def_p:
-	//		member_fraction<&ChampionStats::Def>( arts_bonus, basic_stats, stat.Value );
+	//		member_fraction<&ChampionStats::Def>( arts_bonus_stats, basic_stats, stat.Value );
 	//		return;
 	//	case StatType::CRate:
-	//		arts_bonus.CRate += stat.Value;
+	//		arts_bonus_stats.CRate += stat.Value;
 	//		return;
 	//	case StatType::CDmg:
-	//		arts_bonus.CDmg += stat.Value;
+	//		arts_bonus_stats.CDmg += stat.Value;
 	//		return;
 	//	case StatType::Spd:
-	//		arts_bonus.Spd += stat.Value;
+	//		arts_bonus_stats.Spd += stat.Value;
 	//		return;
 	//	case StatType::Acc:
-	//		arts_bonus.Acc += stat.Value;
+	//		arts_bonus_stats.Acc += stat.Value;
 	//		return;
 	//	case StatType::Res:
-	//		arts_bonus.Res += stat.Value;
+	//		arts_bonus_stats.Res += stat.Value;
 	//		return;
 	//}
 	_ASSERTE( !"unreachable code" );
@@ -503,80 +506,80 @@ void ApplyStat( const Stat& stat, Champion& ch )
 
 const int DivHPCompensation = 2;
 
-void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation )
+void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool compensation )
 {
 	switch ( set )
 	{
 		case ArtSet::HP:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, HP, 15 );
+				add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, 15 );
 			}
 			break;
 		case ArtSet::Immortal:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, HP, 15 + (compensation ? 3 : 0) );
+				add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, 15 + (compensation ? 3 : 0) );
 			}
 			break;
 		case ArtSet::DivLife:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, HP, 15 + (compensation ? DivHPCompensation : 0) );
+				add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, 15 + (compensation ? DivHPCompensation : 0) );
 			}
 			break;
 		case ArtSet::Atk:
 		case ArtSet::Cruel:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, Atk, 15 );
+				add_percent_bonus<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, 15 );
 			}
 			break;
 		case ArtSet::DivAtk:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, Atk, 15 );
+				add_percent_bonus<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, 15 );
 				if ( compensation )
-					ApplyStatBonus( art_bonus_stats, basic_stats, HP, DivHPCompensation );
+					add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, DivHPCompensation );
 			}
 			break;
 		case ArtSet::Def:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, Def, 15 );
+				add_percent_bonus<&ChampionStats::Def>( arts_bonus_stats, basic_stats, 15 );
 			}
 			break;
 		case ArtSet::CRate:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, CRate, 12 );
+				arts_bonus_stats.CRate += 12;
 			}
 			break;
 		case ArtSet::DivCritRate:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, CRate, 12 );
+				arts_bonus_stats.CRate += 12;
 				if ( compensation )
-					ApplyStatBonus( art_bonus_stats, basic_stats, HP, DivHPCompensation );
+					add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, DivHPCompensation );
 			}
 			break;
 		case ArtSet::CDmg:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, CDmg, 20 );
+				arts_bonus_stats.CDmg += 20;
 			}
 			break;
 		case ArtSet::Speed:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, Spd, 12 );
+				add_percent_bonus<&ChampionStats::Spd>( arts_bonus_stats, basic_stats, 12 );
 			}
 			break;
 		case ArtSet::DivSpeed:
 			{
-				ApplyStatBonus( art_bonus_stats, basic_stats, Spd, 12 );
+				add_percent_bonus<&ChampionStats::Spd>( arts_bonus_stats, basic_stats, 12 );
 				if ( compensation )
-					ApplyStatBonus( art_bonus_stats, basic_stats, HP, DivHPCompensation );
+					add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, DivHPCompensation );
 			}
 			break;
 		case ArtSet::Res:
 			{
-				art_bonus_stats.Res += 40;
+				arts_bonus_stats.Res += 40;
 			}
 			break;
 		case ArtSet::Acc:
 			{
-				art_bonus_stats.Acc += 40;
+				arts_bonus_stats.Acc += 40;
 			}
 			break;
 	}
@@ -598,7 +601,7 @@ void ApplySetsBonuses( const Equipment& eq, Champion& ch, bool compensation )
 	}
 }
 
-void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation )
+void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool compensation )
 {
 	int n_arts_by_set[Artefact::SetCount] = {0};
 	for ( const Artefact* art : eq.Arts )
@@ -613,11 +616,11 @@ void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats,
 	{
 		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
 		for ( int i = 0; i < count; ++i )
-			ApplySetBonus( static_cast<ArtSet>(set), basic_stats, art_bonus_stats, compensation );
+			ApplySetBonus( static_cast<ArtSet>(set), basic_stats, arts_bonus_stats, compensation );
 	}
 }
 
-void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool consider_max_level )
+void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool consider_max_level )
 {
 	if ( !art.Initialized() )
 	{
@@ -625,13 +628,13 @@ void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, Champ
 		return;
 	}
 
-	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, art_bonus_stats );
+	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats );
 
 	for ( const Stat& stat : art.AddStats )
-		ApplyStat( stat, basic_stats, art_bonus_stats );
+		ApplyStat( stat, basic_stats, arts_bonus_stats );
 }
 
-void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating )
+void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating, bool consider_max_level )
 {
 	ApplySetsBonuses( eq, ch, estimating );
 
@@ -639,21 +642,21 @@ void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating )
 	{
 		if ( art.Initialized() )
 		{
-			ApplyArtBonus( art, ch.BasicStats, ch.ArtsBonusStats, estimating );
+			ApplyArtBonus( art, ch.BasicStats, ch.ArtsBonusStats, estimating || consider_max_level );
 		}
 	}
 }
 
-void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating )
+void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating, bool consider_max_level )
 {
-	ApplySetsBonuses( eq, basic_stats, art_bonus_stats, estimating );
+	ApplySetsBonuses( eq, basic_stats, arts_bonus_stats, estimating );
 
 	for ( const Artefact* art : eq.Arts )
 	{
 		if ( art )
 		{
 			_ASSERTE( art->Initialized() );
-			ApplyArtBonus( *art, basic_stats, art_bonus_stats, estimating );
+			ApplyArtBonus( *art, basic_stats, arts_bonus_stats, estimating || consider_max_level );
 		}
 	}
 }
@@ -776,35 +779,35 @@ Equipment GetCurrentEquipmentFor( ChampionName name )
 
 Champion ChampionFactory::ColdHeart()
 {
-	return Champion( { 13710, 1376, 738,  94,  15, 57,  30, 0 }, Element::Void );
+	return Champion( { 13710, 1376, 738,  94,  15, 57,  30, 0 }, Element::Void, ChampionName::ColdHeart );
 }
 
 Champion ChampionFactory::Kael()
 {
-	return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue );
+	return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, ChampionName::Kael );
 }
 
 Champion ChampionFactory::Gromoboy()
 {
-	return Champion( { 15855, 727, 1443,  97,  15, 50,  30, 0 }, Element::Void );
+	return Champion( { 15855, 727, 1443,  97,  15, 50,  30, 0 }, Element::Void, ChampionName::Gromoboy );
 }
 
 Champion ChampionFactory::Lekar()
 {
-	return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue );
+	return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, ChampionName::Lekar );
 }
 
 Champion ChampionFactory::Yuliana()
 {
-	return Champion( { 15195, 1354, 870,  103,  15, 50,  30, 0 }, Element::Blue );
+	return Champion( { 15195, 1354, 870,  103,  15, 50,  30, 0 }, Element::Blue, ChampionName::Yuliana );
 }
 
 Champion ChampionFactory::Krisk()
 {
-	return Champion( { 18660, 727, 1465,  94,  15, 50,  30, 0 }, Element::Void );
+	return Champion( { 18660, 727, 1465,  94,  15, 50,  30, 0 }, Element::Void, ChampionName::Krisk );
 }
 
 Champion ChampionFactory::Hatun()
 {
-	return Champion( { 15555, 971, 1146,  97,  15, 50,  30, 0 }, Element::Green );
+	return Champion( { 15555, 971, 1146,  97,  15, 50,  30, 0 }, Element::Green, ChampionName::Hatun );
 }

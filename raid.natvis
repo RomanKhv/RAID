@@ -16,5 +16,11 @@
         <ExpandedItem>Arts</ExpandedItem>
     </Expand>
 </Type>
+
+<Type Name="EquipmentRef">
+    <Expand>
+        <ExpandedItem>Arts,na</ExpandedItem>
+    </Expand>
+</Type>
     
 </AutoVisualizer>
