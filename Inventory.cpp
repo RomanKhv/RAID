@@ -73,7 +73,6 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Gloves, ArtSet::Atk, 5, 8, StatType::Def_p, { {StatType::Atk_p,11}, {StatType::Acc,9} } },
 	Artefact{ ArtType::Gloves, ArtSet::Atk, 5, 0, StatType::CDmg, { {StatType::CRate,4} } },
 
-#ifndef DEBUG_SMALL_INVENTORY
 	Artefact{ ArtType::Chest, ArtSet::Atk, 6, 0, StatType::HP_p, { {StatType::Spd,6}, {StatType::Def_p,6}, {StatType::CRate,6}, {StatType::HP,402} } },
 	Artefact{ ArtType::Chest, ArtSet::Atk, 5, 0, StatType::HP_p, { {StatType::Atk,22}, {StatType::Atk_p,5}, {StatType::Def_p,6} } },
 	Artefact{ ArtType::Chest, ArtSet::Atk, 5, 4, StatType::HP_p, { {StatType::CRate,11} } },
@@ -89,19 +88,24 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Chest, ArtSet::Def, 5, 12, StatType::HP_p, { {StatType::Def,43+10}, {StatType::CDmg,12}, {StatType::Res,10+2} }, ChampionName::Gromoboy },
 	Artefact{ ArtType::Boots, ArtSet::Def, 4, 16, StatType::Spd, { {StatType::Def_p,8+1}, {StatType::Atk,6+5}, {StatType::Res,9+2}, {StatType::Def,10+5} }, ChampionName::Gromoboy },
 
+#ifndef DEBUG_FIND_BEST
 	// Acc
 	Artefact{ ArtType::Weapon, ArtSet::Acc, 6, 8, StatType::Atk, { {StatType::Atk_p,12}, {StatType::Res,21} } },
 	Artefact{ ArtType::Weapon, ArtSet::Acc, 5, 12, StatType::Atk, { {StatType::Atk_p,15}, {StatType::CRate,5}, {StatType::Spd,10} } },
 	Artefact{ ArtType::Weapon, ArtSet::Acc, 5, 8, StatType::Atk, { {StatType::Acc,18}, {StatType::CRate,10} } },
 	Artefact{ ArtType::Weapon, ArtSet::Acc, 4, 8, StatType::Atk, { {StatType::CDmg,7}, {StatType::HP_p,4}, {StatType::Atk_p,7} } },
 
+#endif
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP, { {StatType::Def_p,9+1}, {StatType::Spd,4+1}, {StatType::Res,28+2}, {StatType::CRate,9} }, ChampionName::Gromoboy },
+#ifndef DEBUG_FIND_BEST
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 8, StatType::HP, { {StatType::Acc,28}, {StatType::Spd,4}, {StatType::Atk,15} } },
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 12, StatType::HP, { {StatType::HP_p,12}, {StatType::Atk_p,11}, {StatType::CDmg,6} } },
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 1, StatType::HP, { {StatType::Spd,9}, {StatType::CRate,10} } },
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 4, 8, StatType::HP, { {StatType::Def_p,4}, {StatType::CRate,8}, {StatType::Atk,18} } },
 
+#endif
 	Artefact{ ArtType::Shield, ArtSet::Acc, 5, 16, StatType::Def, { {StatType::HP_p,6+1}, {StatType::Def_p,5+2}, {StatType::CDmg,15}, {StatType::CRate,16} }, ChampionName::Gromoboy },
+#ifndef DEBUG_FIND_BEST
 	Artefact{ ArtType::Shield, ArtSet::Acc, 5, 8, StatType::Def, { {StatType::Def_p,11}, {StatType::HP,219}, {StatType::Res,21} } },
 	Artefact{ ArtType::Shield, ArtSet::Acc, 5, 8, StatType::Def, { {StatType::Acc,19}, {StatType::Res,18}, {StatType::HP_p,5} } },
 	Artefact{ ArtType::Shield, ArtSet::Acc, 5, 8, StatType::Def, { {StatType::Acc,20}, {StatType::Def_p,5} } },
@@ -151,7 +155,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Shield, ArtSet::Speed, 6, 12, StatType::Def, { {StatType::CDmg,19}, {StatType::CRate,7}, {StatType::Def_p,12} } },
 	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 8, StatType::Def, { {StatType::HP,197}, {StatType::CDmg,10}, {StatType::Spd,9} } },
 	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 8, StatType::Def, { {StatType::Res,8}, {StatType::Acc,18}, {StatType::CDmg,9} } },
-	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 8, StatType::Def, { {StatType::HP_p,10}, {StatType::Acc,10}, {StatType::Def_p,10} } },
+	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 9, StatType::Def, { {StatType::HP_p,10}, {StatType::Acc,10}, {StatType::Def_p,10} } },
 	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 12, StatType::Def, { {StatType::Acc,17}, {StatType::HP_p,10}, {StatType::Res,10} } },
 	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 8, StatType::Def, { {StatType::Def_p,10}, {StatType::CDmg,10} } },
 	Artefact{ ArtType::Shield, ArtSet::Speed, 5, 1, StatType::Def, { {StatType::Spd,4}, {StatType::CDmg,4} } },
@@ -259,11 +263,11 @@ const std::vector<Artefact> _MyArts =
 
 	Artefact( ArtType::Boots, ArtSet::Immortal, 5, 8, StatType::Def_p, { {StatType::CDmg,11}, {StatType::HP_p,5} } ),
 	Artefact( ArtType::Boots, ArtSet::Immortal, 4, 8, StatType::Spd, { {StatType::Atk,27}, {StatType::Acc,8} } ),
+//*/
+#endif
 
 	// Rings
 	Artefact( ArtType::Ring,  ArtSet::None, 5, 12, StatType::HP, { {StatType::Def,46+5}, {StatType::Def_p,5+1}, {StatType::HP_p,5+1} }, ChampionName::Gromoboy ),
-//*/
-#endif
 };
 
 /////////////////////////////////////////////////////////////////////////////

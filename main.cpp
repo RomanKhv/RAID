@@ -4,7 +4,9 @@
 #include "iterator.h"
 #include "iterator2.h"
 
+#ifndef DEBUG_FIND_BEST
 #define GENERAL_TESTS
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +57,7 @@ BOOST_AUTO_TEST_CASE( test_basics )
 static const Champion TestChamp( { 10000, 1000, 1000,  100,  100, 100,  0, 0 }, Element::Void );
 
 #define CHECK_SET_BONUS( set, stat, bonus_value ) { \
-		Champion ch = TestChamp; \
+		ChampionExt ch = TestChamp; \
 		ApplySetBonus( set, ch.BasicStats, ch.ArtsBonusStats, false ); \
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.stat, bonus_value ); }
 
@@ -77,57 +79,57 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 BOOST_AUTO_TEST_CASE( test_ApplyStat )
 {
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::HP,100 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 100 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Atk,100 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 100 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Def,100 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 100 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Spd,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 10 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::CRate,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 10 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::CDmg,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 10 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Res,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 10 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Acc,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 10 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::HP_p,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 1000 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Atk_p,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 100 );
 	}
 	{
-		Champion ch = TestChamp;
+		ChampionExt ch = TestChamp;
 		ApplyStat( { StatType::Def_p,10 }, ch );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 100 );
 	}
@@ -136,7 +138,7 @@ BOOST_AUTO_TEST_CASE( test_ApplyStat )
 BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 {
 	{
-		Champion ch = ChampionFactory::Gromoboy();
+		ChampionExt ch = ChampionFactory::Gromoboy();
 		const Equipment eq = {
 			Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
 			Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ),
@@ -144,7 +146,7 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 			Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
 			Artefact( ArtType::Boots, ArtSet::Speed, 6, 8, StatType::Spd, {} ),
 		};
-		ApplySetsBonuses( eq, ch, false );
+		ApplySetsBonuses( eq, ch.BasicStats, ch.ArtsBonusStats, false );
 		BOOST_CHECK( ch.ArtsBonusStats.HP > 0 );
 		BOOST_CHECK( ch.ArtsBonusStats.Spd > 0 );
 		BOOST_CHECK( ch.ArtsBonusStats.Atk == 0 );
@@ -154,9 +156,10 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 
 //BOOST_AUTO_TEST_CASE( test_StatValuesByLevel )
 //{
-//	for ( ArtType art : { ArtType::Weapon, ArtType::Helmet, ArtType::Shield, ArtType::Gloves, ArtType::Chest, ArtType::Boots } )
+//	//for ( ArtType art : { ArtType::Weapon, ArtType::Helmet, ArtType::Shield, ArtType::Gloves, ArtType::Chest, ArtType::Boots } )
+//	for ( ArtType art : Equipment::AllTypesArr )
 //		for ( int stars = 4; stars <= 6; ++stars )
-//			for ( int level : { 0, 4, 8, 12, 16 } )
+//			for ( int level : { /*0, 4, 8, 12,*/ 16 } )
 //				for ( StatType stat : StatTypesForArt( art ) )
 //				{
 //					BOOST_CHECK( StatValueForLevel( art, stat, stars, level ) > 0 );
@@ -331,6 +334,21 @@ BOOST_AUTO_TEST_CASE( test_Iterator2 )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( test_Estimation_FloatFactor )
+{
+	const int min_acc_cap = 120;
+	const int w = 20;
+	float fk;
+	BOOST_CHECK( !EstimateMinCap( 100, min_acc_cap, w, fk ) );
+	BOOST_CHECK( !EstimateMinCap( 110, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0 );
+	BOOST_CHECK( EstimateMinCap( 120, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 1.f );
+	BOOST_CHECK( EstimateMinCap( 131, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 1.f );
+	BOOST_CHECK( EstimateMinCap( 140, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 1.f );
+	BOOST_CHECK( EstimateMinCap( 150, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
+	BOOST_CHECK( EstimateMinCap( 160, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
+	BOOST_CHECK( EstimateMinCap( 200, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
+}
+
 const std::map<StatType, MatchOptions::ArtFactor> All_Stats_Moderate = {
 	{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
 	{ StatType::Atk, MatchOptions::ArtFactor::Moderate },
@@ -371,13 +389,13 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	}
 }
 
-#ifndef DEBUG_SMALL_INVENTORY
+//#ifndef DEBUG_FIND_BEST
 
 BOOST_AUTO_TEST_CASE( test_Gromoboy )
 {
-	Champion ch = ChampionFactory::Gromoboy();
+	ChampionExt ch = ChampionFactory::Gromoboy();
 	const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
-	ApplyEquipment( eq, ch, false );
+	ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
 
 	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 13797 - 2 );
 	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 131 );
@@ -409,6 +427,6 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 	//BOOST_CHECK_EQUAL( final_stats.Res, 98 );
 	//BOOST_CHECK_EQUAL( final_stats.Acc, 103 );
 }
-#endif
+//#endif
 
 #endif

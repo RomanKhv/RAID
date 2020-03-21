@@ -82,6 +82,7 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, DivCritRate );
 		CASE_RETURN_STRING( ArtSet, DivLife );
 		CASE_RETURN_STRING( ArtSet, DivSpeed );
+		case ArtSet::None: return {};
 	}
 	_ASSERTE( !"not yet supported" );
 	return "";

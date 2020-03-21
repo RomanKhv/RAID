@@ -4,8 +4,11 @@
 #include "iterator2.h"
 #include "stl_ext.h"
 #include "profiler.h"
+#include "to_string.h"
 
-#define USE_TBB
+#ifndef DEBUG_FIND_BEST
+	#define USE_TBB
+#endif
 #ifdef USE_TBB
 struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error: 'identifier' was unexpected here" when using /permissive-
 #include "tbb/parallel_reduce.h"
@@ -14,60 +17,121 @@ struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error
 
 /////////////////////////////////////////////////////////////////////////////
 
-//const std::map<StatType, int> ref_stat_values = {
-const int ref_stat_values[ChampionStats::Count] = {
+const ChampionStats::values_t Ref_Stat_Values = {
 	/*StatType::HP*/ 40000,
-	/*StatType::Atk*/ 3000,
-	/*StatType::Def*/ 3000,
+	/*StatType::Atk*/ 3500,
+	/*StatType::Def*/ 3500,
+	/*StatType::Spd*/ 150,
 	/*StatType::CRate*/ 100,
 	/*StatType::CDmg*/ 100,
-	/*StatType::Spd*/ 150,
 	/*StatType::Res*/ 80,
 	/*StatType::Acc*/ 150,
 };
 
+const ChampionStats::values_t Max_Stat_Caps = {
+	/*StatType::HP*/   0,
+	/*StatType::Atk*/  3500,
+	/*StatType::Def*/  3500,
+	/*StatType::Spd*/  0,
+	/*StatType::CRate*/ 100,
+	/*StatType::CDmg*/ 0,
+	/*StatType::Res*/  0,
+	/*StatType::Acc*/  0,
+};
+
+const float fK_ignore = 0;
+const float fK_minor = 0.25f;
+const float fK_moderate = 0.5f;
+const float fK_magor = 0.75f;
+const float fK_max = 1;
+
+inline float FactorK( MatchOptions::ArtFactor f )
+{
+	static const float fks[5] = {
+		fK_ignore, fK_minor, fK_moderate, fK_magor, fK_max
+	};
+	return fks[ stl::enum_to_int(f) ];
+}
+
 bool FloatEstimationFactor( MatchOptions::ArtFactor f, float& fk )
 {
-	switch ( f )
+	if ( stl::enum_to_int(f) <= 4 )
 	{
-		case MatchOptions::ArtFactor::NotInterested:
-			fk = 0;
-			return false;
-		case MatchOptions::ArtFactor::Minor:
-			fk = 0.25f;
-			return true;
-		case MatchOptions::ArtFactor::Moderate:
-			fk = 0.5f;
-			return true;
-		case MatchOptions::ArtFactor::Magor:
-			fk = 0.75f;
-			return true;
-		case MatchOptions::ArtFactor::Max:
-			fk = 1;
-			return true;
+		fk = FactorK( f );
+		return true;
 	}
-	return false;
+	else
+		return false;
+}
+
+float linerp( const int x, const int x1, const float y1, const int x2, const float y2 )
+{
+	const float a = float(y2 - y1) / (x2 - x1);
+	const float b = float(x2*y1 - x1*y2) / (x2 - x1);
+	return a * x + b;
+}
+
+bool EstimateMinCap( const int value, const int ref_value, const int width, float& e )
+{
+	if ( value <= (ref_value - width/2) )
+	{
+		e = fK_ignore;
+		return false;
+	}
+	if ( value < ref_value )
+		e = linerp( value, ref_value - width / 2, fK_ignore, ref_value, fK_max );
+	else
+	if ( value < (ref_value + width) )
+		e = fK_max;
+	else
+	if ( value < (ref_value + 3*width/2) )
+		e = linerp( value, ref_value+width, fK_max, ref_value+3*width/2, fK_moderate );
+	else
+		e = fK_moderate;
+	return true;
 }
 
 float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matching )
 {
 	float est = 0;
+
 	for ( StatType st : ChampionStats::TypeList )
 	{
 		const int min_stat_cap = matching.MinCap[ stl::enum_to_int(st) ];
 		if ( min_stat_cap <= 0 )
-			continue;
+			continue;	//not requested
 		_ASSERTE( matching.Factor(st) == MatchOptions::ArtFactor::MinCap );
-		if ( ch_stats[st] < min_stat_cap )
-			return 0.f;
+
+		float e = 0;
+		if ( !EstimateMinCap( ch_stats[st], min_stat_cap, 20, e ) )
+			return 0.f;	//too small => not accepted
+		est += e;
 	}
+
 	for ( StatType st : ChampionStats::TypeList )
 	{
 		const MatchOptions::ArtFactor f = matching.Factor( st );
 		float fk = 0;
 		if ( FloatEstimationFactor( f, fk ) )
 		{
-			est += fk * (float)ch_stats[st] / ref_stat_values[ stl::enum_to_int(st) ];
+			const int stat_value = ch_stats[st];
+			const int ref_stat_value = Ref_Stat_Values[ stl::enum_to_int(st) ];
+			const int max_stat_cap   = Max_Stat_Caps[ stl::enum_to_int(st) ];
+
+			float e = 0;
+			if ( max_stat_cap && stat_value > max_stat_cap )
+			{
+				const int excessive_threshold = max_stat_cap * 110 / 100;
+				if ( stat_value > excessive_threshold )
+					continue;	//stat got too high, give 0 estimation (or "return 0;" ?)
+				else {
+					e = linerp( stat_value, max_stat_cap, 1, excessive_threshold, 0 );
+				}
+			}
+			else
+				e = (float)stat_value / ref_stat_value;
+
+			est += fk * e;
 		}
 		else {
 			switch ( f )
@@ -112,12 +176,16 @@ void ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 	{
 		best_combination._Est = est;
 		best_combination._Eq = eq;
+
+#ifdef DEBUG_FIND_BEST
+		//std::cout << "\nBetter: (" << est << ")\n" << to_string( eq ) << "\n";
+		std::cout << "\nBetter: (" << est << ")\n" << to_string( arts_bonus_stats ) << "\n";
+#endif
 	}
 }
 
 void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, Equipment& best_eq )
 {
-	scope_profile_time prof_time( "FindBestEquipment" );
 	std::cout << arts_by_type_iterator::n_combinations(arts_by_type) << " combinations\n";
 
 	EqEst best;
@@ -148,6 +216,9 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 		}
 	);
 #else
+#ifdef NDEBUG
+#error TBB is disabled
+#endif
 	arts_by_type_iterator eq_i( arts_by_type );
 	EquipmentRef eq;
 	for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
@@ -181,7 +252,7 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& 
 	FindBestEquipment( arts_by_type, ch, matching, best_eq );
 }
 
-Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
+Equipment FindRealBestEquipment( ChampionExt& ch, const MatchOptions& matching )
 {
 	scope_profile_time prof_time( "FindRealBestEquipment" );
 	Equipment best_eq;
@@ -190,7 +261,7 @@ Equipment FindRealBestEquipment( Champion& ch, const MatchOptions& matching )
 	SeparateInventory( _MyArts, matching, ch.Name, arts_by_type );
 	FindBestEquipment( arts_by_type, ch, matching, best_eq );
 
-	ApplyEquipment( best_eq, ch, false, matching.ConsiderMaxLevels );
+	ApplyEquipment( best_eq, ch.BasicStats, ch.ArtsBonusStats, false, matching.ConsiderMaxLevels );
 
 	return best_eq;
 }

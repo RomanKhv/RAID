@@ -198,11 +198,6 @@ bool Champion::IsReal() const
 	return Elem != Element::none;
 }
 
-ChampionStats Champion::TotalStats(bool apply_hall_bonus) const
-{
-	return TotalStats( ArtsBonusStats, apply_hall_bonus );
-}
-
 ChampionStats Champion::TotalStats( const ChampionStats& arts_bonus_stats, bool apply_hall_bonus ) const
 {
 	ChampionStats stats = BasicStats + arts_bonus_stats;
@@ -214,6 +209,21 @@ ChampionStats Champion::TotalStats( const ChampionStats& arts_bonus_stats, bool 
 	}
 
 	return stats;
+}
+
+ChampionExt::ChampionExt( const Champion& b )
+	:Champion(b)
+{
+}
+
+void ChampionExt::ApplyEquipment( const Equipment& eq, bool estimating, bool consider_max_level )
+{
+	::ApplyEquipment( eq, BasicStats, ArtsBonusStats, estimating, consider_max_level );
+}
+
+ChampionStats ChampionExt::TotalStats( bool apply_hall_bonus ) const
+{
+	return Champion::TotalStats( ArtsBonusStats, apply_hall_bonus );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -277,9 +287,9 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			}
 			else {
 				static const int banner[3][5] = {
-					//      0   4    8   12   16
-					/*4*/{ 24, 0,  0, 0, 0 },
-					/*5*/{ 38, 0, 0, 0, 0 },
+					//      0  4  8  12  16
+					/*4*/{ 24, 0, 0, 0, 285 },
+					/*5*/{ 38, 0, 0, 0, 338 },
 					/*6*/{ 53, 0, 0, 0, 0 }
 				};
 				stat_table = &banner;
@@ -299,9 +309,9 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			}
 			else {
 				static const int banner[3][5] = {
-					//      0     4     8    12    16
-					/*4*/{ 390,    0, 0, 0, 0 },
-					/*5*/{ 675, 0, 0, 0, 0 },
+					//      0   4  8  12   16
+					/*4*/{ 390, 0, 0, 0, 4260 },
+					/*5*/{ 675, 0, 0, 0, 5220 },
 					/*6*/{ 900, 0, 0, 0, 0 }
 				};
 				stat_table = &banner;
@@ -337,8 +347,8 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			else {
 				static const int necklace[3][5] = {
 					//     0  4  8 12  16
-					/*4*/{ 4, 0, 0, 0, 0 },
-					/*5*/{ 5, 0, 0, 0, 0 },
+					/*4*/{ 4, 0, 0, 0, 25 },
+					/*5*/{ 5, 0, 0, 0, 33 },
 					/*6*/{ 6, 0, 0, 0, 0 },
 				};
 				stat_table = &necklace;
@@ -362,7 +372,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 			{
 				static const table_t values_Acc_Res = {
 					//      0   4   8  12  16
-					/*4*/{  8, 0, 0, 0, 60 },
+					/*4*/{  8, 0, 0, 0, 64 },
 					/*5*/{ 12, 0, 0, 0, 78 },
 					/*6*/{ 16, 0, 0, 0, 96 },
 				};
@@ -497,7 +507,7 @@ void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStat
 	_ASSERTE( !"unreachable code" );
 }
 
-void ApplyStat( const Stat& stat, Champion& ch )
+void ApplyStat( const Stat& stat, ChampionExt& ch )
 {
 	ApplyStat( stat, ch.BasicStats, ch.ArtsBonusStats );
 }
@@ -585,35 +595,44 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 	}
 }
 
-void ApplySetsBonuses( const Equipment& eq, Champion& ch, bool compensation )
+void ApplySetsBonuses( const Equipment& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation )
 {
 	int n_arts_by_set[Artefact::SetCount] = {0};
-	for ( const Artefact& art : eq.Arts )
+	for ( size_t iat = 0; iat < Equipment::BasicSize; ++iat )
 	{
+		const Artefact& art = eq.Arts[iat];
 		if ( art.Initialized() )
-			n_arts_by_set[stl::enum_to_int(art.Set)]++;
+		{
+			_ASSERTE( art.IsBasic() );
+			n_arts_by_set[stl::enum_to_int( art.Set )]++;
+		}
 	}
 	for ( int set = 0; set < Artefact::SetCount; ++set )
 	{
+		if ( !n_arts_by_set[set] )
+			continue;
 		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
 		for ( int i = 0; i < count; ++i )
-			ApplySetBonus( static_cast<ArtSet>(set), ch.BasicStats, ch.ArtsBonusStats, compensation );
+			ApplySetBonus( static_cast<ArtSet>(set), basic_stats, art_bonus_stats, compensation );
 	}
 }
 
 void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool compensation )
 {
 	int n_arts_by_set[Artefact::SetCount] = {0};
-	for ( const Artefact* art : eq.Arts )
+	for ( size_t iat = 0; iat < Equipment::BasicSize; ++iat )
 	{
-		if ( art )
+		if ( const Artefact* art = eq.Arts[iat] )
 		{
 			_ASSERTE( art->Initialized() );
+			_ASSERTE( art->IsBasic() );
 			n_arts_by_set[stl::enum_to_int( art->Set )]++;
 		}
 	}
 	for ( int set = 0; set < Artefact::SetCount; ++set )
 	{
+		if ( !n_arts_by_set[set] )
+			continue;
 		const int count = n_arts_by_set[set] / SetSize_fast( static_cast<ArtSet>(set) );
 		for ( int i = 0; i < count; ++i )
 			ApplySetBonus( static_cast<ArtSet>(set), basic_stats, arts_bonus_stats, compensation );
@@ -634,15 +653,15 @@ void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, Champ
 		ApplyStat( stat, basic_stats, arts_bonus_stats );
 }
 
-void ApplyEquipment( const Equipment& eq, Champion& ch, bool estimating, bool consider_max_level )
+void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level )
 {
-	ApplySetsBonuses( eq, ch, estimating );
+	ApplySetsBonuses( eq, basic_stats, art_bonus_stats, estimating );
 
 	for ( const Artefact& art : eq.Arts )
 	{
 		if ( art.Initialized() )
 		{
-			ApplyArtBonus( art, ch.BasicStats, ch.ArtsBonusStats, estimating || consider_max_level );
+			ApplyArtBonus( art, basic_stats, art_bonus_stats, estimating || consider_max_level );
 		}
 	}
 }
@@ -698,6 +717,8 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 	for ( const auto& p : min_caps )
 	{
 		IsValidStatForChampion( p.first );
+		_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
+		Factors[stl::enum_to_int( p.first )] = ArtFactor::MinCap;
 		MinCap[stl::enum_to_int( p.first )] = p.second;
 	}
 }
@@ -706,6 +727,9 @@ bool MatchOptions::IsSetAccepted( ArtSet set ) const
 {
 	if ( SetFilter.empty() )
 		return true;	//accept all
+
+	if ( set == ArtSet::None )
+		return true;	//ring/necklace/banner
 
 	return SetFilter.count( set ) > 0;
 }
@@ -739,9 +763,14 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 		return false;
 
 	std::map<ArtSet,int> eq_sets;
-	for ( const Artefact* art : eq.Arts )
-		if ( art )
+	for ( size_t iat = 0; iat < Equipment::BasicSize; ++iat )
+	{
+		if ( const Artefact* art = eq.Arts[iat] )
+		{
+			_ASSERTE( art->IsBasic() );
 			eq_sets[art->Set] ++;
+		}
+	}
 
 	for ( const auto& rs : req_sets )
 	{

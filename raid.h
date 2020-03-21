@@ -112,13 +112,14 @@ struct Artefact
 	boost::container::static_vector<Stat,4> AddStats;
 
 	ChampionName Owner = ChampionName::none;
-
-	static constexpr int SetCount = static_cast<int>( ArtSet::Count );
 	
 	Artefact() = default;
 	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat>, ChampionName owner = ChampionName::none );
 	bool Initialized() const { return Type != ArtType::None; }
+	bool IsBasic() const { return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }
 	Stat GetMainStat( bool consider_max_level ) const;
+
+	static constexpr int SetCount = static_cast<int>( ArtSet::Count );
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -134,6 +135,7 @@ enum class Element {
 struct ChampionStats
 {
 	static const int Count = 8;
+	using values_t = int[Count];
 	union {
 		struct {
 			int HP;
@@ -145,7 +147,7 @@ struct ChampionStats
 			int Res;
 			int Acc;
 		};
-		int Values[Count];
+		values_t Values;
 	};
 
 	ChampionStats() : HP(0), Atk(0), Def(0), Spd(0), CRate(0), CDmg(0), Res(0), Acc(0) {}
@@ -162,7 +164,7 @@ struct ChampionStats
 
 struct Equipment
 {
-	//static const int BasicSize = 6;
+	static const int BasicSize = 6;
 	static const int TotalSize = 9;
 	Artefact Arts[TotalSize];
 
@@ -209,14 +211,22 @@ struct EquipmentRef
 struct Champion
 {
 	const ChampionStats BasicStats;
-	ChampionStats ArtsBonusStats;
 	const Element Elem;
 	const ChampionName Name = ChampionName::none;
 
 	explicit Champion( const ChampionStats& basic, Element e = Element::none, ChampionName name = ChampionName::none );
 	bool IsReal() const;
-	ChampionStats TotalStats( bool apply_hall_bonus = true ) const;
 	ChampionStats TotalStats( const ChampionStats& art_bonus_stats, bool apply_hall_bonus = true ) const;
+};
+
+struct ChampionExt
+	: public Champion
+{
+	ChampionStats ArtsBonusStats;
+
+	ChampionExt( const Champion& );
+	void ApplyEquipment( const Equipment&, bool estimating, bool consider_max_level );
+	ChampionStats TotalStats( bool apply_hall_bonus = true ) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -229,11 +239,11 @@ bool IsValidStatForArt( StatType, ArtType );
 bool IsValidStatForChampion( StatType );
 bool IsGoodStatForArt( StatType, ArtType );
 void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus );
-void ApplyStat( const Stat&, Champion& );
+void ApplyStat( const Stat&, ChampionExt& );
 void ApplySetBonus( ArtSet, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
-void ApplySetsBonuses( const Equipment&, Champion&, bool compensation );
+void ApplySetsBonuses( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
 void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool consider_max_level /*= false*/ );
-void ApplyEquipment( const Equipment&, Champion&, bool estimating, bool consider_max_level );
+void ApplyEquipment( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
 void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
 void ApplyHallBonus( const Champion&, ChampionStats& );
 
@@ -255,11 +265,11 @@ extern std::map<StatType, int> _MyLeage;
 struct MatchOptions
 {
 	enum class ArtFactor {
-		NotInterested,
-		Minor,
-		Moderate,
-		Magor,
-		Max,
+		NotInterested = 0,
+		Minor         = 1,
+		Moderate      = 2,
+		Magor         = 3,
+		Max           = 4,
 		MinCap,
 	};
 	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
@@ -285,11 +295,11 @@ struct MatchOptions
 	bool IsSetAccepted( ArtSet ) const;
 	bool IsArtAccepted( const Artefact&, ChampionName ) const;
 	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
-	//bool IsEqAccepted( const Equipment& ) const;
 };
 
-Equipment FindRealBestEquipment( Champion&, const MatchOptions& );
+bool EstimateMinCap( int value, int ref_value, int width, float& f );
 void FindBestEquipment( const std::vector<Artefact>&, const Champion&, const MatchOptions&, Equipment& );
+Equipment FindRealBestEquipment( ChampionExt&, const MatchOptions& );
 
 /////////////////////////////////////////////////////////////////////////////
 
