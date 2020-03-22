@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "to_string.h"
+#include <boost/format.hpp>
 
 #define CASE_RETURN_STRING( et, ei )	case et::ei: return #ei;
 
@@ -91,17 +92,20 @@ std::string to_string( const ArtSet& set )
 std::string to_string( const Artefact& art )
 {
 	std::stringstream ss;
-	ss << to_string(art.Type) << ":\t[" << to_string(art.Set) << "]\t";
-	ss << art.Stars << "* (" << art.Level << ") ";
+	ss.width(8);	ss << std::left << (to_string(art.Type) + ":");
+	ss.width(11);	ss << (boost::format("[%s]") % to_string(art.Set) ).str();
+	ss << art.Stars << "* (";
+	ss.width(4); ss << (boost::format("%d)") % art.Level).str();
+	ss.width(6); ss << std::left;
 	switch ( art.Type )
 	{
 		case ArtType::Weapon:
 		case ArtType::Helmet:
 		case ArtType::Shield:
-			ss << "\t\t\t";
+			ss << "";
 			break;
 		default:
-			ss << "\t" << to_string( art.MainStat ) << "\t";
+			ss << to_string( art.MainStat );
 			break;
 	};
 	if ( !art.AddStats.empty() )
@@ -163,12 +167,13 @@ std::string stats_progress( const ChampionStats& new_stats, const ChampionStats&
 	std::stringstream ss;
 	for ( StatType st : ChampionStats::TypeList )
 	{
-		ss << to_string(st) << ":\t" << new_stats[st];
+		ss.width( 7 );	ss << std::left << (to_string(st) + ":");
+		ss << new_stats[st];
 		const int delta = new_stats[st] - prev_stats[st];
+		//ss << "\t(";
+		ss << " (";
 		if ( delta > 0 )
-			ss << ":\t(+";
-		else
-			ss << ":\t(";
+			ss << "+";
 		ss << delta << ")\n";
 	}
 	return ss.str();
