@@ -183,6 +183,7 @@
     <ClInclude Include="profiler.h" />
     <ClInclude Include="raid.h" />
     <ClInclude Include="stl_ext.h" />
+    <ClInclude Include="suiter.h" />
     <ClInclude Include="to_string.h" />
   </ItemGroup>
   <ItemGroup>

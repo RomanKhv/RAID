@@ -3,6 +3,8 @@
 #include "raid.h"
 #include "iterator.h"
 #include "iterator2.h"
+#include "suiter.h"
+#include "to_string.h"
 
 #ifndef DEBUG_FIND_BEST
 #define GENERAL_TESTS
@@ -166,6 +168,20 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 //				}
 //}
 
+EquipmentRef convert( const Equipment& ref_eq )
+{
+	EquipmentRef eq;
+	for ( ArtType at : Equipment::AllTypesArr )
+	{
+		const Artefact& ref_art = ref_eq[at];
+		if ( ref_art.Initialized() )
+			eq.Arts[at] = &ref_art;
+		else
+			eq.Arts[at] = nullptr;
+	}
+	return eq;
+}
+
 BOOST_AUTO_TEST_CASE( find_RequiredSets )
 {
 	{
@@ -176,9 +192,9 @@ BOOST_AUTO_TEST_CASE( find_RequiredSets )
 			Artefact( ArtType::Chest, ArtSet::Speed, 5, 8, StatType::Def_p, {} ),
 			Artefact( ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, {} ),
 		};
-		BOOST_CHECK( MatchOptions( {}, {} ).IsEqHasRequiredSets( eq ) );
-		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Speed } ).IsEqHasRequiredSets( eq ) );
-		BOOST_CHECK( !MatchOptions( {}, { ArtSet::HP, ArtSet::Atk } ).IsEqHasRequiredSets( eq ) );
+		BOOST_CHECK( MatchOptions( {}, {} ).IsEqHasRequiredSets( convert(eq) ) );
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Speed } ).IsEqHasRequiredSets( convert(eq) ) );
+		BOOST_CHECK( !MatchOptions( {}, { ArtSet::HP, ArtSet::Atk } ).IsEqHasRequiredSets( convert(eq) ) );
 	}
 	{
 		const Equipment eq = {
@@ -188,7 +204,7 @@ BOOST_AUTO_TEST_CASE( find_RequiredSets )
 			Artefact( ArtType::Chest, ArtSet::HP, 5, 8, StatType::Def_p, {} ),
 			Artefact( ArtType::Boots, ArtSet::HP, 5, 8, StatType::Spd, {} ),
 		};
-		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::HP } ).IsEqHasRequiredSets( eq ) );
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::HP } ).IsEqHasRequiredSets( convert(eq) ) );
 	}
 	{
 		const Equipment eq = {
@@ -199,8 +215,8 @@ BOOST_AUTO_TEST_CASE( find_RequiredSets )
 			Artefact( ArtType::Chest, ArtSet::HP, 5, 8, StatType::Def_p, {} ),
 			Artefact( ArtType::Boots, ArtSet::Vamp, 5, 8, StatType::Spd, {} ),
 		};
-		BOOST_CHECK( MatchOptions( {}, { ArtSet::Vamp } ).IsEqHasRequiredSets( eq ) );
-		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Vamp } ).IsEqHasRequiredSets( eq ) );
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
+		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
 	}
 }
 
@@ -349,6 +365,54 @@ BOOST_AUTO_TEST_CASE( test_Estimation_FloatFactor )
 	BOOST_CHECK( EstimateMinCap( 200, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
 }
 
+BOOST_AUTO_TEST_CASE( test_join )
+{
+	const std::vector<Artefact> inventory = {
+		Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
+		Artefact( ArtType::Helmet, ArtSet::Def, 5, 8, StatType::HP, {} ),
+		Artefact( ArtType::Shield, ArtSet::Atk, 4, 8, StatType::Def, {} ),
+		Artefact( ArtType::Chest, ArtSet::Speed, 4, 8, StatType::Def_p, {} ),
+		Artefact( ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, {} ),
+	};
+	{
+		EqEst est1( 1, {} );
+		EqEst est2( 2, {} );
+
+		est2._join( est1 );
+		BOOST_CHECK_EQUAL( est2._Est, 2 );
+		est1._join( est2 );
+		BOOST_CHECK_EQUAL( est1._Est, 2 );
+	}
+	{
+		EqEstPool pool;
+		pool.join( EqEst( 2, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 1 );
+
+		pool.join( EqEst( 1, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 2 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 2 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 1 );
+
+		pool.join( EqEst( 4, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 2 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 1 );
+
+		pool.join( EqEst( 3, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 2 );
+
+		pool.join( EqEst( 0.5, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 2 );
+	}
+}
+
 const std::map<StatType, MatchOptions::ArtFactor> All_Stats_Moderate = {
 	{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
 	{ StatType::Atk, MatchOptions::ArtFactor::Moderate },
@@ -415,7 +479,7 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 	BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
 	BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
 	BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
-	BOOST_CHECK_EQUAL( hall_stats.Acc, 20 );
+	BOOST_CHECK_EQUAL( hall_stats.Acc, 30 );
 
 	//const ChampionStats final_stats = ch.TotalStats( true );
 	//BOOST_CHECK_EQUAL( final_stats.HP, 32506 );

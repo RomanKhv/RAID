@@ -176,5 +176,6 @@ std::string stats_progress( const ChampionStats& new_stats, const ChampionStats&
 			ss << "+";
 		ss << delta << ")\n";
 	}
+	suppress_last_symbol( ss );
 	return ss.str();
 }

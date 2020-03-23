@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "raid.h"
+#include "suiter.h"
 #include "iterator.h"
 #include "iterator2.h"
 #include "stl_ext.h"
@@ -23,7 +23,7 @@ const ChampionStats::values_t Ref_Stat_Values = {
 	/*StatType::Def*/ 3500,
 	/*StatType::Spd*/ 150,
 	/*StatType::CRate*/ 100,
-	/*StatType::CDmg*/ 100,
+	/*StatType::CDmg*/ 150,
 	/*StatType::Res*/ 80,
 	/*StatType::Acc*/ 150,
 };
@@ -35,6 +35,17 @@ const ChampionStats::values_t Max_Stat_Caps = {
 	/*StatType::Spd*/  0,
 	/*StatType::CRate*/ 100,
 	/*StatType::CDmg*/ 0,
+	/*StatType::Res*/  0,
+	/*StatType::Acc*/  0,
+};
+
+const ChampionStats::values_t Stat_Tolerance = {
+	/*StatType::HP*/   0,
+	/*StatType::Atk*/  400,
+	/*StatType::Def*/  400,
+	/*StatType::Spd*/  10,
+	/*StatType::CRate*/ 10,
+	/*StatType::CDmg*/ 20,
 	/*StatType::Res*/  0,
 	/*StatType::Acc*/  0,
 };
@@ -91,6 +102,32 @@ bool EstimateMinCap( const int value, const int ref_value, const int width, floa
 	return true;
 }
 
+int GetActualMaxCap( StatType st, const MatchOptions& matching )
+{
+	const int global_max_stat_cap = Max_Stat_Caps[stl::enum_to_int( st )];
+	const int champ_max_stat_cap = matching.MaxCap[stl::enum_to_int( st )];
+	if ( champ_max_stat_cap || global_max_stat_cap )
+	{
+		if ( champ_max_stat_cap && global_max_stat_cap )
+		{
+			_ASSERTE( champ_max_stat_cap < global_max_stat_cap );
+			return std::min( champ_max_stat_cap, global_max_stat_cap );
+		}
+		else {
+			if ( champ_max_stat_cap )
+			{
+				_ASSERTE( !global_max_stat_cap );
+				return champ_max_stat_cap;
+			}
+			else {
+				return global_max_stat_cap;
+			}
+		}
+	}
+	else
+		return 0;
+}
+
 float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matching )
 {
 	float est = 0;
@@ -116,12 +153,15 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 		{
 			const int stat_value = ch_stats[st];
 			const int ref_stat_value = Ref_Stat_Values[ stl::enum_to_int(st) ];
-			const int max_stat_cap   = Max_Stat_Caps[ stl::enum_to_int(st) ];
+			const int max_stat_cap   = GetActualMaxCap( st, matching );
 
 			float e = 0;
 			if ( max_stat_cap && stat_value > max_stat_cap )
 			{
-				const int excessive_threshold = max_stat_cap * 110 / 100;
+				const int tol = Stat_Tolerance[stl::enum_to_int( st )];
+				const int excessive_threshold = ( tol > 0 ) ?
+					max_stat_cap + tol :
+					Max_Stat_Caps[ stl::enum_to_int(st) ] * 110 / 100;
 				if ( stat_value > excessive_threshold )
 					continue;	//stat got too high, give 0 estimation (or "return 0;" ?)
 				else {
@@ -146,26 +186,49 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	return est;
 }
 
-struct EqEst
-{
-	float _Est = 0;
-	EquipmentRef _Eq;
+/////////////////////////////////////////////////////////////////////////////
 
-	void join( const EqEst& rhs )
+EqEstPool::EqEstPool()
+	:_Arr( Size )
+{
+}
+
+void EqEstPool::join( const EqEst& rhs )
+{
+	_ASSERTE( _Arr.capacity() == Size );
+	_ASSERTE( rhs.Initialized() );
+
+	bool inserted = false;
+	for ( auto i = _Arr.begin(); i != _Arr.end(); ++i )
 	{
-		if ( rhs._Est > _Est )
+		if ( rhs._Est > i->_Est )
 		{
-			_Est = rhs._Est;
-			_Eq = rhs._Eq;
+			if ( _Arr.full() )
+				_Arr.pop_back();
+			_Arr.insert( i, rhs );
+			inserted = true;
+			break;
 		}
 	}
-};
+	if ( !inserted && !_Arr.full() )
+		_Arr.push_back( rhs );
+}
 
-void ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, const MatchOptions& matching, EqEst& best_combination )
+void EqEstPool::join( const EqEstPool& rhs )
+{
+	_ASSERTE( _Arr.capacity() == Size );
+
+	for ( const EqEst& est : rhs._Arr )
+		join( est );
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+bool ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, const MatchOptions& matching, EqEst& best_combination )
 {
 	if ( !matching.RequiedSets.empty() &&
 		!matching.IsEqHasRequiredSets( eq ) )
-		return;
+		return false;
 
 	ChampionStats arts_bonus_stats;
 	ApplyEquipment( eq, target_champ.BasicStats, arts_bonus_stats, true, matching.ConsiderMaxLevels );
@@ -179,16 +242,16 @@ void ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 
 #ifdef DEBUG_FIND_BEST
 		//std::cout << "\nBetter: (" << est << ")\n" << to_string( eq ) << "\n";
-		std::cout << "\nBetter: (" << est << ")\n" << to_string( arts_bonus_stats ) << "\n";
+		//std::cout << "\nBetter: (" << est << ")\n" << to_string( arts_bonus_stats ) << "\n";
 #endif
+		return true;
 	}
+	return false;
 }
 
-void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, Equipment& best_eq )
+void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, EqEst& best )
 {
 	std::cout << arts_by_type_iterator::n_combinations(arts_by_type) << " combinations\n";
-
-	EqEst best;
 
 #ifdef USE_TBB
 	best =
@@ -211,7 +274,7 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 		},
 		[]( EqEst lhs, const EqEst& rhs )
 		{
-			lhs.join( rhs );
+			lhs._join( rhs );
 			return lhs;
 		}
 	);
@@ -229,9 +292,55 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 		ProcessCombination( eq, target_champ, matching, best );
 	}
 #endif
+}
 
-	for ( ArtType at : Equipment::AllTypesArr )
-		best_eq[at] = best._Eq[at];
+void FindBestEquipment2( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, EqEstPool& best )
+{
+	std::cout << arts_by_type_iterator::n_combinations(arts_by_type) << " combinations\n";
+
+#ifdef USE_TBB
+	best =
+	tbb::parallel_reduce( tbb::blocked_range<size_t>( 0, arts_by_type.cbegin()->second.size() ), EqEstPool(),
+		[&arts_by_type, &target_champ, &matching]( const tbb::blocked_range<size_t>& r, EqEstPool better )
+		{
+			for ( size_t root_index = r.begin(); root_index < r.end(); ++root_index )
+			{
+				arts_by_type_iterator2 eq_i( arts_by_type, root_index );
+				EquipmentRef eq;
+				for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
+				{
+					eq_i.get( eq );
+					_ASSERTE( eq.CheckValidMapping() );
+
+					EqEst est;
+					if ( ProcessCombination( eq, target_champ, matching, est ) )
+						better.join( est );
+				}
+			}
+			return better;
+		},
+		[]( EqEstPool lhs, const EqEstPool& rhs )
+		{
+			lhs.join( rhs );
+			return lhs;
+		}
+	);
+#else
+#ifdef NDEBUG
+#error TBB is disabled
+#endif
+	arts_by_type_iterator eq_i( arts_by_type );
+	EquipmentRef eq;
+	for ( eq_i.begin(); !eq_i.finished(); eq_i.next() )
+	{
+		eq_i.get( eq );
+		_ASSERTE( eq.CheckValidMapping() );
+
+		EqEst est;
+		if ( ProcessCombination( eq, target_champ, matching, est ) )
+			best.join( est );
+	}
+#endif
 }
 
 void SeparateInventory( const std::vector<Artefact>& inventory, const MatchOptions& matching, ChampionName ch_name,
@@ -249,19 +358,42 @@ void FindBestEquipment( const std::vector<Artefact>& inventory, const Champion& 
 {
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
 	SeparateInventory( inventory, matching, ch.Name, arts_by_type );
-	FindBestEquipment( arts_by_type, ch, matching, best_eq );
+
+	EqEst best;
+	FindBestEquipment( arts_by_type, ch, matching, best );
+
+	best_eq = best._Eq.as_basic();
+}
+
+void FindBestEquipment2( const std::vector<Artefact>& inventory, const Champion& ch, const MatchOptions& matching, std::vector<Equipment>& eqs )
+{
+	std::map<ArtType, std::vector<Artefact>> arts_by_type;
+	SeparateInventory( inventory, matching, ch.Name, arts_by_type );
+
+	EqEstPool best;
+	FindBestEquipment2( arts_by_type, ch, matching, best );
+
+	for ( const EqEst& rhs : best._Arr )
+	{
+		eqs.emplace_back( rhs._Eq.as_basic() );
+	}
 }
 
 Equipment FindRealBestEquipment( ChampionExt& ch, const MatchOptions& matching )
 {
 	scope_profile_time prof_time( "FindRealBestEquipment" );
-	Equipment best_eq;
 
-	std::map<ArtType, std::vector<Artefact>> arts_by_type;
-	SeparateInventory( _MyArts, matching, ch.Name, arts_by_type );
-	FindBestEquipment( arts_by_type, ch, matching, best_eq );
+	Equipment best_eq;
+	FindBestEquipment( _MyArts, ch, matching, best_eq );
 
 	ApplyEquipment( best_eq, ch.BasicStats, ch.ArtsBonusStats, false, matching.ConsiderMaxLevels );
 
 	return best_eq;
+}
+
+void FindRealBestEquipment2( const Champion& ch, const MatchOptions& matching, std::vector<Equipment>& eqs )
+{
+	scope_profile_time prof_time( "FindRealBestEquipment" );
+
+	FindBestEquipment2( _MyArts, ch, matching, eqs );
 }

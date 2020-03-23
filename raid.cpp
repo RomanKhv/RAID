@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "raid.h"
-#include <boost/algorithm/clamp.hpp>
+#include "suiter.h"
 #include "stl_ext.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -15,13 +15,20 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	,AddStats( addstats.begin(), addstats.end() )
 	,Owner(owner)
 {
+	_ASSERTE( Initialized() );
 	_ASSERTE( IsValidStatForArt( mainstat, type ) );
 	_ASSERTE( IsGoodStatForArt( mainstat, type ) );
 	_ASSERTE( addstats.size() <= 4 );
 }
 
+void Artefact::Reset()
+{
+	*this = Artefact();
+}
+
 Stat Artefact::GetMainStat( bool consider_max_level ) const
 {
+	_ASSERTE( Initialized() );
 	return {
 		MainStat,
 		StatValueForLevel( Type, MainStat, Stars, consider_max_level ? 16 : Level )
@@ -66,17 +73,6 @@ size_t Equipment::Size() const
 
 /////////////////////////////////////////////////////////////////////////////
 
-EquipmentRef::EquipmentRef( const Equipment& ref_eq )
-{
-	for ( const Artefact& ref_art : ref_eq.Arts )
-	{
-		if ( ref_art.Initialized() )
-			Arts[ref_art.Type] = &ref_art;
-		else
-			Arts[ref_art.Type] = nullptr;
-	}
-}
-
 void EquipmentRef::Clear()
 {
 	for ( art_ref& art : Arts )
@@ -90,7 +86,7 @@ size_t EquipmentRef::Size() const
 	{
 		if ( art )
 		{
-			_ASSERTE( Initialized(art->Type) );
+			_ASSERTE( Initialized( art->Type ) );
 			_ASSERTE( art->Initialized() );
 			n_arts++;
 		}
@@ -102,11 +98,25 @@ bool EquipmentRef::CheckValidMapping() const
 {
 	for ( ArtType at : Equipment::AllTypesArr )
 	{
+		_ASSERTE( stl::is_valid_enum_as_index( at ) );
 		art_ref art = Arts[at];
 		if ( art && art->Type!=at )
 			return false;
 	}
 	return true;
+}
+
+Equipment EquipmentRef::as_basic() const
+{
+	Equipment eq;
+	for ( ArtType at : Equipment::AllTypesArr )
+	{
+		if ( const Artefact* art = Arts[at] )
+			eq[at] = *art;
+		else
+			eq[at].Reset();
+	}
+	return eq;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -704,11 +714,12 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 /////////////////////////////////////////////////////////////////////////////
 
 MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> set_filter,
-							bool consider_max_lvl, std::map<StatType, int> min_caps )
+							bool consider_max_lvl, std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
 	:RequiedSets( std::move( req_filter ) )
 	,SetFilter( std::move( set_filter ) )
-	,ConsiderMaxLevels( consider_max_lvl )
+	//,ConsiderMaxLevels( consider_max_lvl )
 {
+	_ASSERTE( ConsiderMaxLevels == consider_max_lvl );
 	for ( const auto& p : factors )
 	{
 		IsValidStatForChampion( p.first );
@@ -720,6 +731,13 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 		_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
 		Factors[stl::enum_to_int( p.first )] = ArtFactor::MinCap;
 		MinCap[stl::enum_to_int( p.first )] = p.second;
+	}
+	for ( const auto& p : max_caps )
+	{
+		IsValidStatForChampion( p.first );
+		//_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
+		//Factors[stl::enum_to_int( p.first )] = ArtFactor::MaxCap;		"max cap" is additional limitation
+		MaxCap[stl::enum_to_int( p.first )] = p.second;
 	}
 }
 
@@ -797,9 +815,11 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 
 Equipment GetCurrentEquipmentFor( ChampionName name )
 {
+	_ASSERTE( name != ChampionName::none );
 	Equipment eq;
 	for ( const Artefact& art : _MyArts )
 	{
+		_ASSERTE( art.Initialized() );
 		if ( art.Owner == name )
 			eq[art.Type] = art;
 	}

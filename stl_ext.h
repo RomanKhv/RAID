@@ -40,6 +40,12 @@ constexpr int enum_to_int( ENUM e )
 	return static_cast<int>(e);
 }
 
+template <typename ENUM>
+constexpr bool is_valid_enum_as_index( ENUM e )
+{
+	return static_cast<int>(e) >= 0;
+}
+
 template <typename ENUM, typename VALUE_TYPE>
 void copy_map_to_array( const std::map<ENUM, VALUE_TYPE>& m, VALUE_TYPE arr[] )
 {

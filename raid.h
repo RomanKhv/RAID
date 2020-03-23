@@ -9,7 +9,7 @@
 
 enum /*class*/ ArtType
 {
-	None = -1,
+	None = -1,	//-1 is good for finding algorytm errors
 
 	Weapon,
 	Helmet,
@@ -115,8 +115,9 @@ struct Artefact
 	
 	Artefact() = default;
 	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat>, ChampionName owner = ChampionName::none );
-	bool Initialized() const { return Type != ArtType::None; }
-	bool IsBasic() const { return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }
+	void Reset();
+	bool Initialized() const { return Stars > 0; }
+	bool IsBasic() const { _ASSERTE(Initialized()); return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }
 	Stat GetMainStat( bool consider_max_level ) const;
 
 	static constexpr int SetCount = static_cast<int>( ArtSet::Count );
@@ -170,11 +171,11 @@ struct Equipment
 
 	Equipment() = default;
 	Equipment( std::initializer_list<Artefact> il );
-	const Artefact& operator[]( ArtType t ) const { return Arts[ static_cast<int>(t) ]; }
-	Artefact& operator[]( ArtType t ) { return Arts[ static_cast<int>(t) ]; }
-	bool Initialized( ArtType t ) const { return operator[](t).Initialized(); }
-	void Clear();
 	size_t Size() const;
+	const Artefact& operator[]( ArtType t ) const { _ASSERTE( stl::is_valid_enum_as_index(t) ); return Arts[ stl::enum_to_int(t) ]; }
+	Artefact& operator[]( ArtType t )             { _ASSERTE( stl::is_valid_enum_as_index(t) ); return Arts[ stl::enum_to_int(t) ]; }
+	bool Initialized( ArtType t ) const           { _ASSERTE( stl::is_valid_enum_as_index(t) ); return operator[](t).Initialized(); }
+	void Clear();
 
 	//static const ArtType BasicTypesArr[BasicSize];
 	static const ArtType AllTypesArr[TotalSize];
@@ -186,9 +187,9 @@ struct EquipmentRef
 	art_ref Arts[Equipment::TotalSize] = {nullptr};
 
 	EquipmentRef() = default;
-	EquipmentRef( const Equipment& );
 
 	const Artefact& operator[]( ArtType t ) const {
+		_ASSERTE( stl::is_valid_enum_as_index(t) );
 		const art_ref art = Arts[ static_cast<int>(t) ];
 		if ( art )
 			return *art;
@@ -198,12 +199,15 @@ struct EquipmentRef
 		}
 	}
 	bool Initialized( ArtType t ) const {
+		_ASSERTE( stl::is_valid_enum_as_index(t) );
 		art_ref art = Arts[ static_cast<int>(t) ];
 		return art && art->Initialized();
 	}
-	void Clear();
 	size_t Size() const;
+	void Clear();
 	bool CheckValidMapping() const;
+
+	Equipment as_basic() const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -259,47 +263,6 @@ struct Hall
 extern const Hall _MyHall;
 
 extern std::map<StatType, int> _MyLeage;
-
-/////////////////////////////////////////////////////////////////////////////
-
-struct MatchOptions
-{
-	enum class ArtFactor {
-		NotInterested = 0,
-		Minor         = 1,
-		Moderate      = 2,
-		Magor         = 3,
-		Max           = 4,
-		MinCap,
-	};
-	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
-
-	std::vector<ArtSet> RequiedSets;
-	std::set<ArtSet> SetFilter;
-
-	bool ConsiderMaxLevels = true;
-	int MinCap[ChampionStats::Count] = {0};				//StatType -> value
-//TODO:	StatType RequiredArtStats[Equipment::TotalSize] = {0};	//ArtType -> StatType
-
-	MatchOptions() = default;
-	MatchOptions( std::map<StatType, ArtFactor>,
-				  std::vector<ArtSet> req_filter = {},
-				  std::set<ArtSet> set_filter = {},
-				  bool consider_max_lvl = true,
-				  std::map<StatType,int> min_caps = {} );
-
-	ArtFactor Factor( StatType st ) const
-	{
-		return Factors[ stl::enum_to_int(st) ];
-	}
-	bool IsSetAccepted( ArtSet ) const;
-	bool IsArtAccepted( const Artefact&, ChampionName ) const;
-	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
-};
-
-bool EstimateMinCap( int value, int ref_value, int width, float& f );
-void FindBestEquipment( const std::vector<Artefact>&, const Champion&, const MatchOptions&, Equipment& );
-Equipment FindRealBestEquipment( ChampionExt&, const MatchOptions& );
 
 /////////////////////////////////////////////////////////////////////////////
 

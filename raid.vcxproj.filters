@@ -17,6 +17,7 @@
     <ClInclude Include="iterator.h" />
     <ClInclude Include="profiler.h" />
     <ClInclude Include="iterator2.h" />
+    <ClInclude Include="suiter.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="raid.natvis" />
