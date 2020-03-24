@@ -237,6 +237,7 @@ struct ChampionExt
 
 std::vector<StatType> StatTypesForArt( ArtType );
 int  StatValueForLevel( ArtType, StatType, int starRank, int level );
+int  StatValueForLevel_fast( ArtType, StatType, int starRank, int level );
 int  SetSize( ArtSet );
 inline int SetSize_fast( ArtSet set ) { return (stl::enum_to_int(set) < stl::enum_to_int(ArtSet::_FourBegin)) ? 2 : 4; }
 bool IsValidStatForArt( StatType, ArtType );

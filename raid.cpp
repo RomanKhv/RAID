@@ -51,7 +51,7 @@ Stat Artefact::GetMainStat( bool consider_max_level ) const
 	_ASSERTE( Initialized() );
 	return {
 		MainStat,
-		StatValueForLevel( Type, MainStat, Stars, consider_max_level ? 16 : Level )
+		StatValueForLevel_fast( Type, MainStat, Stars, consider_max_level ? 16 : Level )
 	};
 }
 
@@ -296,10 +296,66 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 
 /////////////////////////////////////////////////////////////////////////////
 
+	typedef int stat_table_t[3][5];
+
+				static const stat_table_t Atk_Def_general = {
+					//      0   4    8   12   16
+					/*4*/{ 16, 51,  85, 120, 190 },
+					/*5*/{ 25, 64, 104, 143, 225 },
+					/*6*/{ 35, 80, 125, 170, 265 }
+				};
+				static const stat_table_t Atk_Def_banner = {
+					//      0  4  8  12  16
+					/*4*/{ 24, 0, 0, 0, 285 },
+					/*5*/{ 38, 0, 0, 0, 338 },
+					/*6*/{ 53, 0, 0, 0, 0 }
+				};
+				static const stat_table_t HP_general = {
+					//      0     4     8    12    16
+					/*4*/{ 260,    0, 1286, 1800, 2840 },
+					/*5*/{ 450, 1044, 1638, 2231, 3480 },
+					/*6*/{ 600, 1277, 1954, 2631, 4080 }
+				};
+				static const stat_table_t HP_banner = {
+					//      0   4  8  12   16
+					/*4*/{ 390, 0, 0, 0, 4260 },
+					/*5*/{ 675, 0, 0, 0, 5220 },
+					/*6*/{ 900, 0, 0, 0, 0 }
+				};
+				static const stat_table_t Atk_HP_Def_percent_CR = {
+					//      0   4   8  12  16
+					/*4*/{  6, 13, 19, 26, 40 },
+					/*5*/{  8, 16, 24, 33, 50 },
+					/*6*/{ 10, 20, 29, 39, 60 },
+				};
+				static const stat_table_t CDmg_general = {
+					//      0  4  8 12  16
+					/*4*/{  8, 0, 0, 0,  0 },
+					/*5*/{ 10, 0, 0, 0, 65 },
+					/*6*/{  0, 0, 0, 0,  0 },
+				};
+				static const stat_table_t CDmg_necklace = {
+					//     0  4  8 12  16
+					/*4*/{ 4, 0, 0, 0, 25 },
+					/*5*/{ 5, 0, 0, 0, 33 },
+					/*6*/{ 6, 0, 0, 0, 0 },
+				};
+				static const stat_table_t Spd_all = {
+					//     0   4   8  12  16
+					/*4*/{ 4, 10, 16,  0, 35 },
+					/*5*/{ 5, 12, 19, 26, 40 },
+					/*6*/{ 0, 00, 00, 00, 00 },
+				};
+				static const stat_table_t Acc_Res = {
+					//      0   4   8  12  16
+					/*4*/{  8, 0, 0, 0, 64 },
+					/*5*/{ 12, 0, 0, 0, 78 },
+					/*6*/{ 16, 0, 0, 0, 96 },
+				};
+
 int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 {
-	typedef int table_t[3][5];
-	const table_t* stat_table = nullptr;
+	const stat_table_t* stat_table = nullptr;
 
 	switch ( stat )
 	{
@@ -307,44 +363,20 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 		case StatType::Def:
 			if ( art != ArtType::Banner )
 			{
-				static const table_t weapon_shield = {
-					//      0   4    8   12   16
-					/*4*/{ 16, 51,  85, 120, 190 },
-					/*5*/{ 25, 64, 104, 143, 225 },
-					/*6*/{ 35, 80, 125, 170, 265 }
-				};
-				stat_table = &weapon_shield;
+				stat_table = &Atk_Def_general;
 			}
 			else {
-				static const int banner[3][5] = {
-					//      0  4  8  12  16
-					/*4*/{ 24, 0, 0, 0, 285 },
-					/*5*/{ 38, 0, 0, 0, 338 },
-					/*6*/{ 53, 0, 0, 0, 0 }
-				};
-				stat_table = &banner;
+				stat_table = &Atk_Def_banner;
 			}
 			break;
 
 		case StatType::HP:
 			if ( art != ArtType::Banner )
 			{
-				static const int helmet[3][5] = {
-					//      0     4     8    12    16
-					/*4*/{ 260,    0, 1286, 1800, 2840 },
-					/*5*/{ 450, 1044, 1638, 2231, 3480 },
-					/*6*/{ 600, 1277, 1954, 2631, 4080 }
-				};
-				stat_table = &helmet;
+				stat_table = &HP_general;
 			}
 			else {
-				static const int banner[3][5] = {
-					//      0   4  8  12   16
-					/*4*/{ 390, 0, 0, 0, 4260 },
-					/*5*/{ 675, 0, 0, 0, 5220 },
-					/*6*/{ 900, 0, 0, 0, 0 }
-				};
-				stat_table = &banner;
+				stat_table = &HP_banner;
 			}
 			break;
 
@@ -353,60 +385,30 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 		case StatType::Def_p:
 		case StatType::CRate:
 			{
-				static const int values_Atk_HP_Def_CR_p[3][5] = {
-					//      0   4   8  12  16
-					/*4*/{  6, 13, 19, 26, 40 },
-					/*5*/{  8, 16, 24, 33, 50 },
-					/*6*/{ 10, 20, 29, 39, 60 },
-				};
-				stat_table = &values_Atk_HP_Def_CR_p;
+				stat_table = &Atk_HP_Def_percent_CR;
 			}
 			break;
 
 		case StatType::CDmg:
 			if ( art != ArtType::Necklace )
 			{
-				static const int values_CDmg[3][5] = {
-					//      0  4  8 12  16
-					/*4*/{  8, 0, 0, 0,  0 },
-					/*5*/{ 10, 0, 0, 0, 65 },
-					/*6*/{  0, 0, 0, 0,  0 },
-				};
-				stat_table = &values_CDmg;
+				stat_table = &CDmg_general;
 			}
 			else {
-				static const int necklace[3][5] = {
-					//     0  4  8 12  16
-					/*4*/{ 4, 0, 0, 0, 25 },
-					/*5*/{ 5, 0, 0, 0, 33 },
-					/*6*/{ 6, 0, 0, 0, 0 },
-				};
-				stat_table = &necklace;
+				stat_table = &CDmg_necklace;
 			}
 			break;
 
 		case StatType::Spd:
 			{
-				static const int values_Spd[3][5] = {
-					//     0   4   8  12  16
-					/*4*/{ 4, 10, 16,  0, 35 },
-					/*5*/{ 5, 12, 19, 26, 40 },
-					/*6*/{ 0, 00, 00, 00, 00 },
-				};
-				stat_table = &values_Spd;
+				stat_table = &Spd_all;
 			}
 			break;
 
 		case StatType::Acc:
 		case StatType::Res:
 			{
-				static const table_t values_Acc_Res = {
-					//      0   4   8  12  16
-					/*4*/{  8, 0, 0, 0, 64 },
-					/*5*/{ 12, 0, 0, 0, 78 },
-					/*6*/{ 16, 0, 0, 0, 96 },
-				};
-				stat_table = &values_Acc_Res;
+				stat_table = &Acc_Res;
 			}
 			break;
 	}
@@ -417,7 +419,37 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 	_ASSERTE( 0 <= level && level <= 16 );
 
 	const int value = (*stat_table)[starRank - 4][level / 4];
-	_ASSERTE( value > 0 );
+	//_ASSERTE( value > 0 );
+	return value;
+}
+
+int StatValueForLevel_fast( ArtType art, StatType stat, int starRank, int level )
+{
+	static const stat_table_t* stat_art_map[ChampionStats::Count + 3][2] = {
+		/*StatType::HP*/   { &HP_general,      &HP_banner },
+		/*StatType::Atk*/  { &Atk_Def_general, &Atk_Def_banner },
+		/*StatType::Def*/  { &Atk_Def_general, &Atk_Def_banner },
+		/*StatType::Spd*/  { &Spd_all,         &Spd_all },
+		/*StatType::CRate*/{ &Atk_HP_Def_percent_CR, &Atk_HP_Def_percent_CR },
+		/*StatType::CDmg*/ { &CDmg_general,    &CDmg_necklace },
+		/*StatType::Res*/  { &Acc_Res,         &Acc_Res },
+		/*StatType::Acc*/  { &Acc_Res,         &Acc_Res },
+		/*StatType::HP_p*/ { &Atk_HP_Def_percent_CR, &Atk_HP_Def_percent_CR },
+		/*StatType::Atk_p*/{ &Atk_HP_Def_percent_CR, &Atk_HP_Def_percent_CR },
+		/*StatType::Def_p*/{ &Atk_HP_Def_percent_CR, &Atk_HP_Def_percent_CR },
+	};
+	const int second_index = stl::enum_to_int(art) /
+		( (stat==StatType::CDmg) ? stl::enum_to_int(ArtType::Necklace) : stl::enum_to_int(ArtType::Banner));
+	_ASSERTE( 0 <= second_index && second_index <= 1 );
+	const stat_table_t* stat_table = stat_art_map[stl::enum_to_int(stat)][second_index];
+
+	//starRank = boost::algorithm::clamp( starRank, 1, 6 );
+	//level = boost::algorithm::clamp( level, 0, 16 );
+	_ASSERTE( 4 <= starRank && starRank <= 6 );
+	_ASSERTE( 0 <= level && level <= 16 );
+
+	const int value = (*stat_table)[starRank - 4][level / 4];
+	//_ASSERTE( value > 0 );
 	return value;
 }
 

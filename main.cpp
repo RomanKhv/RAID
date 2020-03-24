@@ -156,8 +156,10 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 	}
 }
 
-//BOOST_AUTO_TEST_CASE( test_StatValuesByLevel )
-//{
+BOOST_AUTO_TEST_CASE( test_StatValuesByLevel )
+{
+	BOOST_CHECK( MatchOptions::ConsiderMaxLevels );	//now check only 16th level
+
 //	//for ( ArtType art : { ArtType::Weapon, ArtType::Helmet, ArtType::Shield, ArtType::Gloves, ArtType::Chest, ArtType::Boots } )
 //	for ( ArtType art : Equipment::AllTypesArr )
 //		for ( int stars = 4; stars <= 6; ++stars )
@@ -166,7 +168,16 @@ BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 //				{
 //					BOOST_CHECK( StatValueForLevel( art, stat, stars, level ) > 0 );
 //				}
-//}
+
+	for ( ArtType art : Equipment::AllTypesArr )
+		for ( int stars = 4; stars <= 6; ++stars )
+			for ( int level : { /*0, 4, 8, 12,*/ 16 } )
+				for ( StatType stat : StatTypesForArt( art ) )
+				{
+					_ASSERTE( StatValueForLevel( art, stat, stars, level ) == StatValueForLevel_fast( art, stat, stars, level ) );
+					BOOST_CHECK_EQUAL( StatValueForLevel( art, stat, stars, level ), StatValueForLevel_fast( art, stat, stars, level ) );
+				}
+}
 
 EquipmentRef convert( const Equipment& ref_eq )
 {
