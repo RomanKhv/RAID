@@ -27,10 +27,10 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	,Set(set)
 	,Stars(stars)
 	,Level(level)
-	,MainStat(mainstat)
 	,AddStats( addstats.begin(), addstats.end() )
 	,Owner(owner)
 {
+	_MainStat.Type = mainstat;
 	_ASSERTE( Initialized() );
 	_ASSERTE( IsValidStatForArt( mainstat, type ) );
 	_ASSERTE( IsGoodStatForArt( mainstat, type ) );
@@ -46,13 +46,19 @@ void Artefact::Reset()
 	*this = Artefact();
 }
 
-Stat Artefact::GetMainStat( bool consider_max_level ) const
+const Stat& Artefact::GetMainStat( bool consider_max_level ) const
 {
 	_ASSERTE( Initialized() );
-	return {
-		MainStat,
-		StatValueForLevel_fast( Type, MainStat, Stars, consider_max_level ? 16 : Level )
-	};
+	if ( !_MainStat.Initialized() )
+	{
+		_MainStat.Value = StatValueForLevel_fast( Type, _MainStat.Type, Stars, consider_max_level ? 16 : Level );
+	}
+#ifdef _DEBUG
+	else {
+		_ASSERTE( _MainStat.Value == StatValueForLevel_fast( Type, _MainStat.Type, Stars, consider_max_level ? 16 : Level ) );
+	}
+#endif
+	return _MainStat;
 }
 
 /////////////////////////////////////////////////////////////////////////////

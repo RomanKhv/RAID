@@ -105,7 +105,7 @@ std::string to_string( const Artefact& art )
 			ss << "";
 			break;
 		default:
-			ss << to_string( art.MainStat );
+			ss << to_string( art.MainStatType() );
 			break;
 	};
 	if ( !art.AddStats.empty() )

@@ -23,6 +23,8 @@ enum /*class*/ ArtType
 	Banner,
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
 enum class StatType
 {
 	HP,
@@ -42,8 +44,17 @@ enum class StatType
 struct Stat
 {
 	StatType Type;
-	int Value;
+	int Value = 0;
+
+	Stat() = default;
+	Stat( StatType t, int val ) : Type(t), Value(val) {}
+
+	bool Initialized() const { return Value > 0; }
+
+	static const int TypeCount = 8 + 3;
 };
+
+/////////////////////////////////////////////////////////////////////////////
 
 enum class ArtSet
 {
@@ -108,7 +119,6 @@ struct Artefact
 	int Stars = 0;
 	int Level = 0;
 
-	StatType MainStat = StatType::Atk;
 	boost::container::static_vector<Stat,4> AddStats;
 
 	ChampionName Owner = ChampionName::none;
@@ -118,9 +128,12 @@ struct Artefact
 	void Reset();
 	bool Initialized() const { return Stars > 0; }
 	bool IsBasic() const { _ASSERTE(Initialized()); return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }
-	Stat GetMainStat( bool consider_max_level ) const;
+	StatType MainStatType() const { return _MainStat.Type; }
+	const Stat& GetMainStat( bool consider_max_level ) const;
 
 	static constexpr int SetCount = static_cast<int>( ArtSet::Count );
+private:
+	mutable Stat _MainStat;
 };
 
 /////////////////////////////////////////////////////////////////////////////
