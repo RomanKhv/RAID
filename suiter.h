@@ -73,9 +73,10 @@ struct EqEst
 struct EqEstPool
 {
 	boost::circular_buffer<EqEst> _Arr;
-	static const size_t Size = 5;
+	static const size_t DefaultSize = 5;
 
 	EqEstPool();
+	explicit EqEstPool(size_t custom_buffer_size);
 
 	void join( const EqEst& );
 	void join( const EqEstPool& );

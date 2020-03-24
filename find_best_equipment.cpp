@@ -45,9 +45,9 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	std::vector<Equipment> best_eq_pool;
 	FindRealBestEquipment2( ch, matching, best_eq_pool );
 	BOOST_CHECK( !best_eq_pool.empty() );
-	BOOST_CHECK_LE( best_eq_pool.size(), EqEstPool::Size );
+	BOOST_CHECK_LE( best_eq_pool.size(), EqEstPool::DefaultSize );
 
-	BOOST_TEST_MESSAGE( "Top " << EqEstPool::Size << " best eq:" );
+	BOOST_TEST_MESSAGE( "Top " << EqEstPool::DefaultSize << " best eq:" );
 	for ( int i = 0; i < best_eq_pool.size(); ++i )
 	{
 		BOOST_TEST_MESSAGE( "#" << (i+1) );

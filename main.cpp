@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE( test_join )
 		BOOST_CHECK_EQUAL( est1._Est, 2 );
 	}
 	{
-		EqEstPool pool;
+		EqEstPool pool( 3 );
 		pool.join( EqEst( 2, {} ) );
 		BOOST_CHECK_EQUAL( pool._Arr.size(), 1 );
 

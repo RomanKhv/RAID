@@ -189,13 +189,18 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 /////////////////////////////////////////////////////////////////////////////
 
 EqEstPool::EqEstPool()
-	:_Arr( Size )
+	:_Arr( DefaultSize )
+{
+}
+
+EqEstPool::EqEstPool( size_t custom_buffer_size )
+	:_Arr( custom_buffer_size )
 {
 }
 
 void EqEstPool::join( const EqEst& rhs )
 {
-	_ASSERTE( _Arr.capacity() == Size );
+	_ASSERTE( _Arr.capacity() > 0 );
 	_ASSERTE( rhs.Initialized() );
 
 	bool inserted = false;
@@ -216,7 +221,7 @@ void EqEstPool::join( const EqEst& rhs )
 
 void EqEstPool::join( const EqEstPool& rhs )
 {
-	_ASSERTE( _Arr.capacity() == Size );
+	_ASSERTE( _Arr.capacity() > 0 );
 
 	for ( const EqEst& est : rhs._Arr )
 		join( est );
