@@ -254,9 +254,37 @@ bool ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 	return false;
 }
 
+void report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_by_type )
+{
+	const size_t n_comb = arts_by_type_iterator::n_combinations( arts_by_type );
+	std::cout << n_comb << " combinations [";
+	for ( const auto& at : arts_by_type )
+		std::cout << at.second.size() << "x";
+	std::cout << "]";
+	_ASSERTE( n_comb < 310 );
+	
+	//std::cout << "(will take ";
+	//const double n = _MyArts.size();
+	//const double n2 = n * n;
+	//const double n3 = n * n2;
+	//const double n4 = n * n3;
+	//const double n5 = n * n4;
+	//const int t = int( 2E-09*n5 - 1E-06*n4 + 0.0005*n3 - 0.0782*n2 + 6.3328*n - 196.8);
+	//std::cout << t << " sec)";
+
+	std::cout << "\n";
+
+	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Ring ) )
+		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
+	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Necklace ) )
+		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
+	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Banner ) )
+		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
+}
+
 void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, EqEst& best )
 {
-	std::cout << arts_by_type_iterator::n_combinations(arts_by_type) << " combinations\n";
+	report_combinations( arts_by_type );
 
 #ifdef USE_TBB
 	best =
@@ -301,7 +329,7 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 
 void FindBestEquipment2( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, EqEstPool& best )
 {
-	std::cout << arts_by_type_iterator::n_combinations(arts_by_type) << " combinations\n";
+	report_combinations( arts_by_type );
 
 #ifdef USE_TBB
 	best =

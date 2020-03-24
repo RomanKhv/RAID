@@ -32,8 +32,8 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 {
 	_MainStat.Type = mainstat;
 	_ASSERTE( Initialized() );
-	_ASSERTE( IsValidStatForArt( mainstat, type ) );
-	_ASSERTE( IsGoodStatForArt( mainstat, type ) );
+	_ASSERTE( debug::IsValidStatForArt( mainstat, type ) );
+	_ASSERTE( debug::IsGoodStatForArt( mainstat, type ) );
 	_ASSERTE( addstats.size() <= 4 );
 #ifdef _DEBUG
 	for ( const Stat& stat : AddStats )
@@ -122,7 +122,7 @@ size_t EquipmentRef::Size() const
 
 bool EquipmentRef::CheckValidMapping() const
 {
-	for ( ArtType at : Equipment::AllTypesArr )
+	for ( const ArtType at : Equipment::AllTypesArr )
 	{
 		_ASSERTE( stl::is_valid_enum_as_index( at ) );
 		art_ref art = Arts[at];
@@ -135,7 +135,7 @@ bool EquipmentRef::CheckValidMapping() const
 Equipment EquipmentRef::as_basic() const
 {
 	Equipment eq;
-	for ( ArtType at : Equipment::AllTypesArr )
+	for ( const ArtType at : Equipment::AllTypesArr )
 	{
 		if ( const Artefact* art = Arts[at] )
 			eq[at] = *art;
@@ -264,6 +264,8 @@ ChampionStats ChampionExt::TotalStats( bool apply_hall_bonus ) const
 
 /////////////////////////////////////////////////////////////////////////////
 
+namespace debug {
+
 std::vector<StatType> StatTypesForArt( ArtType art )
 {
 	std::vector<StatType> valid_stats;
@@ -299,6 +301,8 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 	}
 	return valid_stats;
 }
+
+}//debug
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -358,6 +362,8 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*5*/{ 12, 0, 0, 0, 78 },
 					/*6*/{ 16, 0, 0, 0, 96 },
 				};
+
+namespace debug {
 
 int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 {
@@ -428,6 +434,7 @@ int StatValueForLevel( ArtType art, StatType stat, int starRank, int level )
 	//_ASSERTE( value > 0 );
 	return value;
 }
+}//debug
 
 int StatValueForLevel_fast( ArtType art, StatType stat, int starRank, int level )
 {
@@ -460,6 +467,7 @@ int StatValueForLevel_fast( ArtType art, StatType stat, int starRank, int level 
 }
 
 /////////////////////////////////////////////////////////////////////////////
+namespace debug {
 
 int SetSize( ArtSet set )
 {
@@ -515,64 +523,31 @@ bool IsGoodStatForArt( StatType stat, ArtType art )
 	return true;
 }
 
+}//debug
 /////////////////////////////////////////////////////////////////////////////
-
-inline void apply_stat_absolute( StatType st, int value, ChampionStats& arts_bonus_stats )
-{
-	arts_bonus_stats[st] += value;
-}
 
 void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats )
 {
 	_ASSERTE( stat.Value > 0 );
-	switch ( stat.Type )
+	if ( Stat::IsBasic( stat.Type ) )	// == IsAdditive
 	{
-		case StatType::HP_p:
-		case StatType::Atk_p:
-		case StatType::Def_p:
-			arts_bonus_stats.p_stat(stat.Type) += basic_stats.p_stat(stat.Type) * stat.Value / 100;
-			return;
-		default:
-			apply_stat_absolute( stat.Type, stat.Value, arts_bonus_stats );
-			return;
+		arts_bonus_stats[stat.Type] += stat.Value;
+	}
+	else {
+		arts_bonus_stats.basic_from_p(stat.Type) += basic_stats.basic_from_p(stat.Type) * stat.Value / 100;
 	}
 	//switch ( stat.Type )
 	//{
-	//	case StatType::Atk:
-	//		arts_bonus_stats.Atk += stat.Value;
-	//		return;
-	//	case StatType::HP:
-	//		arts_bonus_stats.HP += stat.Value;
-	//		return;
-	//	case StatType::Def:
-	//		arts_bonus_stats.Def += stat.Value;
-	//		return;
-	//	case StatType::Atk_p:
-	//		member_fraction<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, stat.Value );
-	//		return;
 	//	case StatType::HP_p:
-	//		member_fraction<&ChampionStats::HP>( arts_bonus_stats, basic_stats, stat.Value );
-	//		return;
+	//	case StatType::Atk_p:
 	//	case StatType::Def_p:
-	//		member_fraction<&ChampionStats::Def>( arts_bonus_stats, basic_stats, stat.Value );
+	//		arts_bonus_stats.p_stat(stat.Type) += basic_stats.p_stat(stat.Type) * stat.Value / 100;
 	//		return;
-	//	case StatType::CRate:
-	//		arts_bonus_stats.CRate += stat.Value;
-	//		return;
-	//	case StatType::CDmg:
-	//		arts_bonus_stats.CDmg += stat.Value;
-	//		return;
-	//	case StatType::Spd:
-	//		arts_bonus_stats.Spd += stat.Value;
-	//		return;
-	//	case StatType::Acc:
-	//		arts_bonus_stats.Acc += stat.Value;
-	//		return;
-	//	case StatType::Res:
-	//		arts_bonus_stats.Res += stat.Value;
+	//	default:
+	//		arts_bonus_stats[stat.Type] += stat.Value;
 	//		return;
 	//}
-	_ASSERTE( !"unreachable code" );
+	//_ASSERTE( !"unreachable code" );
 }
 
 void ApplyStat( const Stat& stat, ChampionExt& ch )
@@ -738,7 +713,7 @@ void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, C
 {
 	ApplySetsBonuses( eq, basic_stats, arts_bonus_stats, estimating );
 
-	for ( const Artefact* art : eq.Arts )
+	for ( const Artefact* const art : eq.Arts )
 	{
 		if ( art )
 		{
@@ -752,7 +727,7 @@ void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 {
 	const Hall::table_row_t& hall_bonus = _MyHall.Table[ stl::enum_to_int(ch.Elem) ];
 
-	for ( StatType st : { StatType::HP_p, StatType::Atk_p, StatType::Def_p, StatType::CDmg, StatType::Res, StatType::Acc } )
+	for ( const StatType st : { StatType::HP_p, StatType::Atk_p, StatType::Def_p, StatType::CDmg, StatType::Res, StatType::Acc } )
 	{
 		const int b = hall_bonus[stl::enum_to_int( st )];
 		ApplyStat( { st, b }, ch.BasicStats, stats );
@@ -778,40 +753,46 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> set_filter,
 							bool consider_max_lvl, std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
 	:RequiedSets( std::move( req_filter ) )
-	,SetFilter( std::move( set_filter ) )
+	//,SetFilter( std::move( set_filter ) )
 	//,ConsiderMaxLevels( consider_max_lvl )
 {
 	_ASSERTE( ConsiderMaxLevels == consider_max_lvl );
 	for ( const auto& p : factors )
 	{
-		IsValidStatForChampion( p.first );
+		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
 		Factors[stl::enum_to_int( p.first )] = p.second;
 	}
 	for ( const auto& p : min_caps )
 	{
-		IsValidStatForChampion( p.first );
+		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
 		_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
 		Factors[stl::enum_to_int( p.first )] = ArtFactor::MinCap;
 		MinCap[stl::enum_to_int( p.first )] = p.second;
 	}
 	for ( const auto& p : max_caps )
 	{
-		IsValidStatForChampion( p.first );
+		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
 		//_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
 		//Factors[stl::enum_to_int( p.first )] = ArtFactor::MaxCap;		"max cap" is additional limitation
 		MaxCap[stl::enum_to_int( p.first )] = p.second;
+	}
+
+	static bool inventory_logged = false;
+	if ( !inventory_logged ) {
+		std::printf( "Inventory: %I64u items\n", _MyArts.size() );
+		inventory_logged = true;
 	}
 }
 
 bool MatchOptions::IsSetAccepted( ArtSet set ) const
 {
-	if ( SetFilter.empty() )
+	//if ( SetFilter.empty() )
 		return true;	//accept all
 
-	if ( set == ArtSet::None )
-		return true;	//ring/necklace/banner
+	//if ( set == ArtSet::None )
+	//	return true;	//ring/necklace/banner
 
-	return SetFilter.count( set ) > 0;
+	//return SetFilter.count( set ) > 0;
 }
 
 bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) const
@@ -862,16 +843,6 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 
 	return true;
 }
-
-//bool MatchOptions::IsEqAccepted( const Equipment& eq ) const
-//{
-//	for ( const auto a : eq )
-//	{
-//		if ( !IsSetAccepted( a.second.Set ) )
-//			return false;
-//	}
-//	return IsEqHasRequiredSets( eq );
-//}
 
 /////////////////////////////////////////////////////////////////////////////
 

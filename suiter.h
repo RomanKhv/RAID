@@ -17,7 +17,7 @@ struct MatchOptions
 	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
 
 	std::vector<ArtSet> RequiedSets;
-	std::set<ArtSet> SetFilter;
+	//std::set<ArtSet> SetFilter;	TODO: std::set -> const array
 
 	static const bool ConsiderMaxLevels = true;
 	int MinCap[ChampionStats::Count] = { 0 };				//StatType -> value

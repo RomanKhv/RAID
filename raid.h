@@ -52,6 +52,7 @@ struct Stat
 	bool Initialized() const { return Value > 0; }
 
 	static const int TypeCount = 8 + 3;
+	static bool IsBasic( const StatType st ) { return stl::enum_to_int(st) <= stl::enum_to_int(StatType::Acc); }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -169,8 +170,8 @@ struct ChampionStats
 	ChampionStats operator+( const ChampionStats& ) const;
 	int operator[](StatType t) const { _ASSERTE( static_cast<int>(t) < Count ); return Values[static_cast<int>(t)]; }
 	int& operator[](StatType t)      { _ASSERTE( static_cast<int>(t) < Count ); return Values[static_cast<int>(t)]; }
-	int p_stat(StatType t) const { return Values[static_cast<int>(t)%Count]; }
-	int& p_stat(StatType t)      { return Values[static_cast<int>(t)%Count]; }
+	int basic_from_p(StatType t) const { return Values[static_cast<int>(t)-Count]; }
+	int& basic_from_p(StatType t)      { return Values[static_cast<int>(t)-Count]; }
 
 	typedef const StatType StatList[Count];
 	static const StatList TypeList;
@@ -248,14 +249,21 @@ struct ChampionExt
 
 /////////////////////////////////////////////////////////////////////////////
 
+// straight-forward implementations
+namespace debug
+{
 std::vector<StatType> StatTypesForArt( ArtType );
 int  StatValueForLevel( ArtType, StatType, int starRank, int level );
-int  StatValueForLevel_fast( ArtType, StatType, int starRank, int level );
 int  SetSize( ArtSet );
-inline int SetSize_fast( ArtSet set ) { return (stl::enum_to_int(set) < stl::enum_to_int(ArtSet::_FourBegin)) ? 2 : 4; }
 bool IsValidStatForArt( StatType, ArtType );
 bool IsValidStatForChampion( StatType );
 bool IsGoodStatForArt( StatType, ArtType );
+}
+
+// optimized implementations
+int  StatValueForLevel_fast( ArtType, StatType, int starRank, int level );
+inline int SetSize_fast( ArtSet set ) { return (stl::enum_to_int(set) < stl::enum_to_int(ArtSet::_FourBegin)) ? 2 : 4; }
+
 void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus );
 void ApplyStat( const Stat&, ChampionExt& );
 void ApplySetBonus( ArtSet, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );

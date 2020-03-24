@@ -38,13 +38,29 @@ BOOST_AUTO_TEST_CASE( test_basics )
 		BOOST_CHECK( stats[StatType::CDmg] == 6 );
 		BOOST_CHECK( stats[StatType::Res] == 7 );
 		BOOST_CHECK( stats[StatType::Acc] == 8 );
+
+		BOOST_CHECK( Stat::IsBasic( StatType::HP ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::Atk ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::Def ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::Spd ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::CRate ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::CDmg ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::Res ) );
+		BOOST_CHECK( Stat::IsBasic( StatType::Acc ) );
+		BOOST_CHECK( !Stat::IsBasic( StatType::HP_p ) );
+		BOOST_CHECK( !Stat::IsBasic( StatType::Atk_p ) );
+		BOOST_CHECK( !Stat::IsBasic( StatType::Def_p ) );
+
+		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::HP_p ), 1 );
+		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::Atk_p ), 2 );
+		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::Def_p ), 3 );
 	}
 
 	//for ( ArtSet set = static_cast<ArtSet>(0); stl::enum_to_int( set ) < stl::enum_to_int( ArtSet::Count ); ++static_cast<int&>(set) )
 	for ( int s = 0; s < stl::enum_to_int( ArtSet::Count ); ++s )
 	{
 		const ArtSet set = static_cast<ArtSet>(s);
-		BOOST_CHECK_EQUAL( SetSize_fast(set), SetSize(set) );
+		BOOST_CHECK_EQUAL( SetSize_fast(set), debug::SetSize(set) );
 	}
 
 	{
@@ -172,10 +188,10 @@ BOOST_AUTO_TEST_CASE( test_StatValuesByLevel )
 	for ( ArtType art : Equipment::AllTypesArr )
 		for ( int stars = 4; stars <= 6; ++stars )
 			for ( int level : { /*0, 4, 8, 12,*/ 16 } )
-				for ( StatType stat : StatTypesForArt( art ) )
+				for ( StatType stat : debug::StatTypesForArt( art ) )
 				{
-					_ASSERTE( StatValueForLevel( art, stat, stars, level ) == StatValueForLevel_fast( art, stat, stars, level ) );
-					BOOST_CHECK_EQUAL( StatValueForLevel( art, stat, stars, level ), StatValueForLevel_fast( art, stat, stars, level ) );
+					_ASSERTE( debug::StatValueForLevel( art, stat, stars, level ) == StatValueForLevel_fast( art, stat, stars, level ) );
+					BOOST_CHECK_EQUAL( debug::StatValueForLevel( art, stat, stars, level ), StatValueForLevel_fast( art, stat, stars, level ) );
 				}
 }
 

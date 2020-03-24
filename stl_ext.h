@@ -34,6 +34,15 @@ typename MAP::mapped_type get_value_or( const MAP& m, typename const MAP::key_ty
 	return i->second;
 }
 
+template <class MAP>
+typename const MAP::mapped_type* get_value_ptr( const MAP& m, typename const MAP::key_type& key )
+{
+	const auto i = m.find( key );
+	if ( i == m.end() )
+		return nullptr;
+	return &i->second;
+}
+
 template <typename ENUM>
 constexpr int enum_to_int( ENUM e )
 {
