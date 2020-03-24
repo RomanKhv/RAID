@@ -270,13 +270,14 @@ void ApplyHallBonus( const Champion&, ChampionStats& );
 struct Hall
 {
 	static const int ElementCount = 4;
-	std::map<StatType, int> Table[ElementCount];
+	using table_row_t = int[Stat::TypeCount];
+	table_row_t Table[ElementCount];
 
 	Hall( std::map< Element, std::map<StatType, int> > );
 };
 extern const Hall _MyHall;
 
-extern std::map<StatType, int> _MyLeage;
+//extern std::map<StatType, int> _MyLeage;
 
 /////////////////////////////////////////////////////////////////////////////
 

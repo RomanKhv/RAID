@@ -750,11 +750,12 @@ void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, C
 
 void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 {
-	const std::map<StatType, int>& hall_bonus = _MyHall.Table[ stl::enum_to_int(ch.Elem) ];
+	const Hall::table_row_t& hall_bonus = _MyHall.Table[ stl::enum_to_int(ch.Elem) ];
 
 	for ( StatType st : { StatType::HP_p, StatType::Atk_p, StatType::Def_p, StatType::CDmg, StatType::Res, StatType::Acc } )
 	{
-		ApplyStat( { st, hall_bonus.at(st) }, ch.BasicStats, stats );
+		const int b = hall_bonus[stl::enum_to_int( st )];
+		ApplyStat( { st, b }, ch.BasicStats, stats );
 	}
 }
 
@@ -762,10 +763,13 @@ void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 
 Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 {
+	for ( auto& e : Table )
+		for ( auto& b : e )
+			b = 0;
 	for ( const auto& e : m )
 		for ( const auto& s : e.second )
 		{
-			Table[stl::enum_to_int(e.first)][s.first] = s.second;
+			Table[stl::enum_to_int(e.first)][stl::enum_to_int(s.first)] = s.second;
 		}
 }
 
