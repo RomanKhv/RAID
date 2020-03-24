@@ -462,7 +462,7 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 	ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
 
 	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 13797 - 2 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 131 );
+	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 136 );
 	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 1960 - 3 );
 	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 54 );
 	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 42 );

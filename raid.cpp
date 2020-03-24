@@ -5,6 +5,22 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+bool check_stat_input_error( const Stat& stat )
+{
+	switch ( stat.Type )
+	{
+		case StatType::Atk:			return stat.Value >= 16;
+		case StatType::HP:			return stat.Value >= 100;
+		case StatType::Def:			return stat.Value >= 15;
+		case StatType::Atk_p:		return stat.Value < 20;
+		case StatType::HP_p:		return stat.Value <= 24;
+		case StatType::Def_p:		return stat.Value < 20;
+	}
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mainstat, std::vector<Stat> addstats,
 					ChampionName owner)
 	:Type(type)
@@ -19,6 +35,10 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	_ASSERTE( IsValidStatForArt( mainstat, type ) );
 	_ASSERTE( IsGoodStatForArt( mainstat, type ) );
 	_ASSERTE( addstats.size() <= 4 );
+#ifdef _DEBUG
+	for ( const Stat& stat : AddStats )
+		_ASSERTE( check_stat_input_error( stat ) );
+#endif
 }
 
 void Artefact::Reset()
