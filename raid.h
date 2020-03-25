@@ -85,10 +85,11 @@ enum class ArtSet
 	Cursed,
 	Toxic,
 	Frost,
-	//Daze,			//Ступор
+	Daze,			//Ступор
 	Immunitet,		//Avenging
+	Vozmezdie,
 	Shield,
-	//Stalwart,
+	Doblest,
 	Beshenstvo,		//4 Frenzy
 	Regeneration,
 	Svirepost,		//Relentless
@@ -235,6 +236,8 @@ struct Champion
 	explicit Champion( const ChampionStats& basic, Element e = Element::none, ChampionName name = ChampionName::none );
 	bool IsReal() const;
 	ChampionStats TotalStats( const ChampionStats& art_bonus_stats, bool apply_hall_bonus = true ) const;
+
+	static Champion ByName( ChampionName );
 };
 
 struct ChampionExt
@@ -288,17 +291,6 @@ extern const Hall _MyHall;
 //extern std::map<StatType, int> _MyLeage;
 
 /////////////////////////////////////////////////////////////////////////////
-
-namespace ChampionFactory
-{
-	Champion ColdHeart();
-	Champion Gromoboy();
-	Champion Kael();
-	Champion Lekar();
-	Champion Yuliana();
-	Champion Krisk();
-	Champion Hatun();
-}
 
 extern const std::vector<Artefact> _MyArts;
 Equipment GetCurrentEquipmentFor( ChampionName );

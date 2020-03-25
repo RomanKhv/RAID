@@ -18,17 +18,17 @@ struct IUnknown; // Workaround for "combaseapi.h(229): error C2187: syntax error
 /////////////////////////////////////////////////////////////////////////////
 
 const ChampionStats::values_t Ref_Stat_Values = {
-	/*StatType::HP*/ 40000,
+	/*StatType::HP*/ 35000,
 	/*StatType::Atk*/ 3500,
 	/*StatType::Def*/ 3500,
 	/*StatType::Spd*/ 150,
 	/*StatType::CRate*/ 100,
-	/*StatType::CDmg*/ 150,
+	/*StatType::CDmg*/ 190,
 	/*StatType::Res*/ 80,
 	/*StatType::Acc*/ 150,
 };
 
-const ChampionStats::values_t Max_Stat_Caps = {
+const ChampionStats::values_t Def_Max_Stat_Caps = {	// 0 - no cap/no penalty
 	/*StatType::HP*/   0,
 	/*StatType::Atk*/  3500,
 	/*StatType::Def*/  3500,
@@ -39,13 +39,13 @@ const ChampionStats::values_t Max_Stat_Caps = {
 	/*StatType::Acc*/  0,
 };
 
-const ChampionStats::values_t Stat_Tolerance = {
+const ChampionStats::values_t Excess_Tolerance = {	//weight: 1 -> (tol width) -> 0
 	/*StatType::HP*/   0,
-	/*StatType::Atk*/  400,
-	/*StatType::Def*/  400,
-	/*StatType::Spd*/  10,
-	/*StatType::CRate*/ 10,
-	/*StatType::CDmg*/ 20,
+	/*StatType::Atk*/  1500,
+	/*StatType::Def*/  1500,
+	/*StatType::Spd*/  40,
+	/*StatType::CRate*/ 30,
+	/*StatType::CDmg*/ 40,
 	/*StatType::Res*/  0,
 	/*StatType::Acc*/  0,
 };
@@ -104,7 +104,7 @@ bool EstimateMinCap( const int value, const int ref_value, const int width, floa
 
 int GetActualMaxCap( StatType st, const MatchOptions& matching )
 {
-	const int global_max_stat_cap = Max_Stat_Caps[stl::enum_to_int( st )];
+	const int global_max_stat_cap = Def_Max_Stat_Caps[stl::enum_to_int( st )];
 	const int champ_max_stat_cap = matching.MaxCap[stl::enum_to_int( st )];
 	if ( champ_max_stat_cap || global_max_stat_cap )
 	{
@@ -127,6 +127,16 @@ int GetActualMaxCap( StatType st, const MatchOptions& matching )
 	else
 		return 0;
 }
+
+/*		Max Cap
+Weight
+1---------------|\
+                |   \
+                |      \
+                |         \
+0---------------|-----------|------------- stat value
+              ref    tol       cut off
+*/
 
 float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matching )
 {
@@ -158,10 +168,10 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 			float e = 0;
 			if ( max_stat_cap && stat_value > max_stat_cap )
 			{
-				const int tol = Stat_Tolerance[stl::enum_to_int( st )];
+				const int tol = Excess_Tolerance[stl::enum_to_int( st )];
 				const int excessive_threshold = ( tol > 0 ) ?
 					max_stat_cap + tol :
-					Max_Stat_Caps[ stl::enum_to_int(st) ] * 110 / 100;
+					Def_Max_Stat_Caps[ stl::enum_to_int(st) ] * 140 / 100;
 				if ( stat_value > excessive_threshold )
 					continue;	//stat got too high, give 0 estimation (or "return 0;" ?)
 				else {

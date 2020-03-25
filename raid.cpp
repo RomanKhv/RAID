@@ -2,6 +2,7 @@
 #include "raid.h"
 #include "suiter.h"
 #include "stl_ext.h"
+#include "to_string.h"
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,7 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 #ifdef _DEBUG
 	for ( const Stat& stat : AddStats )
 		_ASSERTE( check_stat_input_error( stat ) );
+	to_string( Set );
 #endif
 }
 
@@ -866,37 +868,32 @@ Equipment GetCurrentEquipmentFor( ChampionName name )
 	return eq;
 }
 
-Champion ChampionFactory::ColdHeart()
+Champion Champion::ByName( ChampionName name )
 {
-	return Champion( { 13710, 1376, 738,  94,  15, 57,  30, 0 }, Element::Void, ChampionName::ColdHeart );
-}
-
-Champion ChampionFactory::Kael()
-{
-	return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, ChampionName::Kael );
-}
-
-Champion ChampionFactory::Gromoboy()
-{
-	return Champion( { 15855, 727, 1443,  97,  15, 50,  30, 0 }, Element::Void, ChampionName::Gromoboy );
-}
-
-Champion ChampionFactory::Lekar()
-{
-	return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, ChampionName::Lekar );
-}
-
-Champion ChampionFactory::Yuliana()
-{
-	return Champion( { 15195, 1354, 870,  103,  15, 50,  30, 0 }, Element::Blue, ChampionName::Yuliana );
-}
-
-Champion ChampionFactory::Krisk()
-{
-	return Champion( { 18660, 727, 1465,  94,  15, 50,  30, 0 }, Element::Void, ChampionName::Krisk );
-}
-
-Champion ChampionFactory::Hatun()
-{
-	return Champion( { 15555, 971, 1146,  97,  15, 50,  30, 0 }, Element::Green, ChampionName::Hatun );
+	switch ( name )
+	{
+		case ChampionName::ColdHeart:
+			return Champion( { 13710, 1376, 738,  94,  15, 57,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Gromoboy:
+			return Champion( { 15855, 727, 1443,  97,  15, 50,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Hatun:
+			return Champion( { 15555, 971, 1146,  97,  15, 50,  30, 0 }, Element::Green, name );
+			break;
+		case ChampionName::Kael:
+			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Krisk:
+			return Champion( { 18660, 727, 1465,  94,  15, 50,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Lekar:
+			return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Yuliana:
+			return Champion( { 15195, 1354, 870,  103,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
+	}
+	_ASSERTE( !"not yet supported" );
+	return Champion( { 0, 0, 0,  0,  0, 0,  0, 0 }, Element::Blue, name );
 }

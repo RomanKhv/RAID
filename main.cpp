@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE( test_ApplyStat )
 BOOST_AUTO_TEST_CASE( test_EqSetBonuses )
 {
 	{
-		ChampionExt ch = ChampionFactory::Gromoboy();
+		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
 		const Equipment eq = {
 			Artefact( ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, {} ),
 			Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ),
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE( test_Best )
 
 BOOST_AUTO_TEST_CASE( test_Gromoboy )
 {
-	ChampionExt ch = ChampionFactory::Gromoboy();
+	ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
 	const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
 	ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
 
@@ -622,5 +622,55 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 	//BOOST_CHECK_EQUAL( final_stats.Acc, 103 );
 }
 //#endif
+
+BOOST_AUTO_TEST_CASE( debug_EstimationResult )
+{
+	//ChampionExt current_ch = Champion::ByName( ChampionName::Gromoboy );
+	//const Equipment current_eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
+	//ApplyEquipment( current_eq, current_ch.BasicStats, current_ch.ArtsBonusStats, false, false );
+	//const ChampionStats current_total_stats = current_ch.TotalStats();
+
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
+			{ StatType::Def, MatchOptions::ArtFactor::Magor },
+			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+		}
+	);
+
+	float est3, est4;
+	{
+		const Equipment eq = {
+			Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::CRate,14}, {StatType::Acc,9}, {StatType::HP,157} } },
+			Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP, { {StatType::Def_p,9 + 1}, {StatType::Spd,4 + 1}, {StatType::Res,28 + 2}, {StatType::CRate,9} }, ChampionName::Gromoboy },
+			Artefact{ ArtType::Shield, ArtSet::Vamp, 6, 12, StatType::Def, { {StatType::Acc,11}, {StatType::CRate,19}, {StatType::HP,423} } },
+			Artefact{ ArtType::Gloves, ArtSet::Vamp, 4, 8, StatType::Def_p, { {StatType::HP_p,9}, {StatType::Spd,4} } },
+			Artefact( ArtType::Chest, ArtSet::DivLife, 6, 12, StatType::Def_p, { {StatType::Spd,6}, {StatType::Def,29}, {StatType::HP_p,7}, {StatType::Acc,41} } ),
+			Artefact{ ArtType::Boots, ArtSet::Vamp, 5, 12, StatType::Spd, { {StatType::Acc,19}, {StatType::HP_p,10}, {StatType::CRate,4} } },
+			Artefact( ArtType::Ring,  ArtSet::None, 5, 12, StatType::HP, { {StatType::Def,46 + 5}, {StatType::Def_p,5 + 1}, {StatType::HP_p,5 + 1} }, ChampionName::Gromoboy ),
+		};
+		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
+		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, true, true );
+		est3 = EstimateEquipment( ch.TotalStats(), matching );
+	}
+	{
+		const Equipment eq = {
+			Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::CRate,14}, {StatType::Acc,9}, {StatType::HP,157} } },
+			Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 12, StatType::HP, { {StatType::Spd,9}, {StatType::CRate,10} } },
+			Artefact{ ArtType::Shield, ArtSet::Vamp, 6, 12, StatType::Def, { {StatType::Acc,11}, {StatType::CRate,19}, {StatType::HP,423} } },
+			Artefact{ ArtType::Gloves, ArtSet::Vamp, 5, 8, StatType::Def_p, { {StatType::Def,21}, {StatType::HP_p,17} } },
+			Artefact( ArtType::Chest, ArtSet::DivLife, 6, 12, StatType::Def_p, { {StatType::Spd,6}, {StatType::Def,29}, {StatType::HP_p,7}, {StatType::Acc,41} } ),
+			Artefact{ ArtType::Boots, ArtSet::Vamp, 5, 12, StatType::Spd, { {StatType::Acc,19}, {StatType::HP_p,10}, {StatType::CRate,4} } },
+			Artefact( ArtType::Ring,  ArtSet::None, 5, 12, StatType::HP, { {StatType::Def,46 + 5}, {StatType::Def_p,5 + 1}, {StatType::HP_p,5 + 1} }, ChampionName::Gromoboy ),
+		};
+		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
+		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, true, true );
+		est4 = EstimateEquipment( ch.TotalStats(), matching );
+	}
+	BOOST_TEST_MESSAGE( est3 << " vs " << est4 );
+	BOOST_CHECK_GT( est3, est4 );
+}
 
 #endif

@@ -44,7 +44,8 @@ struct MatchOptions
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool EstimateMinCap( int value, int ref_value, int width, float& f );
+bool EstimateMinCap( int value, int ref_value, int width, float& est );
+float EstimateEquipment( const ChampionStats&, const MatchOptions& );
 void FindBestEquipment( const std::vector<Artefact>&, const Champion&, const MatchOptions&, Equipment& );
 void FindBestEquipment2( const std::vector<Artefact>&, const Champion&, const MatchOptions&, std::vector<Equipment>& );
 Equipment FindRealBestEquipment( ChampionExt&, const MatchOptions& );

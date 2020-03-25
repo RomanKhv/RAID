@@ -70,8 +70,11 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, Cursed );
 		CASE_RETURN_STRING( ArtSet, Toxic );
 		CASE_RETURN_STRING( ArtSet, Frost );
+		CASE_RETURN_STRING( ArtSet, Daze );
 		CASE_RETURN_STRING( ArtSet, Immunitet );
+		CASE_RETURN_STRING( ArtSet, Vozmezdie );
 		CASE_RETURN_STRING( ArtSet, Shield );
+		CASE_RETURN_STRING( ArtSet, Doblest );
 		CASE_RETURN_STRING( ArtSet, Beshenstvo );
 		CASE_RETURN_STRING( ArtSet, Regeneration );
 		CASE_RETURN_STRING( ArtSet, Svirepost );
@@ -160,6 +163,22 @@ std::string to_string( const EquipmentRef& eq )
 	}
 	//suppress_last_symbol( ss );
 	return ss.str();
+}
+
+const char* to_string( const ChampionName& name )
+{
+	switch ( name )
+	{
+		CASE_RETURN_STRING( ChampionName, ColdHeart );
+		CASE_RETURN_STRING( ChampionName, Gromoboy );
+		CASE_RETURN_STRING( ChampionName, Hatun );
+		CASE_RETURN_STRING( ChampionName, Kael );
+		CASE_RETURN_STRING( ChampionName, Krisk );
+		CASE_RETURN_STRING( ChampionName, Lekar );
+		CASE_RETURN_STRING( ChampionName, Yuliana );
+	}
+	_ASSERTE( "!unreachable code" );
+	return "Chosen One";
 }
 
 std::string stats_progress( const ChampionStats& new_stats, const ChampionStats& prev_stats )
