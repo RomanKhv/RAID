@@ -305,7 +305,7 @@ EquipmentRef convert( const Equipment& ref_eq )
 	return eq;
 }
 
-BOOST_AUTO_TEST_CASE( find_RequiredSets )
+BOOST_AUTO_TEST_CASE( find_SetsRestrictions )
 {
 	{
 		const Equipment eq = {
@@ -328,6 +328,9 @@ BOOST_AUTO_TEST_CASE( find_RequiredSets )
 			Artefact( ArtType::Boots, ArtSet::HP, 5, 8, StatType::Spd, {} ),
 		};
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::HP } ).IsEqHasRequiredSets( convert(eq) ) );
+
+		BOOST_CHECK( MatchOptions( {}, {}, { ArtSet::Atk } ).IsArtAccepted( eq[ArtType::Weapon], ChampionName::Gromoboy ) );
+		BOOST_CHECK( !MatchOptions( {}, {}, { ArtSet::Atk } ).IsArtAccepted( eq[ArtType::Shield], ChampionName::Gromoboy ) );
 	}
 	{
 		const Equipment eq = {
@@ -341,6 +344,10 @@ BOOST_AUTO_TEST_CASE( find_RequiredSets )
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
 	}
+
+	BOOST_CHECK( MatchOptions( {}, {}, { ArtSet::Atk } ).IsSetAccepted( ArtSet::HP ) );
+	BOOST_CHECK( !MatchOptions( {}, {}, { ArtSet::Atk } ).IsSetAccepted( ArtSet::Atk ) );
+	BOOST_CHECK( !MatchOptions( {}, {}, { ArtSet::Atk, ArtSet::Def } ).IsSetAccepted( ArtSet::Atk ) );
 }
 
 BOOST_AUTO_TEST_CASE( test_Iterator )

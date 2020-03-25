@@ -17,7 +17,7 @@ struct MatchOptions
 	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
 
 	std::map<ArtSet, int> RequiedSets;
-	//enum_index_map<ArtSet,ArtSet::Count,bool> SetExclFilter;
+	enum_index_map<ArtSet,ArtSet::Count,bool> ExcludedSets;
 
 	static const bool ConsiderMaxLevels = true;
 	int MinCap[ChampionStats::Count] = { 0 };				//StatType -> value
@@ -27,7 +27,7 @@ struct MatchOptions
 	MatchOptions() = default;
 	MatchOptions( std::map<StatType, ArtFactor>,
 				  std::vector<ArtSet> req_filter = {},
-				  std::set<ArtSet> set_filter = {},
+				  std::set<ArtSet> exclusion_filter = {},
 				  bool consider_max_lvl = true,
 				  std::map<StatType, int> min_caps = {},
 				  std::map<StatType, int> max_caps = {} );

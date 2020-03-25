@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 		}
 		,{ ArtSet::Vamp }
-		,{ /*ArtSet::HP, ArtSet::Def, ArtSet::Acc, ArtSet::Speed, ArtSet::Immortal, ArtSet::DivLife, ArtSet::DivSpeed*/ }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 		,true
 		,{ {StatType::Spd,150}, {StatType::Acc,110} }
 		,{ {StatType::CRate,60}, {StatType::CDmg,100} }

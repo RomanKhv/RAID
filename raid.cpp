@@ -750,14 +750,17 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 
 /////////////////////////////////////////////////////////////////////////////
 
-MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> set_filter,
+MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
 							bool consider_max_lvl, std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
-	//,SetFilter( std::move( set_filter ) )
 	//,ConsiderMaxLevels( consider_max_lvl )
 {
 	for ( ArtSet set : req_filter )
 	{
 		RequiedSets[set]++;
+	}
+	for ( ArtSet set : exclusion_filter )
+	{
+		ExcludedSets[set] = true;
 	}
 	_ASSERTE( ConsiderMaxLevels == consider_max_lvl );
 	for ( const auto& p : factors )
@@ -803,13 +806,10 @@ bool MatchOptions::IsInputOK() const
 
 bool MatchOptions::IsSetAccepted( ArtSet set ) const
 {
-	//if ( SetFilter.empty() )
-		return true;	//accept all
+	if ( set == ArtSet::None )
+		return true;	//ring/necklace/banner
 
-	//if ( set == ArtSet::None )
-	//	return true;	//ring/necklace/banner
-
-	//return SetFilter.count( set ) > 0;
+	return !ExcludedSets[set];
 }
 
 bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) const
