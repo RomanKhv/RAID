@@ -22,6 +22,102 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
 
 /////////////////////////////////////////////////////////////////////////////
 
+#ifdef _DEBUG
+template <typename IMAP>
+int index_map_iterator<IMAP>::_instances_counter = 0;
+#endif
+
+enum class Enum { e0, e1, e2, Count };
+
+BOOST_AUTO_TEST_CASE( test_index_map )
+{
+	{
+		enum_index_map<ArtSet, ArtSet::Count, int> sets;
+		sets[ArtSet::HP] = 1;
+		BOOST_CHECK_EQUAL( sets._Arr[0], 1 );
+		sets[ArtSet::Atk] = 2;
+		BOOST_CHECK_EQUAL( sets._Arr[1], 2 );
+	}
+	{
+		index_map<ArtSet, stl::enum_to_<size_t>( ArtSet::Count ), int> sets;
+		sets[ArtSet::HP] = 1;
+		BOOST_CHECK_EQUAL( sets._Arr[0], 1 );
+		sets[ArtSet::Atk] = 2;
+		BOOST_CHECK_EQUAL( sets._Arr[1], 2 );
+	}
+	{
+		using map_t = enum_index_map<Enum, Enum::Count, int>;
+		map_t m;
+		BOOST_CHECK( m.begin() != m.end() );
+		BOOST_CHECK( m.size() == 3 );
+		BOOST_CHECK( ++(++(++m.begin())) == m.end() );
+		BOOST_CHECK_EQUAL( m._Arr[0], 0 );
+		BOOST_CHECK_EQUAL( m._Arr[1], 0 );
+		BOOST_CHECK_EQUAL( m._Arr[2], 0 );
+
+		m[Enum::e1] = 1;
+		BOOST_CHECK( m.begin().key() == Enum::e0 );
+		BOOST_CHECK( m.begin().value() == 0 );
+
+		auto i = m.begin();
+		BOOST_CHECK( i.key() == Enum::e0 );
+		BOOST_CHECK_EQUAL( i.value(), 0 );
+		++i;
+		BOOST_CHECK( i.key() == Enum::e1 );
+		BOOST_CHECK_EQUAL( i.value(), 1 );
+		++i;
+		BOOST_CHECK( i.key() == Enum::e2 );
+		BOOST_CHECK_EQUAL( i.value(), 0 );
+		++i;
+		BOOST_CHECK( i == m.end() );
+
+#ifdef INDEX_MAP_READY_FOR_RANGE_FOR
+		int counter = 0;
+#ifdef _DEBUG
+		index_map_iterator<map_t>::_instances_counter = 0;
+#endif
+		for ( const auto i : m )
+			counter++;
+#ifdef _DEBUG
+		 BOOST_CHECK_EQUAL( index_map_iterator<map_t>::_instances_counter, 2 );
+#endif
+		BOOST_CHECK_EQUAL( counter, 3 );
+#endif
+	}
+}
+
+BOOST_AUTO_TEST_CASE( test_enum_range_iterator )
+{
+//	{
+//		int counter = 0;
+//		for ( Enum e : make_enum_range<Enum>( Enum::e0, Enum::Count ) )
+//			counter++;
+//		BOOST_CHECK_EQUAL( counter, 3 );
+//	}
+	{
+		enum_iterator<Enum> i( Enum::e0, Enum::Count );
+		BOOST_CHECK( !i.finished() );
+		BOOST_CHECK( *i == Enum::e0 );
+		++i;
+		BOOST_CHECK( !i.finished() );
+		BOOST_CHECK( *i == Enum::e1 );
+		++i;
+		BOOST_CHECK( !i.finished() );
+		++i;
+		BOOST_CHECK( i.finished() );
+		++i;
+		BOOST_CHECK( i.finished() );
+	}
+	{
+		int counter = 0;
+		for ( enum_iterator<Enum> i( Enum::e0, Enum::Count ); !i.finished(); ++i )
+			counter++;
+		BOOST_CHECK_EQUAL( counter, 3 );
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 #ifdef GENERAL_TESTS
 
 BOOST_AUTO_TEST_CASE( test_basics )

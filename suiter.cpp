@@ -261,7 +261,6 @@ void report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_b
 	for ( const auto& at : arts_by_type )
 		std::cout << at.second.size() << "x";
 	std::cout << "]";
-	_ASSERTE( n_comb < 310 );
 	
 	//std::cout << "(will take ";
 	//const double n = _MyArts.size();
@@ -274,6 +273,7 @@ void report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_b
 
 	std::cout << "\n";
 
+	_ASSERTE( n_comb < 310 );
 	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Ring ) )
 		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
 	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Necklace ) )

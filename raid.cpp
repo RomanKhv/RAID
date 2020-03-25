@@ -752,10 +752,13 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 
 MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> set_filter,
 							bool consider_max_lvl, std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
-	:RequiedSets( std::move( req_filter ) )
 	//,SetFilter( std::move( set_filter ) )
 	//,ConsiderMaxLevels( consider_max_lvl )
 {
+	for ( ArtSet set : req_filter )
+	{
+		RequiedSets[set]++;
+	}
 	_ASSERTE( ConsiderMaxLevels == consider_max_lvl );
 	for ( const auto& p : factors )
 	{
@@ -782,6 +785,20 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 		std::printf( "Inventory: %I64u items\n", _MyArts.size() );
 		inventory_logged = true;
 	}
+}
+
+bool MatchOptions::IsInputOK() const
+{
+	int total_req_art_count = 0;
+	for ( const auto& set : RequiedSets )
+	{
+		total_req_art_count += SetSize_fast( set.first );
+	}
+	_ASSERTE( total_req_art_count <= 6 );
+	if ( total_req_art_count > 6 )
+		return false;
+
+	return true;
 }
 
 bool MatchOptions::IsSetAccepted( ArtSet set ) const
@@ -812,18 +829,7 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 	if ( RequiedSets.empty() )
 		return true;
 
-	std::map<ArtSet,int> req_sets;
-	int total_req_art_count = 0;
-	for ( ArtSet set : RequiedSets )
-	{
-		req_sets[set] ++;
-		total_req_art_count += SetSize_fast( set );
-	}
-	_ASSERTE( total_req_art_count <= 6 );
-	if ( total_req_art_count > 6 )
-		return false;
-
-	std::map<ArtSet,int> eq_sets;
+	enum_index_map<ArtSet,ArtSet::Count,int> eq_sets;
 	for ( size_t iat = 0; iat < Equipment::BasicSize; ++iat )
 	{
 		if ( const Artefact* art = eq.Arts[iat] )
@@ -833,10 +839,11 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 		}
 	}
 
-	for ( const auto& rs : req_sets )
+	for ( const auto set : RequiedSets )
 	{
-		const int n_req_arts = SetSize_fast( rs.first ) * rs.second;
-		const int n_eq_arts = stl::get_value_or( eq_sets, rs.first, 0 );
+		_ASSERTE( set.second > 0 );
+		const int n_req_arts = SetSize_fast( set.first ) * set.second;
+		const int n_eq_arts = eq_sets[set.first];
 		if ( n_eq_arts < n_req_arts )
 			return false;
 	}

@@ -5,6 +5,8 @@
 #include "to_string.h"
 
 #if !defined _DEBUG || defined DEBUG_FIND_BEST
+#define RUN_FIND
+#endif
 
 #define DISPLAY_BEST_POOL
 
@@ -64,6 +66,10 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 
 /////////////////////////////////////////////////////////////////////////////
 
+/*
+- Always compile and run MatchOptions instanciation to verify input data in Debug configurations
+*/
+
 BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 {
 	const MatchOptions matching(
@@ -80,8 +86,9 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 		,{ {StatType::Spd,150}, {StatType::Acc,110} }
 		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
+	BOOST_CHECK( matching.IsInputOK() );
 
+#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Gromoboy, matching );
-}
-
 #endif
+}

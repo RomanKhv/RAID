@@ -76,8 +76,7 @@ enum class ArtSet
 	DivLife,
 	DivSpeed,
 	//4
-	_FourBegin,
-	Vamp = _FourBegin,
+	Vamp,
 	Gibel,
 	Mest,
 	Fury,
@@ -96,7 +95,8 @@ enum class ArtSet
 	Savage,			//Жестокость
 	Taunting,		//Насмешка
 
-	Count
+	Count,
+	_FourBegin = Vamp
 };
 
 enum class ChampionName
