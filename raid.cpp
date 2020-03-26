@@ -753,7 +753,7 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 /////////////////////////////////////////////////////////////////////////////
 
 MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
-							bool consider_max_lvl, std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
+							std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
 	//,ConsiderMaxLevels( consider_max_lvl )
 {
 	for ( ArtSet set : req_filter )
@@ -764,7 +764,6 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 	{
 		ExcludedSets[set] = true;
 	}
-	_ASSERTE( ConsiderMaxLevels == consider_max_lvl );
 	for ( const auto& p : factors )
 	{
 		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
@@ -774,7 +773,7 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 	{
 		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
 		_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
-		Factors[stl::enum_to_int( p.first )] = ArtFactor::MinCap;
+		//Factors[stl::enum_to_int( p.first )] = ArtFactor::MinCap;
 		MinCap[stl::enum_to_int( p.first )] = p.second;
 	}
 	for ( const auto& p : max_caps )
@@ -831,7 +830,7 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 	if ( RequiedSets.empty() )
 		return true;
 
-	enum_index_map<ArtSet,ArtSet::Count,int> eq_sets;
+	enum_index_map<ArtSet,ArtSet::count,int> eq_sets;
 	for ( size_t iat = 0; iat < Equipment::BasicSize; ++iat )
 	{
 		if ( const Artefact* art = eq.Arts[iat] )
@@ -879,7 +878,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 15855, 727, 1443,  97,  15, 50,  30, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Hatun:
-			return Champion( { 15555, 971, 1146,  97,  15, 50,  30, 0 }, Element::Green, name );
+			return Champion( { 15690, 980, 1156,  97,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Kael:
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
@@ -889,6 +888,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Voitelnica:
+			return Champion( { 10440, 907, 534,  97,  15, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Yuliana:
 			return Champion( { 15195, 1354, 870,  103,  15, 50,  30, 0 }, Element::Blue, name );

@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Gromoboy;
+const ChampionName Champion_to_suitup = ChampionName::Voitelnica;
 
 #define DISPLAY_BEST_POOL
 
@@ -96,13 +96,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 		{
 			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
 			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
-			{ StatType::Def, MatchOptions::ArtFactor::Magor },
+			{ StatType::Def, MatchOptions::ArtFactor::Major },
 			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,true
 		,{ {StatType::Spd,150}, {StatType::Acc,110} }
 		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
@@ -110,5 +109,68 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 
 #ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Gromoboy, matching );
+#endif
+	/*
+HP:    31005 (-2906)
+Atk:   1031 (+84)
+Def:   3524 (+81)
+Spd:   152 (+1)
+CRate: 63 (+6)
+CDmg:  58 (-21)
+Res:   35 (-63)
+Acc:   110 (+13)
+Weapon: [Vamp]     5* (16)       { {CDmg,6}, {CRate,15}, {Atk_p,5}, {Acc,9}, }
+Helmet: [Acc]      5* (12)       { {Spd,9}, {CRate,10}, }
+Shield: [Vamp]     6* (12)       { {Acc,11}, {CRate,19}, {HP,423}, }
+Gloves: [Vamp]     5* (8)  Def_p { {Def,21}, {HP_p,17}, }
+Chest:  [DivLife]  6* (16) Def_p { {Spd,6}, {Def,29}, {HP_p,14}, {Acc,41}, }
+Boots:  [Vamp]     5* (16) Spd   { {Acc,19}, {HP_p,10}, {CRate,4}, {Atk_p,4}, }
+Ring:   []         5* (12) HP    { {Def,51}, {Def_p,6}, {HP_p,6}, }
+	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Krisk )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
+			{ StatType::Def, MatchOptions::ArtFactor::Major },
+			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ {StatType::Spd,150}, {StatType::Acc,110} }
+		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Krisk, matching );
+#endif
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			{ StatType::Atk, MatchOptions::ArtFactor::Max },
+			{ StatType::Def, MatchOptions::ArtFactor::Minor },
+			//{ StatType::Spd, MatchOptions::ArtFactor::Max },
+			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Moderate },
+			//{ StatType::Acc, MatchOptions::ArtFactor::Major },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ {StatType::Spd,150}, {StatType::Acc,110} }
+		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Krisk, matching );
 #endif
 }

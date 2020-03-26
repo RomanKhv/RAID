@@ -96,20 +96,24 @@ enum class ArtSet
 	Savage,			//Жестокость
 	Taunting,		//Насмешка
 
-	Count,
+	count,
 	_FourBegin = Vamp
 };
 
 enum class ChampionName
 {
-	none,
+	none = -1,
+
 	ColdHeart,
 	Gromoboy,
 	Hatun,
 	Kael,
 	Krisk,
 	Lekar,
+	Voitelnica,
 	Yuliana,
+
+	count
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -133,7 +137,7 @@ struct Artefact
 	StatType MainStatType() const { return _MainStat.Type; }
 	const Stat& GetMainStat( bool consider_max_level ) const;
 
-	static constexpr int SetCount = static_cast<int>( ArtSet::Count );
+	static constexpr int SetCount = static_cast<int>( ArtSet::count );
 private:
 	mutable Stat _MainStat;
 };

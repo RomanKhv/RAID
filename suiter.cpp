@@ -147,7 +147,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 		const int min_stat_cap = matching.MinCap[ stl::enum_to_int(st) ];
 		if ( min_stat_cap <= 0 )
 			continue;	//not requested
-		_ASSERTE( matching.Factor(st) == MatchOptions::ArtFactor::MinCap );
+		//_ASSERTE( matching.Factor(st) == MatchOptions::ArtFactor::MinCap );
 
 		float e = 0;
 		if ( !EstimateMinCap( ch_stats[st], min_stat_cap, 20, e ) )
@@ -183,17 +183,6 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 
 			est += fk * e;
 		}
-#ifdef _DEBUG
-		else {
-			switch ( f )
-			{
-				case MatchOptions::ArtFactor::MinCap:
-					{
-						_ASSERTE( matching.MinCap[ stl::enum_to_int(st) ] > 0 );
-					}
-			}
-		}
-#endif
 	}
 	return est;
 }

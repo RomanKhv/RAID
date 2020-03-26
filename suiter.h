@@ -10,16 +10,17 @@ struct MatchOptions
 		NotInterested = 0,
 		Minor = 1,
 		Moderate = 2,
-		Magor = 3,
+		Major = 3,
 		Max = 4,
-		MinCap,
+		//MinCap,
 	};
 	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
 
 	std::map<ArtSet, int> RequiedSets;
-	enum_index_map<ArtSet,ArtSet::Count,bool> ExcludedSets;
+	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
 
 	static const bool ConsiderMaxLevels = true;
+	//static const bool OptimizeAddStatFlatBonus = true;
 	int MinCap[ChampionStats::Count] = { 0 };				//StatType -> value
 	int MaxCap[ChampionStats::Count] = { 0 };				//StatType -> value
 //TODO:	StatType RequiredArtStats[Equipment::TotalSize] = {0};	//ArtType -> StatType
@@ -28,7 +29,6 @@ struct MatchOptions
 	MatchOptions( std::map<StatType, ArtFactor>,
 				  std::vector<ArtSet> req_filter = {},
 				  std::set<ArtSet> exclusion_filter = {},
-				  bool consider_max_lvl = true,
 				  std::map<StatType, int> min_caps = {},
 				  std::map<StatType, int> max_caps = {} );
 

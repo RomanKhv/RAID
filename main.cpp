@@ -32,14 +32,14 @@ enum class Enum { e0, e1, e2, Count };
 BOOST_AUTO_TEST_CASE( test_index_map )
 {
 	{
-		enum_index_map<ArtSet, ArtSet::Count, int> sets;
+		enum_index_map<ArtSet, ArtSet::count, int> sets;
 		sets[ArtSet::HP] = 1;
 		BOOST_CHECK_EQUAL( sets._Arr[0], 1 );
 		sets[ArtSet::Atk] = 2;
 		BOOST_CHECK_EQUAL( sets._Arr[1], 2 );
 	}
 	{
-		index_map<ArtSet, stl::enum_to_<size_t>( ArtSet::Count ), int> sets;
+		index_map<ArtSet, stl::enum_to_<size_t>( ArtSet::count ), int> sets;
 		sets[ArtSet::HP] = 1;
 		BOOST_CHECK_EQUAL( sets._Arr[0], 1 );
 		sets[ArtSet::Atk] = 2;
@@ -152,8 +152,7 @@ BOOST_AUTO_TEST_CASE( test_basics )
 		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::Def_p ), 3 );
 	}
 
-	//for ( ArtSet set = static_cast<ArtSet>(0); stl::enum_to_int( set ) < stl::enum_to_int( ArtSet::Count ); ++static_cast<int&>(set) )
-	for ( int s = 0; s < stl::enum_to_int( ArtSet::Count ); ++s )
+	for ( int s = 0; s < stl::enum_to_int( ArtSet::count ); ++s )
 	{
 		const ArtSet set = static_cast<ArtSet>(s);
 		BOOST_CHECK_EQUAL( SetSize_fast(set), debug::SetSize(set) );
@@ -643,13 +642,12 @@ BOOST_AUTO_TEST_CASE( test_MaxCapPenalty )
 		{
 			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
 			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
-			{ StatType::Def, MatchOptions::ArtFactor::Magor },
+			{ StatType::Def, MatchOptions::ArtFactor::Major },
 			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,true
 		,{ {StatType::Spd,150}, {StatType::Acc,110} }
 		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
@@ -688,3 +686,16 @@ BOOST_AUTO_TEST_CASE( test_MaxCapPenalty )
 }
 
 #endif
+
+BOOST_AUTO_TEST_CASE( check_switches )
+{
+	for ( enum_iterator<ArtSet> i( ArtSet::count ); !i.finished(); ++i )
+	{
+		BOOST_CHECK( !to_string( *i ).empty() );
+	}
+	for ( enum_iterator<ChampionName> i( ChampionName::count ); !i.finished(); ++i )
+	{
+		BOOST_CHECK( !std::string(to_string( *i )).empty() );
+		BOOST_CHECK( Champion::ByName( *i ).IsReal() );
+	}
+}
