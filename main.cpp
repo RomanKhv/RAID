@@ -523,23 +523,35 @@ BOOST_AUTO_TEST_CASE( test_join )
 		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 2 );
 		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 1 );
 
-		pool.join( EqEst( 4, {} ) );
+		pool.join( EqEst( 5, {} ) );
 		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
-		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 5 );
 		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 2 );
 		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 1 );
 
+		pool.join( EqEst( 4, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 5 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 2 );
+
 		pool.join( EqEst( 3, {} ) );
 		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
-		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 4 );
-		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 3 );
-		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 2 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 5 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 3 );
 
 		pool.join( EqEst( 0.5, {} ) );
 		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
-		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 4 );
-		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 3 );
-		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 2 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 5 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 4 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 3 );
+
+		pool.join( EqEst( 6, {} ) );
+		BOOST_CHECK_EQUAL( pool._Arr.size(), 3 );
+		BOOST_CHECK_EQUAL( pool._Arr[0]._Est, 6 );
+		BOOST_CHECK_EQUAL( pool._Arr[1]._Est, 5 );
+		BOOST_CHECK_EQUAL( pool._Arr[2]._Est, 4 );
 	}
 }
 
@@ -623,12 +635,9 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 }
 //#endif
 
-BOOST_AUTO_TEST_CASE( debug_EstimationResult )
+BOOST_AUTO_TEST_CASE( test_MaxCapPenalty )
 {
-	//ChampionExt current_ch = Champion::ByName( ChampionName::Gromoboy );
-	//const Equipment current_eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
-	//ApplyEquipment( current_eq, current_ch.BasicStats, current_ch.ArtsBonusStats, false, false );
-	//const ChampionStats current_total_stats = current_ch.TotalStats();
+	//CRate penalty on excess +1 shouldn't be stronger than bonus of +1000 HP
 
 	const MatchOptions matching(
 		{
@@ -638,6 +647,11 @@ BOOST_AUTO_TEST_CASE( debug_EstimationResult )
 			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,true
+		,{ {StatType::Spd,150}, {StatType::Acc,110} }
+		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 
 	float est3, est4;
@@ -669,8 +683,8 @@ BOOST_AUTO_TEST_CASE( debug_EstimationResult )
 		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, true, true );
 		est4 = EstimateEquipment( ch.TotalStats(), matching );
 	}
-	BOOST_TEST_MESSAGE( est3 << " vs " << est4 );
-	BOOST_CHECK_GT( est3, est4 );
+	//BOOST_TEST_MESSAGE( est3 << " vs " << est4 );
+	BOOST_CHECK_LT( est3, est4 );
 }
 
 #endif

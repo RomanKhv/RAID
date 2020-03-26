@@ -44,7 +44,7 @@ const ChampionStats::values_t Excess_Tolerance = {	//weight: 1 -> (tol width) ->
 	/*StatType::Atk*/  1500,
 	/*StatType::Def*/  1500,
 	/*StatType::Spd*/  40,
-	/*StatType::CRate*/ 30,
+	/*StatType::CRate*/ 50,
 	/*StatType::CDmg*/ 40,
 	/*StatType::Res*/  0,
 	/*StatType::Acc*/  0,
@@ -66,7 +66,7 @@ inline float FactorK( MatchOptions::ArtFactor f )
 
 bool FloatEstimationFactor( MatchOptions::ArtFactor f, float& fk )
 {
-	if ( stl::enum_to_int(f) <= 4 )
+	if ( f >= MatchOptions::ArtFactor::Minor && f <= MatchOptions::ArtFactor::Max )
 	{
 		fk = FactorK( f );
 		return true;
@@ -183,6 +183,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 
 			est += fk * e;
 		}
+#ifdef _DEBUG
 		else {
 			switch ( f )
 			{
@@ -192,6 +193,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 					}
 			}
 		}
+#endif
 	}
 	return est;
 }
@@ -283,7 +285,7 @@ void report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_b
 
 	std::cout << "\n";
 
-	_ASSERTE( n_comb < 310 );
+	//_ASSERTE( n_comb < 310 );
 	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Ring ) )
 		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
 	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Necklace ) )
@@ -418,6 +420,7 @@ void FindBestEquipment2( const std::vector<Artefact>& inventory, const Champion&
 
 	for ( const EqEst& rhs : best._Arr )
 	{
+		std::printf( "Est: %f\n", rhs._Est );
 		eqs.emplace_back( rhs._Eq.as_basic() );
 	}
 }
