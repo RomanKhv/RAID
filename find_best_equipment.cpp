@@ -25,7 +25,8 @@ void report_stats_and_eq( const ChampionStats& final_stats, const Equipment& eq,
 		ChampionExt old_ch = target_champ;
 		const Equipment current_eq = GetCurrentEquipmentFor( target_champ.Name );
 		old_ch.ApplyEquipment( current_eq, false, MatchOptions::ConsiderMaxLevels );
-		log << stats_progress( final_stats, old_ch.TotalStats() ) << '\n';
+		const ChampionStats old_stats = old_ch.TotalStats();
+		log << stats_progress( final_stats, old_stats ) << '\n';
 	}
 
 	// equipment
@@ -52,7 +53,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	const ChampionStats final_stats = ch.TotalStats();
 	report_stats_and_eq( final_stats, eq, ChampionFactory::Gromoboy() );
 #else
-	const Champion ch = Champion::ByName( ChampionName::Gromoboy );
+	const Champion ch = Champion::ByName( name );
 
 	std::vector<Equipment> best_eq_pool;
 	FindRealBestEquipment2( ch, matching, best_eq_pool );
@@ -155,7 +156,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			{ StatType::HP,  MatchOptions::ArtFactor::Minor },
 			{ StatType::Atk, MatchOptions::ArtFactor::Max },
 			{ StatType::Def, MatchOptions::ArtFactor::Minor },
 			//{ StatType::Spd, MatchOptions::ArtFactor::Max },
@@ -163,14 +164,32 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 			{ StatType::CDmg, MatchOptions::ArtFactor::Moderate },
 			//{ StatType::Acc, MatchOptions::ArtFactor::Major },
 		}
-		,{ ArtSet::Vamp }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,150}, {StatType::Acc,110} }
-		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+		,{  }
+		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal }
+		,{ {StatType::Spd,160}, {StatType::Acc,90} }
+		,{ {StatType::CRate,70}/*, {StatType::CDmg,90}*/ }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
 #ifdef RUN_FIND
-	FindAndReportBestForChampion( ChampionName::Krisk, matching );
+	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
 #endif
+	/*
+1>HP:    19174 (+411)
+1>Atk:   2568 (+350)
+1>Def:   821 (-138)
+1>Spd:   162 (+3)
+1>CRate: 73 (+9)
+1>CDmg:  83 (+23)
+1>Res:   49 (-37)
+1>Acc:   102 (+17)
+1>Weapon: [CRate]    6* (16)       { {Acc,22}, {CRate,17}, {Res,19}, {CDmg,5}, }
+1>Helmet: [CRate]    5* (12)       { {Atk_p,10}, {CDmg,11}, {HP_p,5}, }
+1>Shield: [DivSpeed] 5* (12)       { {Acc,20}, {Spd,9}, {Def_p,5}, }
+1>Gloves: [Acc]      6* (12) Atk_p { {CRate,20}, {Spd,5}, {HP_p,5}, }
+1>Chest:  [Acc]      5* (12) Atk_p { {Def_p,5}, {CDmg,15}, {Acc,10}, }
+
+1>Boots:  [DivSpeed] 5* (12) Spd   { {Atk_p,14}, {Atk,20}, {CRate,9}, }
+1>Ring:   []         5* (8)  HP    { {Atk_p,16}, {HP_p,5}, }
+	*/
 }

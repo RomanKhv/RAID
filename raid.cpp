@@ -15,7 +15,7 @@ bool check_stat_input_error( const Stat& stat )
 		case StatType::Def:			return stat.Value >= 15;
 		case StatType::Atk_p:		return stat.Value < 20;
 		case StatType::HP_p:		return stat.Value <= 24;
-		case StatType::Def_p:		return stat.Value < 20;
+		case StatType::Def_p:		return stat.Value <= 21;
 	}
 	return true;
 }
@@ -581,9 +581,13 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 			}
 			break;
 		case ArtSet::Atk:
-		case ArtSet::Cruel:
 			{
 				add_percent_bonus<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, 15 );
+			}
+			break;
+		case ArtSet::Cruel:
+			{
+				add_percent_bonus<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, 15 + (compensation ? 3 : 0) );
 			}
 			break;
 		case ArtSet::DivAtk:
@@ -732,7 +736,8 @@ void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 	for ( const StatType st : { StatType::HP_p, StatType::Atk_p, StatType::Def_p, StatType::CDmg, StatType::Res, StatType::Acc } )
 	{
 		const int b = hall_bonus[stl::enum_to_int( st )];
-		ApplyStat( { st, b }, ch.BasicStats, stats );
+		if ( b > 0 )
+			ApplyStat( { st, b }, ch.BasicStats, stats );
 	}
 }
 
@@ -884,10 +889,13 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Krisk:
-			return Champion( { 18660, 727, 1465,  94,  15, 50,  30, 0 }, Element::Void, name );
+			return Champion( { 18990, 738, 1487,  94,  15, 50,  30, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::VisirOvelis:
+			return Champion( { 15255, 1319, 963,  101,  15, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Voitelnica:
 			return Champion( { 10440, 907, 534,  97,  15, 50,  30, 0 }, Element::Red, name );
@@ -898,4 +906,12 @@ Champion Champion::ByName( ChampionName name )
 	}
 	_ASSERTE( !"not yet supported" );
 	return Champion( { 0, 0, 0,  0,  0, 0,  0, 0 }, Element::Blue, name );
+}
+
+ChampionStats GetCurrentFinalStatsFor( ChampionName name )
+{
+	ChampionExt ch = Champion::ByName( name );
+	const Equipment current_eq = GetCurrentEquipmentFor( name );
+	ch.ApplyEquipment( current_eq, false, false );
+	return ch.TotalStats();
 }

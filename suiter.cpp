@@ -40,14 +40,14 @@ const ChampionStats::values_t Def_Max_Stat_Caps = {	// 0 - no cap/no penalty
 };
 
 const ChampionStats::values_t Excess_Tolerance = {	//weight: 1 -> (tol width) -> 0
-	/*StatType::HP*/   0,
+	/*StatType::HP*/   Def_Max_Stat_Caps[ stl::enum_to_int(StatType::HP) ] * 140 / 100,
 	/*StatType::Atk*/  1500,
 	/*StatType::Def*/  1500,
 	/*StatType::Spd*/  40,
 	/*StatType::CRate*/ 50,
 	/*StatType::CDmg*/ 40,
-	/*StatType::Res*/  0,
-	/*StatType::Acc*/  0,
+	/*StatType::Res*/  Def_Max_Stat_Caps[ stl::enum_to_int(StatType::Res) ] * 140 / 100,
+	/*StatType::Acc*/  Def_Max_Stat_Caps[ stl::enum_to_int(StatType::Acc) ] * 140 / 100,
 };
 
 const float fK_ignore = 0;
@@ -150,7 +150,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 		//_ASSERTE( matching.Factor(st) == MatchOptions::ArtFactor::MinCap );
 
 		float e = 0;
-		if ( !EstimateMinCap( ch_stats[st], min_stat_cap, 20, e ) )
+		if ( !EstimateMinCap( ch_stats[st], min_stat_cap, Excess_Tolerance[stl::enum_to_int( st )], e ) )
 			return 0.f;	//too small => not accepted
 		est += e;
 	}
@@ -169,9 +169,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 			if ( max_stat_cap && stat_value > max_stat_cap )
 			{
 				const int tol = Excess_Tolerance[stl::enum_to_int( st )];
-				const int excessive_threshold = ( tol > 0 ) ?
-					max_stat_cap + tol :
-					Def_Max_Stat_Caps[ stl::enum_to_int(st) ] * 140 / 100;
+				const int excessive_threshold = max_stat_cap + tol;
 				if ( stat_value > excessive_threshold )
 					continue;	//stat got too high, give 0 estimation (or "return 0;" ?)
 				else {

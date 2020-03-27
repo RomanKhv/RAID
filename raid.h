@@ -110,6 +110,7 @@ enum class ChampionName
 	Kael,
 	Krisk,
 	Lekar,
+	VisirOvelis,
 	Voitelnica,
 	Yuliana,
 
@@ -298,5 +299,6 @@ extern const Hall _MyHall;
 
 extern const std::vector<Artefact> _MyArts;
 Equipment GetCurrentEquipmentFor( ChampionName );
+ChampionStats GetCurrentFinalStatsFor( ChampionName );
 
 /////////////////////////////////////////////////////////////////////////////
