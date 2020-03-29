@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Voitelnica;
+const ChampionName Champion_to_suitup = ChampionName::Kael;
 
 #define DISPLAY_BEST_POOL
 
@@ -130,25 +130,84 @@ Ring:   []         5* (12) HP    { {Def,51}, {Def_p,6}, {HP_p,6}, }
 	*/
 }
 
-BOOST_AUTO_TEST_CASE( FindBest_Krisk )
+BOOST_AUTO_TEST_CASE( FindBest_Kael )
 {
 	const MatchOptions matching(
 		{
 			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
+			{ StatType::Atk, MatchOptions::ArtFactor::Max },
+			{ StatType::Def, MatchOptions::ArtFactor::Moderate },
+			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Def }
+		,{ {StatType::Spd,155}, {StatType::Acc,115} }
+		,{ {StatType::CRate,60}/*, {StatType::CDmg,100}*/ }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Kael, matching );
+#endif
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Krisk )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Major },
+			{ StatType::Def, MatchOptions::ArtFactor::Max },
+			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ {StatType::Spd,140}, {StatType::Acc,120} }
+		,{ {StatType::CRate,60}/*, {StatType::CDmg,100}*/ }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Krisk, matching );
+#endif
+	/*
+HP:    40050 (+9241)
+Atk:   1071 (+55)
+Def:   2958 (-47)
+Spd:   139 (0)
+CRate: 61 (-14)
+CDmg:  67 (-11)
+Res:   64 (-5)
+Acc:   129 (+19)
+Weapon: [Vamp]     5* (12)       { {Spd,5}, {Acc,33}, {HP,458}, }
+Helmet: [Vamp]     5* (16)       { {Def_p,6}, {Acc,28}, {CRate,6}, {Res,11}, }
+Shield: [Acc]      5* (16)       { {HP_p,7}, {Def_p,7}, {CDmg,15}, {CRate,16}, }
+Gloves: [DivLife]  6* (12) Def_p { {HP_p,11}, {Def,27}, {Acc,10}, {CRate,18}, }
+Chest:  [Vamp]     5* (16) HP_p  { {Atk_p,10}, {CRate,6}, {Def_p,5}, {HP,351}, }
+Boots:  [Vamp]     5* (8)  Spd   { {Res,18}, {Acc,20}, }
+Necklace:[]        5* (0)  HP    { {Def,16}, {Acc,8}, {Atk,21}, }
+	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Major },
 			{ StatType::Def, MatchOptions::ArtFactor::Major },
 			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,150}, {StatType::Acc,110} }
-		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+		,{ {StatType::Spd,150}, {StatType::Acc,120} }
+		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
 #ifdef RUN_FIND
-	FindAndReportBestForChampion( ChampionName::Krisk, matching );
+	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
 #endif
 }
 

@@ -44,12 +44,16 @@ enum class StatType
 struct Stat
 {
 	StatType Type;
-	int Value = 0;
+	int Value = 0;		//= BaseValue + ExtValue
+	int BaseValue = 0;
+	int ExtValue = 0;
 
 	Stat() = default;
-	Stat( StatType t, int val ) : Type(t), Value(val) {}
+	Stat( StatType t, int val ) : Type(t), BaseValue(val), Value(val) {}
+	Stat( StatType t, int base, int add ) : Type(t), BaseValue(base), ExtValue(add), Value(base+add) {}
 
 	bool Initialized() const { return Value > 0; }
+	int  get_val(bool estimation) const { return estimation ? BaseValue : Value; }
 
 	static const int TypeCount = 8 + 3;
 	static bool IsBasic( const StatType st ) { return stl::enum_to_int(st) <= stl::enum_to_int(StatType::Acc); }
@@ -251,6 +255,7 @@ struct ChampionExt
 	ChampionStats ArtsBonusStats;
 
 	ChampionExt( const Champion& );
+	void ApplyStat( const Stat&, bool estimating = false );
 	void ApplyEquipment( const Equipment&, bool estimating, bool consider_max_level );
 	ChampionStats TotalStats( bool apply_hall_bonus = true ) const;
 };
@@ -272,11 +277,10 @@ bool IsGoodStatForArt( StatType, ArtType );
 int  StatValueForLevel_fast( ArtType, StatType, int starRank, int level );
 inline int SetSize_fast( ArtSet set ) { return (stl::enum_to_int(set) < stl::enum_to_int(ArtSet::_FourBegin)) ? 2 : 4; }
 
-void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus );
-void ApplyStat( const Stat&, ChampionExt& );
+void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus, bool estimating );
 void ApplySetBonus( ArtSet, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
 void ApplySetsBonuses( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
-void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool consider_max_level /*= false*/ );
+void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
 void ApplyEquipment( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
 void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
 void ApplyHallBonus( const Champion&, ChampionStats& );
@@ -299,6 +303,7 @@ extern const Hall _MyHall;
 
 extern const std::vector<Artefact> _MyArts;
 Equipment GetCurrentEquipmentFor( ChampionName );
+ChampionStats GetCurrentArtsStatsFor( ChampionName );
 ChampionStats GetCurrentFinalStatsFor( ChampionName );
 
 /////////////////////////////////////////////////////////////////////////////

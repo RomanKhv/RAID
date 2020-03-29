@@ -53,7 +53,7 @@ const Stat& Artefact::GetMainStat( bool consider_max_level ) const
 	_ASSERTE( Initialized() );
 	if ( !_MainStat.Initialized() )
 	{
-		_MainStat.Value = StatValueForLevel_fast( Type, _MainStat.Type, Stars, consider_max_level ? 16 : Level );
+		_MainStat.Value = _MainStat.BaseValue = StatValueForLevel_fast( Type, _MainStat.Type, Stars, consider_max_level ? 16 : Level );
 	}
 #ifdef _DEBUG
 	else {
@@ -359,10 +359,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{ 0, 00, 00, 00, 00 },
 				};
 				static const stat_table_t Acc_Res = {
-					//      0   4   8  12  16
-					/*4*/{  8, 0, 0, 0, 64 },
-					/*5*/{ 12, 0, 0, 0, 78 },
-					/*6*/{ 16, 0, 0, 0, 96 },
+					//      0  4   8  12  16
+					/*4*/{  8, 0,  0, 0, 64 },
+					/*5*/{ 12, 0, 38, 0, 78 },
+					/*6*/{ 16, 0,  0, 0, 96 },
 				};
 
 namespace debug {
@@ -528,15 +528,15 @@ bool IsGoodStatForArt( StatType stat, ArtType art )
 }//debug
 /////////////////////////////////////////////////////////////////////////////
 
-void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats )
+void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating )
 {
-	_ASSERTE( stat.Value > 0 );
+	_ASSERTE( stat.Value > 0 && stat.BaseValue > 0 );
 	if ( Stat::IsBasic( stat.Type ) )	// == IsAdditive
 	{
-		arts_bonus_stats[stat.Type] += stat.Value;
+		arts_bonus_stats[stat.Type] += stat.get_val( estimating );
 	}
 	else {
-		arts_bonus_stats.basic_from_p(stat.Type) += basic_stats.basic_from_p(stat.Type) * stat.Value / 100;
+		arts_bonus_stats.basic_from_p(stat.Type) += basic_stats.basic_from_p(stat.Type) * stat.get_val(estimating) / 100;
 	}
 	//switch ( stat.Type )
 	//{
@@ -552,9 +552,9 @@ void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStat
 	//_ASSERTE( !"unreachable code" );
 }
 
-void ApplyStat( const Stat& stat, ChampionExt& ch )
+void ChampionExt::ApplyStat( const Stat& stat, bool estimating )
 {
-	ApplyStat( stat, ch.BasicStats, ch.ArtsBonusStats );
+	::ApplyStat( stat, BasicStats, ArtsBonusStats, estimating );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -688,18 +688,20 @@ void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats,
 	}
 }
 
-void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool consider_max_level )
+void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating, bool consider_max_level )
 {
 	if ( !art.Initialized() )
 	{
 		_ASSERTE( !"invalid art" );
 		return;
 	}
+	if ( !MatchOptions::ConsiderMaxLevelsForNonBasicArts && !art.IsBasic() )
+		consider_max_level = false;
 
-	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats );
+	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats, false );
 
 	for ( const Stat& stat : art.AddStats )
-		ApplyStat( stat, basic_stats, arts_bonus_stats );
+		ApplyStat( stat, basic_stats, arts_bonus_stats, estimating );
 }
 
 void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level )
@@ -710,7 +712,7 @@ void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, Cham
 	{
 		if ( art.Initialized() )
 		{
-			ApplyArtBonus( art, basic_stats, art_bonus_stats, estimating || consider_max_level );
+			ApplyArtBonus( art, basic_stats, art_bonus_stats, estimating, estimating || consider_max_level );
 		}
 	}
 }
@@ -724,7 +726,7 @@ void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, C
 		if ( art )
 		{
 			_ASSERTE( art->Initialized() );
-			ApplyArtBonus( *art, basic_stats, arts_bonus_stats, estimating || consider_max_level );
+			ApplyArtBonus( *art, basic_stats, arts_bonus_stats, estimating, estimating || consider_max_level );
 		}
 	}
 }
@@ -737,7 +739,7 @@ void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 	{
 		const int b = hall_bonus[stl::enum_to_int( st )];
 		if ( b > 0 )
-			ApplyStat( { st, b }, ch.BasicStats, stats );
+			ApplyStat( { st, b }, ch.BasicStats, stats, false );
 	}
 }
 
@@ -908,10 +910,17 @@ Champion Champion::ByName( ChampionName name )
 	return Champion( { 0, 0, 0,  0,  0, 0,  0, 0 }, Element::Blue, name );
 }
 
+ChampionStats GetCurrentArtsStatsFor( ChampionName name )
+{
+	ChampionStats arts_bonus_stats;
+	const Champion ch = Champion::ByName( name );
+	const Equipment current_eq = GetCurrentEquipmentFor( name );
+	ApplyEquipment( current_eq, ch.BasicStats, arts_bonus_stats, false, false );
+	return arts_bonus_stats;
+}
+
 ChampionStats GetCurrentFinalStatsFor( ChampionName name )
 {
-	ChampionExt ch = Champion::ByName( name );
-	const Equipment current_eq = GetCurrentEquipmentFor( name );
-	ch.ApplyEquipment( current_eq, false, false );
-	return ch.TotalStats();
+	const Champion ch = Champion::ByName( name );
+	return ch.TotalStats( GetCurrentArtsStatsFor( name ) );
 }

@@ -20,6 +20,7 @@ struct MatchOptions
 	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
 
 	static const bool ConsiderMaxLevels = true;
+	static const bool ConsiderMaxLevelsForNonBasicArts = false;	//no data, so far too expensive
 	//static const bool OptimizeAddStatFlatBonus = true;
 	int MinCap[ChampionStats::Count] = { 0 };				//StatType -> value
 	int MaxCap[ChampionStats::Count] = { 0 };				//StatType -> value

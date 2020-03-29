@@ -193,57 +193,57 @@ BOOST_AUTO_TEST_CASE( test_ApplyStat )
 {
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::HP,100 }, ch );
+		ch.ApplyStat( { StatType::HP,100 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 100 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Atk,100 }, ch );
+		ch.ApplyStat( { StatType::Atk,100 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 100 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Def,100 }, ch );
+		ch.ApplyStat( { StatType::Def,100 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 100 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Spd,10 }, ch );
+		ch.ApplyStat( { StatType::Spd,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 10 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::CRate,10 }, ch );
+		ch.ApplyStat( { StatType::CRate,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 10 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::CDmg,10 }, ch );
+		ch.ApplyStat( { StatType::CDmg,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 10 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Res,10 }, ch );
+		ch.ApplyStat( { StatType::Res,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 10 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Acc,10 }, ch );
+		ch.ApplyStat( { StatType::Acc,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 10 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::HP_p,10 }, ch );
+		ch.ApplyStat( { StatType::HP_p,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 1000 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Atk_p,10 }, ch );
+		ch.ApplyStat( { StatType::Atk_p,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 100 );
 	}
 	{
 		ChampionExt ch = TestChamp;
-		ApplyStat( { StatType::Def_p,10 }, ch );
+		ch.ApplyStat( { StatType::Def_p,10 } );
 		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 100 );
 	}
 }
@@ -598,39 +598,42 @@ BOOST_AUTO_TEST_CASE( test_Best )
 
 BOOST_AUTO_TEST_CASE( test_Gromoboy )
 {
-	ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
-	const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
-	ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
+	{
+		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
+		const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
+		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
 
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 15207 - 2 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 305 - 1 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 2295 - 2 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 51 + 1 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 47 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 6 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 42 );
-	BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 90 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 15207 - 2 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 305 - 1 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 2295 - 2 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 51 + 1 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 47 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 6 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 42 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 90 );
 
-	ChampionStats hall_stats;
-	ApplyHallBonus( ch, hall_stats );
-	BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
-	BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
-	BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
-	BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
-	BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
-	BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
-	BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
-	BOOST_CHECK_EQUAL( hall_stats.Acc, 30 );
-
-	//const ChampionStats final_stats = ch.TotalStats( true );
-	//BOOST_CHECK_EQUAL( final_stats.HP, 32506 );
-	//BOOST_CHECK_EQUAL( final_stats.Atk, 989 );
-	//BOOST_CHECK_EQUAL( final_stats.Def, 3742 );
-	//BOOST_CHECK_EQUAL( final_stats.Spd, 151 );
-	//BOOST_CHECK_EQUAL( final_stats.CRate, 62 );
-	//BOOST_CHECK_EQUAL( final_stats.CDmg, 89 );
-	//BOOST_CHECK_EQUAL( final_stats.Res, 98 );
-	//BOOST_CHECK_EQUAL( final_stats.Acc, 103 );
+		ChampionStats hall_stats;
+		ApplyHallBonus( ch, hall_stats );
+		BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
+		BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
+		BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
+		BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
+		BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
+		BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
+		BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
+		BOOST_CHECK_EQUAL( hall_stats.Acc, 30 );
+	}
+	{
+		//const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Krisk );
+		//BOOST_CHECK_EQUAL( stats.HP, 8411 - 1 );
+		//BOOST_CHECK_EQUAL( stats.Atk, 182 );
+		//BOOST_CHECK_EQUAL( stats.Def, 1471 + 3 );
+		//BOOST_CHECK_EQUAL( stats.Spd, 45 );
+		//BOOST_CHECK_EQUAL( stats.CRate, 46 );
+		//BOOST_CHECK_EQUAL( stats.CDmg, 26 );
+		//BOOST_CHECK_EQUAL( stats.Res, 34 );
+		//BOOST_CHECK_EQUAL( stats.Acc, 80 );
+	}
 }
 //#endif
 
