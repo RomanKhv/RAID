@@ -48,6 +48,14 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Chest, ArtSet::Speed, 4, 16, StatType::Def_p, { {StatType::HP_p,10,1}, {StatType::Spd,4,1}, {StatType::Atk_p,4}, {StatType::Res,7,2} }, ChampionName::Hatun },
 	Artefact{ ArtType::Boots, ArtSet::Speed, 5, 16, StatType::Spd, { {StatType::Atk,28,5}, {StatType::HP_p,5,1}, {StatType::CDmg,5}, {StatType::Def_p,5,1} }, ChampionName::Hatun },
 
+	// Стальной Череп
+	Artefact{ ArtType::Weapon, ArtSet::HP, 5, 12, StatType::Atk, { {StatType::Spd,13,1}, {StatType::Acc,11,2}, {StatType::HP,296,100} }, ChampionName::SteelSkull },
+	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP, { {StatType::Spd,9,1}, {StatType::HP_p,9,1}, {StatType::Acc,11,2}, {StatType::Def_p,6,1} }, ChampionName::SteelSkull },
+	Artefact{ ArtType::Shield, ArtSet::Acc, 4, 12, StatType::Def, { {StatType::Def_p,9,1}, {StatType::Acc,16}, {StatType::HP,110,100} }, ChampionName::SteelSkull },
+	Artefact{ ArtType::Gloves, ArtSet::HP, 4, 13, StatType::Def_p, { {StatType::Atk_p,9,1}, {StatType::HP_p,4,1}, {StatType::Spd,4,1} }, ChampionName::SteelSkull },
+	Artefact{ ArtType::Chest, ArtSet::Acc, 5, 12, StatType::Def_p, { {StatType::HP_p,5,1}, {StatType::HP,711,100}, {StatType::Spd,4,1} }, ChampionName::SteelSkull },
+	Artefact{ ArtType::Boots, ArtSet::Acc, 5, 12, StatType::Spd, { {StatType::Def,55,5}, {StatType::Atk_p,5,1}, {StatType::HP_p,11,1} }, ChampionName::SteelSkull },
+
 
 	// HP
 	Artefact{ ArtType::Weapon, ArtSet::HP, 6, 16, StatType::Atk, { {StatType::CDmg,13}, {StatType::Spd,12}, {StatType::CRate,11}, {StatType::Atk_p,7} } },
@@ -446,7 +454,7 @@ const std::vector<Artefact> _MyArts =
 
 	Artefact( ArtType::Shield, ArtSet::DivLife, 6, 8, StatType::Def, { {StatType::HP_p,11}, {StatType::Def_p,5}, {StatType::HP,800}, {StatType::Res,10} } ),
 
-	Artefact( ArtType::Gloves, ArtSet::DivLife, 6, 12, StatType::Def_p, { {StatType::HP_p,11}, {StatType::Def,27}, {StatType::Acc,10}, {StatType::CRate,18} }, ChampionName::Krisk ),
+	Artefact( ArtType::Gloves, ArtSet::DivLife, 6, 15, StatType::Def_p, { {StatType::HP_p,11}, {StatType::Def,27}, {StatType::Acc,10}, {StatType::CRate,18} }, ChampionName::Krisk ),
 	Artefact( ArtType::Gloves, ArtSet::DivLife, 5, 8, StatType::HP_p, { {StatType::Acc,10}, {StatType::CDmg,14}, {StatType::Atk,13,5} } ),
 
 	Artefact( ArtType::Chest, ArtSet::DivLife, 6, 16, StatType::Def_p, { {StatType::Spd,6,1}, {StatType::Def,29,5}, {StatType::HP_p,14,4}, {StatType::Acc,41,3} }, ChampionName::Gromoboy ),

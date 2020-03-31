@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Kael;
+const ChampionName Champion_to_suitup = ChampionName::SteelSkull;
 
 #define DISPLAY_BEST_POOL
 
@@ -188,6 +188,28 @@ Chest:  [Vamp]     5* (16) HP_p  { {Atk_p,10}, {CRate,6}, {Def_p,5}, {HP,351}, }
 Boots:  [Vamp]     5* (8)  Spd   { {Res,18}, {Acc,20}, }
 Necklace:[]        5* (0)  HP    { {Def,16}, {Acc,8}, {Atk,21}, }
 	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
+			{ StatType::Def, MatchOptions::ArtFactor::Max },
+			//{ StatType::CRate, MatchOptions::ArtFactor::Minor },
+			//{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+		}
+		,{ /*ArtSet::Vamp ArtSet::Immortal*/ }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ {StatType::Spd,150}, {StatType::Acc,160} }
+		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::SteelSkull, matching );
+#endif
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )

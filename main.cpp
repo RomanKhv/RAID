@@ -621,18 +621,18 @@ BOOST_AUTO_TEST_CASE( test_Gromoboy )
 		BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
 		BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
 		BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
-		BOOST_CHECK_EQUAL( hall_stats.Acc, 30 );
+		BOOST_CHECK_EQUAL( hall_stats.Acc, 40 );
 	}
 	{
-		//const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Krisk );
-		//BOOST_CHECK_EQUAL( stats.HP, 8411 - 1 );
-		//BOOST_CHECK_EQUAL( stats.Atk, 182 );
-		//BOOST_CHECK_EQUAL( stats.Def, 1471 + 3 );
-		//BOOST_CHECK_EQUAL( stats.Spd, 45 );
-		//BOOST_CHECK_EQUAL( stats.CRate, 46 );
-		//BOOST_CHECK_EQUAL( stats.CDmg, 26 );
-		//BOOST_CHECK_EQUAL( stats.Res, 34 );
-		//BOOST_CHECK_EQUAL( stats.Acc, 80 );
+		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Krisk );
+		//BOOST_CHECK_EQUAL( stats.HP, 19528 - 1 );
+		BOOST_CHECK_EQUAL( stats.Atk, 248 - 1 );
+		//BOOST_CHECK_EQUAL( stats.Def, 1368 );
+		BOOST_CHECK_EQUAL( stats.Spd, 45 );
+		BOOST_CHECK_EQUAL( stats.CRate, 46 );
+		BOOST_CHECK_EQUAL( stats.CDmg, 15 );
+		BOOST_CHECK_EQUAL( stats.Res, 30 );
+		BOOST_CHECK_EQUAL( stats.Acc, 102 - 2 );
 	}
 }
 //#endif

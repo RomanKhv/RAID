@@ -338,7 +338,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					//      0   4   8  12  16
 					/*4*/{  6, 13, 19, 26, 40 },
 					/*5*/{  8, 16, 24, 33, 50 },
-					/*6*/{ 10, 20, 29, 39, 60 },
+					/*6*/{ 10, 20, 29, 39, /*0,0,46,*/60 },
 				};
 				static const stat_table_t CDmg_general = {
 					//      0  4  8 12  16
@@ -895,6 +895,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::SteelSkull:
+			return Champion( { 15030, 1244, 892,  104,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 15255, 1319, 963,  101,  15, 50,  30, 0 }, Element::Red, name );

@@ -175,12 +175,13 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Kael );
 		CASE_RETURN_STRING( ChampionName, Krisk );
 		CASE_RETURN_STRING( ChampionName, Lekar );
+		CASE_RETURN_STRING( ChampionName, SteelSkull );
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );
 		CASE_RETURN_STRING( ChampionName, Voitelnica );
 		CASE_RETURN_STRING( ChampionName, Yuliana );
 	}
-	_ASSERTE( "!unreachable code" );
-	return "Chosen One";
+	_ASSERTE( !"unreachable code" );
+	return "";
 }
 
 std::string stats_progress( const ChampionStats& new_stats, const ChampionStats& prev_stats )

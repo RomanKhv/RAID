@@ -114,6 +114,7 @@ enum class ChampionName
 	Kael,
 	Krisk,
 	Lekar,
+	SteelSkull,
 	VisirOvelis,
 	Voitelnica,
 	Yuliana,
