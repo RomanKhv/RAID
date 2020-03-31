@@ -891,7 +891,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Krisk:
-			return Champion( { 18990, 738, 1487,  94,  15, 50,  30, 0 }, Element::Void, name );
+			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 16680, 859, 969,  101,  15, 50,  30, 0 }, Element::Blue, name );

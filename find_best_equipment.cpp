@@ -194,12 +194,13 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Major },
-			{ StatType::Def, MatchOptions::ArtFactor::Major },
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
+			{ StatType::Def, MatchOptions::ArtFactor::Max },
 			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
 			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
 		}
-		,{ ArtSet::Vamp }
+		,{ /*ArtSet::Vamp*/ ArtSet::Immortal }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 		,{ {StatType::Spd,150}, {StatType::Acc,120} }
 		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
@@ -209,6 +210,22 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 #ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
 #endif
+	/*
+HP:    26935 (+11375)
+Atk:   1766 (+421)
+Def:   2553 (+1571)
+Spd:   153 (+52)
+CRate: 36 (+21)
+CDmg:  73 (+21)
+Res:   57 (+27)
+Acc:   134 (+124)
+Weapon: [Immortal] 5* (12)       { {CRate,10}, {Acc,18}, {HP_p,5}, {HP,689}, }
+Helmet: [Immortal] 5* (12)       { {Acc,35}, {CDmg,5}, {Def_p,5}, }
+Shield: [Speed]    5* (12)       { {HP_p,10}, {Acc,10}, {Def_p,16}, }
+Gloves: [HP]       6* (12) Def_p { {Atk_p,5}, {Acc,42}, {HP,343}, {CDmg,6}, }
+Chest:  [HP]       5* (16) Def_p { {Atk_p,10}, {CRate,11}, {CDmg,10}, {Res,8}, }
+Boots:  [Speed]    5* (12) Spd   { {Def_p,9}, {Acc,19}, {Res,19}, }
+	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
