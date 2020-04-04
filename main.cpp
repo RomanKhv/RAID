@@ -594,49 +594,6 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	}
 }
 
-//#ifndef DEBUG_FIND_BEST
-
-BOOST_AUTO_TEST_CASE( test_Gromoboy )
-{
-	{
-		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
-		const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
-		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
-
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 15207 - 2 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 305 - 1 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 2295 - 2 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 51 + 1 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 47 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 6 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 42 );
-		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 90 );
-
-		ChampionStats hall_stats;
-		ApplyHallBonus( ch, hall_stats );
-		BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
-		BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
-		BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
-		BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
-		BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
-		BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
-		BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
-		BOOST_CHECK_EQUAL( hall_stats.Acc, 40 );
-	}
-	{
-		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Krisk );
-		//BOOST_CHECK_EQUAL( stats.HP, 19528 - 1 );
-		BOOST_CHECK_EQUAL( stats.Atk, 248 - 1 );
-		//BOOST_CHECK_EQUAL( stats.Def, 1368 );
-		BOOST_CHECK_EQUAL( stats.Spd, 45 );
-		BOOST_CHECK_EQUAL( stats.CRate, 46 );
-		BOOST_CHECK_EQUAL( stats.CDmg, 15 );
-		BOOST_CHECK_EQUAL( stats.Res, 30 );
-		BOOST_CHECK_EQUAL( stats.Acc, 102 - 2 );
-	}
-}
-//#endif
-
 BOOST_AUTO_TEST_CASE( test_MaxCapPenalty )
 {
 	//CRate penalty on excess +1 shouldn't be stronger than bonus of +1000 HP
@@ -697,17 +654,69 @@ BOOST_AUTO_TEST_CASE( test_champ_relations )
 	BOOST_CHECK_GT( Voitelnica.Spd, Kael.Spd );
 }
 
-#endif
+//#ifndef DEBUG_FIND_BEST
 
-BOOST_AUTO_TEST_CASE( check_switches )
+BOOST_AUTO_TEST_CASE( test_CurrentStats )
 {
-	for ( enum_iterator<ArtSet> i( ArtSet::count ); !i.finished(); ++i )
 	{
-		BOOST_CHECK( !to_string( *i ).empty() );
+		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
+		const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
+		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
+
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 15207 - 2 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 305 - 1 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 2295 - 2 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 51 + 1 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 47 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 6 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 42 );
+		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 90 );
+
+		ChampionStats hall_stats;
+		ApplyHallBonus( ch, hall_stats );
+		BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
+		BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
+		BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
+		BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
+		BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
+		BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
+		BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
+		BOOST_CHECK_EQUAL( hall_stats.Acc, 40 );
 	}
-	for ( enum_iterator<ChampionName> i( ChampionName::count ); !i.finished(); ++i )
 	{
-		BOOST_CHECK( !std::string(to_string( *i )).empty() );
-		BOOST_CHECK( Champion::ByName( *i ).IsReal() );
+		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Krisk );
+		BOOST_CHECK_EQUAL( stats.HP, 20184 - 2 );
+		BOOST_CHECK_EQUAL( stats.Atk, 266 - 1 );
+		BOOST_CHECK_EQUAL( stats.Def, 1868 + 2 );
+		BOOST_CHECK_EQUAL( stats.Spd, 45 );
+		BOOST_CHECK_EQUAL( stats.CRate, 51 );
+		BOOST_CHECK_EQUAL( stats.CDmg, 15 );
+		BOOST_CHECK_EQUAL( stats.Res, 30 );
+		BOOST_CHECK_EQUAL( stats.Acc, 102 );
+	}
+	{
+		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Lekar );
+		//BOOST_CHECK_EQUAL( stats.HP, 12543-429 - 2 );
+		BOOST_CHECK_EQUAL( stats.Atk, 503-15 - 2 );
+		BOOST_CHECK_EQUAL( stats.Def, 1332-25 - 1 );
+		BOOST_CHECK_EQUAL( stats.Spd, 70-1 );
+		BOOST_CHECK_EQUAL( stats.CRate, 84 );
+		BOOST_CHECK_EQUAL( stats.CDmg, 15-4 );
+		BOOST_CHECK_EQUAL( stats.Res, 8 );
+		BOOST_CHECK_EQUAL( stats.Acc, 36-9 );
+	}
+	{
+		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Yuliana );
+		BOOST_CHECK_EQUAL( stats.HP, 10209 - 2 );
+		//BOOST_CHECK_EQUAL( stats.Atk, 479 - 1 );
+		BOOST_CHECK_EQUAL( stats.Def, 1057 - 2 );
+		BOOST_CHECK_EQUAL( stats.Spd, 70 );
+		BOOST_CHECK_EQUAL( stats.CRate, 65 );
+		BOOST_CHECK_EQUAL( stats.CDmg, 5 );
+		BOOST_CHECK_EQUAL( stats.Res, 24 );
+		BOOST_CHECK_EQUAL( stats.Acc, 147 );
 	}
 }
+//#endif
+
+#endif

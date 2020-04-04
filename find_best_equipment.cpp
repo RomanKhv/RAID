@@ -112,14 +112,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 	FindAndReportBestForChampion( ChampionName::Gromoboy, matching );
 #endif
 	/*
-HP:    31005 (-2906)
-Atk:   1031 (+84)
-Def:   3524 (+81)
-Spd:   152 (+1)
-CRate: 63 (+6)
-CDmg:  58 (-21)
-Res:   35 (-63)
-Acc:   110 (+13)
 Weapon: [Vamp]     5* (16)       { {CDmg,6}, {CRate,15}, {Atk_p,5}, {Acc,9}, }
 Helmet: [Acc]      5* (12)       { {Spd,9}, {CRate,10}, }
 Shield: [Vamp]     6* (12)       { {Acc,11}, {CRate,19}, {HP,423}, }
@@ -172,14 +164,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 	FindAndReportBestForChampion( ChampionName::Krisk, matching );
 #endif
 	/*
-HP:    40050 (+9241)
-Atk:   1071 (+55)
-Def:   2958 (-47)
-Spd:   139 (0)
-CRate: 61 (-14)
-CDmg:  67 (-11)
-Res:   64 (-5)
-Acc:   129 (+19)
 Weapon: [Vamp]     5* (12)       { {Spd,5}, {Acc,33}, {HP,458}, }
 Helmet: [Vamp]     5* (16)       { {Def_p,6}, {Acc,28}, {CRate,6}, {Res,11}, }
 Shield: [Acc]      5* (16)       { {HP_p,7}, {Def_p,7}, {CDmg,15}, {CRate,16}, }
@@ -187,6 +171,35 @@ Gloves: [DivLife]  6* (12) Def_p { {HP_p,11}, {Def,27}, {Acc,10}, {CRate,18}, }
 Chest:  [Vamp]     5* (16) HP_p  { {Atk_p,10}, {CRate,6}, {Def_p,5}, {HP,351}, }
 Boots:  [Vamp]     5* (8)  Spd   { {Res,18}, {Acc,20}, }
 Necklace:[]        5* (0)  HP    { {Def,16}, {Acc,8}, {Atk,21}, }
+	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Lekar )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
+			{ StatType::Def, MatchOptions::ArtFactor::Max },
+		}
+		,{ ArtSet::Speed }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ {StatType::Spd,170}, {StatType::CRate,90} }
+		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Lekar, matching );
+#endif
+	/*
+Weapon: [Speed]    5* (16)       { {CRate,11}, {HP_p,9}, {Spd,5}, {Res,8}, }
+Helmet: [HP]       6* (16)       { {Spd,29}, {HP_p,8}, {Res,13}, {Atk_p,7}, }
+Shield: [HP]       6* (12)       { {CRate,7}, {Acc,22}, {Def_p,16}, {Res,11}, }
+Gloves: [Speed]    5* (8)  CRate { {Atk,21}, {Def,20}, {Spd,14}, }
+Chest:  [HP]       5* (13) Def_p { {HP_p,5}, {Spd,5}, {Atk_p,6}, }
+Boots:  [HP]       6* (4)  Def_p { {CRate,12}, {CDmg,6}, {HP,209}, }
+Ring:   []         5* (8)  Atk   { {Def,62}, {Atk_p,6}, {Def_p,7}, }
 	*/
 }
 
@@ -233,14 +246,6 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
 #endif
 	/*
-HP:    26935 (+11375)
-Atk:   1766 (+421)
-Def:   2553 (+1571)
-Spd:   153 (+52)
-CRate: 36 (+21)
-CDmg:  73 (+21)
-Res:   57 (+27)
-Acc:   134 (+124)
 Weapon: [Immortal] 5* (12)       { {CRate,10}, {Acc,18}, {HP_p,5}, {HP,689}, }
 Helmet: [Immortal] 5* (12)       { {Acc,35}, {CDmg,5}, {Def_p,5}, }
 Shield: [Speed]    5* (12)       { {HP_p,10}, {Acc,10}, {Def_p,16}, }
@@ -273,14 +278,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
 #endif
 	/*
-1>HP:    19174 (+411)
-1>Atk:   2568 (+350)
-1>Def:   821 (-138)
-1>Spd:   162 (+3)
-1>CRate: 73 (+9)
-1>CDmg:  83 (+23)
-1>Res:   49 (-37)
-1>Acc:   102 (+17)
 1>Weapon: [CRate]    6* (16)       { {Acc,22}, {CRate,17}, {Res,19}, {CDmg,5}, }
 1>Helmet: [CRate]    5* (12)       { {Atk_p,10}, {CDmg,11}, {HP_p,5}, }
 1>Shield: [DivSpeed] 5* (12)       { {Acc,20}, {Spd,9}, {Def_p,5}, }
@@ -289,5 +286,27 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 
 1>Boots:  [DivSpeed] 5* (12) Spd   { {Atk_p,14}, {Atk,20}, {CRate,9}, }
 1>Ring:   []         5* (8)  HP    { {Atk_p,16}, {HP_p,5}, }
+	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Minor },
+			{ StatType::Def, MatchOptions::ArtFactor::Max },
+			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+		}
+		,{  }
+		,{ ArtSet::Vamp, ArtSet::Atk, ArtSet::Cruel, ArtSet::DivAtk }
+		,{ {StatType::Spd,160}, {StatType::Acc,180} }
+		,{ {StatType::CRate,80}/*, {StatType::CDmg,90}*/ }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Yuliana, matching );
+#endif
+	/*
 	*/
 }
