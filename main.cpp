@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 	CHECK_SET_BONUS( ArtSet::Def,    Def, 150 );
 	CHECK_SET_BONUS( ArtSet::Speed,    Spd, 12 );
 	CHECK_SET_BONUS( ArtSet::DivSpeed, Spd, 12 );
-	CHECK_SET_BONUS( ArtSet::Res, Res, 40 );
+	CHECK_SET_BONUS( ArtSet::Resist, Res, 40 );
 	CHECK_SET_BONUS( ArtSet::Acc, Acc, 40 );
 }
 
@@ -704,6 +704,17 @@ BOOST_AUTO_TEST_CASE( test_CurrentStats )
 		BOOST_CHECK_EQUAL( stats.CDmg, 15-4 );
 		BOOST_CHECK_EQUAL( stats.Res, 8 );
 		BOOST_CHECK_EQUAL( stats.Acc, 36-9 );
+	}
+	{
+		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::SteelSkull );
+		//BOOST_CHECK_EQUAL( stats.HP, 10209 - 2 );
+		//BOOST_CHECK_EQUAL( stats.Atk, 479 - 1 );
+		//BOOST_CHECK_EQUAL( stats.Def, 1057 - 2 );
+		//BOOST_CHECK_EQUAL( stats.Spd, 70 );
+		//BOOST_CHECK_EQUAL( stats.CRate, 65 );
+		//BOOST_CHECK_EQUAL( stats.CDmg, 5 );
+		//BOOST_CHECK_EQUAL( stats.Res, 24 );
+		//BOOST_CHECK_EQUAL( stats.Acc, 147 );
 	}
 	{
 		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Yuliana );

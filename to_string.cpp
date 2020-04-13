@@ -57,11 +57,11 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, Atk );
 		CASE_RETURN_STRING( ArtSet, Def );
 		CASE_RETURN_STRING( ArtSet, CRate );
-		CASE_RETURN_STRING( ArtSet, CDmg );
+		CASE_RETURN_STRING( ArtSet, CritDmg );
 		CASE_RETURN_STRING( ArtSet, Acc );
 		CASE_RETURN_STRING( ArtSet, Speed );
 		CASE_RETURN_STRING( ArtSet, Vamp );
-		CASE_RETURN_STRING( ArtSet, Res );
+		CASE_RETURN_STRING( ArtSet, Resist );
 		CASE_RETURN_STRING( ArtSet, Gibel );
 		CASE_RETURN_STRING( ArtSet, Mest );
 		CASE_RETURN_STRING( ArtSet, Fury );
@@ -169,6 +169,7 @@ const char* to_string( const ChampionName& name )
 {
 	switch ( name )
 	{
+		CASE_RETURN_STRING( ChampionName, Alura );
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
 		CASE_RETURN_STRING( ChampionName, Hatun );
@@ -176,6 +177,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Krisk );
 		CASE_RETURN_STRING( ChampionName, Lekar );
 		CASE_RETURN_STRING( ChampionName, SteelSkull );
+		CASE_RETURN_STRING( ChampionName, Tyrel );
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );
 		CASE_RETURN_STRING( ChampionName, Voitelnica );
 		CASE_RETURN_STRING( ChampionName, Yuliana );

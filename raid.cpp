@@ -479,9 +479,9 @@ int SetSize( ArtSet set )
 		case ArtSet::Atk:
 		case ArtSet::Def:
 		case ArtSet::CRate:
-		case ArtSet::CDmg:
+		case ArtSet::CritDmg:
 		case ArtSet::Speed:
-		case ArtSet::Res:
+		case ArtSet::Resist:
 		case ArtSet::Acc:
 		case ArtSet::Cruel:
 		case ArtSet::Immortal:
@@ -614,7 +614,7 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 					add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, DivHPCompensation );
 			}
 			break;
-		case ArtSet::CDmg:
+		case ArtSet::CritDmg:
 			{
 				arts_bonus_stats.CDmg += 20;
 			}
@@ -631,7 +631,7 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 					add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, DivHPCompensation );
 			}
 			break;
-		case ArtSet::Res:
+		case ArtSet::Resist:
 			{
 				arts_bonus_stats.Res += 40;
 			}
@@ -878,6 +878,9 @@ Champion Champion::ByName( ChampionName name )
 {
 	switch ( name )
 	{
+		case ChampionName::Alura:
+			return Champion( { 13185, 1415, 740,  96,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::ColdHeart:
 			return Champion( { 13710, 1376, 738,  94,  15, 57,  30, 0 }, Element::Void, name );
 			break;
@@ -898,6 +901,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::SteelSkull:
 			return Champion( { 15030, 1244, 892,  104,  15, 50,  30, 0 }, Element::Green, name );
+			break;
+		case ChampionName::Tyrel:
+			return Champion( { 16185, 881, 1343,  95,  15, 50,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 15255, 1319, 963,  101,  15, 50,  30, 0 }, Element::Red, name );

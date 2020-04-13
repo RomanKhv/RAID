@@ -70,8 +70,8 @@ enum class ArtSet
 	Def,
 	Speed,
 	CRate,
-	CDmg,
-	Res,
+	CritDmg,
+	Resist,
 	Acc,
 	Cruel,			//Беспощадность
 	Immortal,
@@ -108,6 +108,7 @@ enum class ChampionName
 {
 	none = -1,
 
+	Alura,
 	ColdHeart,
 	Gromoboy,
 	Hatun,
@@ -115,6 +116,7 @@ enum class ChampionName
 	Krisk,
 	Lekar,
 	SteelSkull,
+	Tyrel,
 	VisirOvelis,
 	Voitelnica,
 	Yuliana,

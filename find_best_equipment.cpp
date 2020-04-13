@@ -91,6 +91,27 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 - Always compile and run MatchOptions instanciation to verify input data in Debug configurations
 */
 
+BOOST_AUTO_TEST_CASE( FindBest_Alura )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			{ StatType::Atk, MatchOptions::ArtFactor::Max },
+			{ StatType::Def, MatchOptions::ArtFactor::Minor },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Moderate },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::HP, ArtSet::DivLife }
+		,{ {StatType::Spd,140}, {StatType::Acc,80} }
+		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Alura, matching );
+#endif
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 {
 	const MatchOptions matching(
@@ -225,6 +246,36 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 #endif
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
+			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
+			{ StatType::Def, MatchOptions::ArtFactor::Max },
+			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ {StatType::Spd,150}, {StatType::Acc,130} }
+		,{ {StatType::CRate,50}, {StatType::CDmg,60} }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Tyrel, matching );
+#endif
+	/*
+Weapon: [Def]      4* (12)       { {CRate,11}, {Acc,16}, {HP_p,5}, }
+Helmet: [Vamp]     5* (16)       { {Atk_p,5}, {Acc,31}, {HP_p,4}, {Def,17}, }
+Shield: [Vamp]     5* (8)        { {CRate,9}, {HP,185}, }
+Gloves: [Def]      5* (16) Def_p { {Spd,14}, {Acc,11}, {CRate,6}, {Res,10}, }
+Chest:  [Vamp]     5* (16) Def_p { {CDmg,9}, {CRate,10}, {Res,11}, {HP,464}, }
+Boots:  [Vamp]     5* (12) Spd   { {Acc,29}, {Atk,22}, {HP,137}, }
+	*/
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 {
 	const MatchOptions matching(
@@ -283,7 +334,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 1>Shield: [DivSpeed] 5* (12)       { {Acc,20}, {Spd,9}, {Def_p,5}, }
 1>Gloves: [Acc]      6* (12) Atk_p { {CRate,20}, {Spd,5}, {HP_p,5}, }
 1>Chest:  [Acc]      5* (12) Atk_p { {Def_p,5}, {CDmg,15}, {Acc,10}, }
-
 1>Boots:  [DivSpeed] 5* (12) Spd   { {Atk_p,14}, {Atk,20}, {CRate,9}, }
 1>Ring:   []         5* (8)  HP    { {Atk_p,16}, {HP_p,5}, }
 	*/
