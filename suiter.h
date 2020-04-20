@@ -6,15 +6,26 @@
 
 struct MatchOptions
 {
-	enum class ArtFactor {
+	enum class StatInfluence {
 		NotInterested = 0,
 		Minor = 1,
-		Moderate = 2,
+		Modrt = 2,
 		Major = 3,
 		Max = 4,
-		//MinCap,
 	};
-	ArtFactor Factors[ChampionStats::Count] = { ArtFactor::NotInterested };		// StatType -> ArtFactor
+	struct StatFactor
+	{
+		StatInfluence Mode = StatInfluence::NotInterested;
+		int MinCap = 0;
+		int MaxCap = 0;
+		StatFactor() = default;
+		StatFactor( StatInfluence m, int max_cap = 0 ) : Mode(m), MinCap(0), MaxCap(max_cap) {}
+		StatFactor( int min_cap, int max_cap = 0 ) : Mode(StatInfluence::Max), MinCap(min_cap), MaxCap(max_cap) {}
+		bool IgnoreStat() const { return Mode == StatInfluence::NotInterested; }
+		bool HasMinCap() const { return MinCap > 0; }
+		bool HasMaxCap() const { return MaxCap > 0; }
+	};
+	StatFactor Factors[ChampionStats::Count];		// StatType -> StatFactorMode
 
 	std::map<ArtSet, int> RequiedSets;
 	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
@@ -22,22 +33,18 @@ struct MatchOptions
 	static const bool ConsiderMaxLevels = true;
 	static const bool ConsiderMaxLevelsForNonBasicArts = false;	//no data, so far too expensive
 	//static const bool OptimizeAddStatFlatBonus = true;
-	int MinCap[ChampionStats::Count] = { 0 };				//StatType -> value
-	int MaxCap[ChampionStats::Count] = { 0 };				//StatType -> value
-//TODO:	StatType RequiredArtStats[Equipment::TotalSize] = {0};	//ArtType -> StatType
 
 	MatchOptions() = default;
-	MatchOptions( std::map<StatType, ArtFactor>,
+	MatchOptions( std::map<StatType, StatFactor>,
 				  std::vector<ArtSet> req_filter = {},
-				  std::set<ArtSet> exclusion_filter = {},
-				  std::map<StatType, int> min_caps = {},
-				  std::map<StatType, int> max_caps = {} );
+				  std::set<ArtSet> exclusion_filter = {} );
 
 	bool IsInputOK() const;
-	ArtFactor Factor( StatType st ) const
+	const StatFactor& Factor( StatType st ) const
 	{
 		return Factors[stl::enum_to_int( st )];
 	}
+
 	bool IsSetAccepted( ArtSet ) const;
 	bool IsArtAccepted( const Artefact&, ChampionName ) const;
 	bool IsEqHasRequiredSets( const EquipmentRef& ) const;

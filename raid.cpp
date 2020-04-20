@@ -774,7 +774,7 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 	{
 		const auto& f = Factors[stl::enum_to_int( p.first )] = p.second;
 		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
-		_ASSERTE( !f.HasMinCap() && !f.HasMaxCap() || f.Mode!=StatFactorMode::NotInterested );
+		_ASSERTE( !f.HasMinCap() && !f.HasMaxCap() || f.Mode!=StatInfluence::NotInterested );
 		_ASSERTE( !f.HasMinCap() || !f.HasMaxCap() || f.MinCap<p.second.MaxCap );
 	}
 

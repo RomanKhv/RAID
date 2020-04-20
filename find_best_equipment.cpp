@@ -95,12 +95,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 140 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 80 } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 140 } },
+			{ StatType::Acc, { 80 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::HP, ArtSet::DivLife }
@@ -116,13 +116,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatFactorMode::NotInterested } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Major } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Minor, 0, 60 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor, 0, 100 } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 110 } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::CRate,{ MatchOptions::StatInfluence::Minor, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 100 } },
+			{ StatType::Spd,  { 150 } },
+			{ StatType::Acc,  { 110 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -147,13 +146,13 @@ BOOST_AUTO_TEST_CASE( FindBest_Kael )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 60 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 155 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 115 } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { MatchOptions::StatInfluence::Modrt, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 155 } },
+			{ StatType::Acc, { 115 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Def }
@@ -169,12 +168,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Major } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 60 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 140 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 120 } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { MatchOptions::StatInfluence::Modrt, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 140 } },
+			{ StatType::Acc, { 120 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -199,11 +198,11 @@ BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Max, 90 } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 170 } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 90 } },
+			{ StatType::Spd, { 170 } },
 		}
 		,{ ArtSet::Speed }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -228,13 +227,13 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
 			//{ StatType::CRate, { MatchOptions::StatFactorMode::Minor } },
 			//{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 160 } },
+			{ StatType::Spd, { 150 } },
+			{ StatType::Acc, { 160 } },
 		}
 		,{ /*ArtSet::Vamp ArtSet::Immortal*/ }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -250,13 +249,13 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 50 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor, 0, 60 } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 130 } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ MatchOptions::StatInfluence::Modrt, 50 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 60 } },
+			{ StatType::Spd,  { 150 } },
+			{ StatType::Acc,  { 130 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -280,13 +279,13 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 120 } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd,  { 150 } },
+			{ StatType::Acc,  { 120 } },
 		}
 		,{ /*ArtSet::Vamp*/ ArtSet::Immortal }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -310,13 +309,13 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 70 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 160 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 90 } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { MatchOptions::StatInfluence::Modrt, 70 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd,  { 160 } },
+			{ StatType::Acc,  { 90 } },
 		}
 		,{  }
 		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal }
@@ -347,11 +346,11 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 80 } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 160 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 180 } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ MatchOptions::StatInfluence::Modrt, 80 } },
+			{ StatType::Spd,  { 160 } },
+			{ StatType::Acc,  { 180 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::Cruel, ArtSet::DivAtk }
@@ -369,12 +368,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Zargala )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 80 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 165 } },
-			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 120 } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ 80 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd,  { 165 } },
+			{ StatType::Acc,  { 120 } },
 		}
 		,{  }
 		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal, ArtSet::DivLife }

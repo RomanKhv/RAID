@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE( test_basics )
 		const MatchOptions m;
 		for ( StatType st : ChampionStats::TypeList )
 		{
-			BOOST_CHECK( m.Factor(st).Mode == MatchOptions::StatFactorMode::NotInterested );
+			BOOST_CHECK( m.Factor(st).Mode == MatchOptions::StatInfluence::NotInterested );
 		}
 	}
 }
@@ -479,30 +479,39 @@ BOOST_AUTO_TEST_CASE( test_Iterator2 )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( test_Estimation_FloatFactor )
+BOOST_AUTO_TEST_CASE( test_EstimationBasics )
 {
-	const int min_acc_cap = 120;
-	const int w = 20;
-	float fk;
-	BOOST_CHECK( !EstimateMinCap( 100, min_acc_cap, w, fk ) );
-	BOOST_CHECK( !EstimateMinCap( 110, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0 );
-	BOOST_CHECK( EstimateMinCap( 120, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 1.f );
-	BOOST_CHECK( EstimateMinCap( 131, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 1.f );
-	BOOST_CHECK( EstimateMinCap( 140, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 1.f );
-	BOOST_CHECK( EstimateMinCap( 150, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
-	BOOST_CHECK( EstimateMinCap( 160, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
-	BOOST_CHECK( EstimateMinCap( 200, min_acc_cap, w, fk ) );			BOOST_CHECK_EQUAL( fk, 0.5f );
 	{
 		const MatchOptions matching(
 			{
-				{ StatType::Acc,  { MatchOptions::StatFactorMode::Max, 120 } },
+				{ StatType::Res, { MatchOptions::StatInfluence::Max } },
 			}
 		);
 		ChampionStats ch;
+		ch.Res = 70;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.7f );
+		ch.Res = 100;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.f );
+		ch.Res = 120;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.2f );
+	}
+	{
+		const MatchOptions matching(
+			{
+				{ StatType::Acc, { 120 } },
+			}
+		);
+		ChampionStats ch;
+		ch.Acc = 110;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0 );
+		ch.Acc = 115;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.5f );
 		ch.Acc = 120;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.f );
 		ch.Acc = 150;
-		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.5f );
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.f );
+		ch.Acc = 200;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.f );
 	}
 }
 
@@ -567,14 +576,14 @@ BOOST_AUTO_TEST_CASE( test_join )
 }
 
 const std::map<StatType, MatchOptions::StatFactor> All_Stats_Moderate = {
-	{ StatType::HP,  {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::Atk, {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::Def, {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::Spd, {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::CRate, {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::CDmg, {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::Res, {MatchOptions::StatFactorMode::Modrt} },
-	{ StatType::Acc, {MatchOptions::StatFactorMode::Modrt} }
+	{ StatType::HP,  {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::Atk, {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::Def, {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::Spd, {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::CRate, {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::CDmg, {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::Res, {MatchOptions::StatInfluence::Modrt} },
+	{ StatType::Acc, {MatchOptions::StatInfluence::Modrt} }
 };
 
 BOOST_AUTO_TEST_CASE( test_Best )
@@ -612,12 +621,12 @@ BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 	const ChampionName name = ChampionName::Zargala;
 	const MatchOptions matching(
 		{
-			{ StatType::HP,   { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Atk,  { MatchOptions::StatFactorMode::Max } },
-			{ StatType::CRate,{ MatchOptions::StatFactorMode::Modrt, 80 } },
-			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
-			{ StatType::Spd,  { MatchOptions::StatFactorMode::Max, 165 } },
-			{ StatType::Acc,  { MatchOptions::StatFactorMode::Max, 120 } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ 80 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd,  { 165 } },
+			{ StatType::Acc,  { 120 } },
 		}
 	);
 
@@ -641,12 +650,12 @@ BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 	}
 	{	// new
 		const Equipment eq = {
-			Artefact{ ArtType::Weapon, ArtSet::Acc, 5, 8, StatType::Atk, { {StatType::CDmg,9}, {StatType::Atk_p,4}, {StatType::CRate,12} } },
-			Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 12, StatType::HP, { {StatType::Spd,9}, {StatType::CRate,10} } },
-			Artefact{ ArtType::Shield, ArtSet::Speed, 6, 12, StatType::Def, { {StatType::CDmg,19}, {StatType::CRate,7}, {StatType::Def_p,12} } },
+			Artefact( ArtType::Weapon, ArtSet::DivAtk, 6, 16, StatType::Atk, { {StatType::HP,860}, {StatType::HP_p,12}, {StatType::Atk_p,10}, {StatType::Acc,12,1} } ),
+			Artefact( ArtType::Helmet, ArtSet::DivAtk, 5, 16, StatType::HP, { {StatType::CDmg,15}, {StatType::CRate,5}, {StatType::Atk_p,10,1}, {StatType::Def_p,5,1} } ),
+			Artefact( ArtType::Shield, ArtSet::DivSpeed, 5, 16, StatType::Def, { {StatType::Acc,20,1}, {StatType::Spd,9,1}, {StatType::Def_p,5,1}, {StatType::CDmg,6} } ),
 			Artefact{ ArtType::Gloves, ArtSet::Acc, 6, 16, StatType::Atk_p, { {StatType::CRate,20}, {StatType::Spd,5,2}, {StatType::HP_p,5,1}, {StatType::Def_p,7,1} } },
 			Artefact{ ArtType::Chest, ArtSet::Acc, 5, 16, StatType::Atk_p, { {StatType::Def_p,5,1}, {StatType::CDmg,15}, {StatType::Acc,10,2}, {StatType::Res,9} } },
-			Artefact{ ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, { {StatType::Atk,37}, {StatType::CRate,11} } },
+			Artefact( ArtType::Boots, ArtSet::DivSpeed, 5, 16, StatType::Spd, { {StatType::Atk_p,14,2}, {StatType::Atk,15,12}, {StatType::CRate,9} } ),
 			Artefact{ ArtType::Ring, ArtSet::None, 5, 8, StatType::HP, { {StatType::Atk_p,16,1}, {StatType::HP_p,5,1} } },
 			Artefact{ ArtType::Necklace, ArtSet::None, 4, 12, StatType::Atk, { {StatType::Acc,24}, {StatType::HP,522}, {StatType::CDmg,5} } },
 		};
