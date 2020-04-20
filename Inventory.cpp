@@ -404,7 +404,7 @@ const std::vector<Artefact> _MyArts =
 
 	Artefact( ArtType::Boots, ArtSet::Cruel, 5, 1, StatType::Atk_p, { {StatType::Atk,17}, {StatType::HP,216}, {StatType::HP_p,5}, {StatType::Spd,5} } ),
 	Artefact( ArtType::Boots, ArtSet::Cruel, 5, 8, StatType::Atk_p, { {StatType::CDmg,14}, {StatType::Def,23} } ),
-	Artefact( ArtType::Boots, ArtSet::Cruel, 4, 1, StatType::Spd, { {StatType::Atk,9}, {StatType::CRate,5}, {StatType::Acc,7}, {StatType::Def_p,5} } ),
+	Artefact( ArtType::Boots, ArtSet::Cruel, 4, 1, StatType::Spd, { {StatType::Atk,9,10}, {StatType::CRate,5}, {StatType::Acc,7}, {StatType::Def_p,5} } ),
 
 	// Immortal
 	Artefact( ArtType::Weapon, ArtSet::Immortal, 5, 16, StatType::Atk, { {StatType::Acc,19}, {StatType::CRate,14}, {StatType::Atk_p,5}, {StatType::CDmg,9} } ),

@@ -110,6 +110,7 @@ enum class ChampionName
 
 	Alura,
 	ColdHeart,
+	Gorgorab,
 	Gromoboy,
 	Hatun,
 	Kael,
@@ -120,6 +121,7 @@ enum class ChampionName
 	VisirOvelis,
 	Voitelnica,
 	Yuliana,
+	Zargala,
 
 	count
 };

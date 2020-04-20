@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::SteelSkull;
+const ChampionName Champion_to_suitup = ChampionName::Zargala;
 
 #define DISPLAY_BEST_POOL
 
@@ -95,15 +95,15 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			{ StatType::Atk, MatchOptions::ArtFactor::Max },
-			{ StatType::Def, MatchOptions::ArtFactor::Minor },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Moderate },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 140 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 80 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::HP, ArtSet::DivLife }
-		,{ {StatType::Spd,140}, {StatType::Acc,80} }
-		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -116,16 +116,16 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			{ StatType::Atk, MatchOptions::ArtFactor::NotInterested },
-			{ StatType::Def, MatchOptions::ArtFactor::Major },
-			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatFactorMode::NotInterested } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Major } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Minor, 0, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor, 0, 100 } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 110 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,150}, {StatType::Acc,110} }
-		,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -147,16 +147,16 @@ BOOST_AUTO_TEST_CASE( FindBest_Kael )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			{ StatType::Atk, MatchOptions::ArtFactor::Max },
-			{ StatType::Def, MatchOptions::ArtFactor::Moderate },
-			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 155 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 115 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Def }
-		,{ {StatType::Spd,155}, {StatType::Acc,115} }
-		,{ {StatType::CRate,60}/*, {StatType::CDmg,100}*/ }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -169,15 +169,15 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Major },
-			{ StatType::Def, MatchOptions::ArtFactor::Max },
-			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Major } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 140 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 120 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,140}, {StatType::Acc,120} }
-		,{ {StatType::CRate,60}/*, {StatType::CDmg,100}*/ }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -199,14 +199,14 @@ BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
-			{ StatType::Def, MatchOptions::ArtFactor::Max },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Max, 90 } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 170 } },
 		}
 		,{ ArtSet::Speed }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,170}, {StatType::CRate,90} }
-		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -228,16 +228,16 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
-			{ StatType::Def, MatchOptions::ArtFactor::Max },
-			//{ StatType::CRate, MatchOptions::ArtFactor::Minor },
-			//{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			//{ StatType::CRate, { MatchOptions::StatFactorMode::Minor } },
+			//{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 160 } },
 		}
 		,{ /*ArtSet::Vamp ArtSet::Immortal*/ }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,150}, {StatType::Acc,160} }
-		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -250,16 +250,16 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
-			{ StatType::Def, MatchOptions::ArtFactor::Max },
-			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 50 } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor, 0, 60 } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 130 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,150}, {StatType::Acc,130} }
-		,{ {StatType::CRate,50}, {StatType::CDmg,60} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -280,16 +280,16 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Atk, MatchOptions::ArtFactor::Minor },
-			{ StatType::Def, MatchOptions::ArtFactor::Max },
-			{ StatType::CRate, MatchOptions::ArtFactor::Minor },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Minor },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Modrt } },
+			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 150 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 120 } },
 		}
 		,{ /*ArtSet::Vamp*/ ArtSet::Immortal }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
-		,{ {StatType::Spd,150}, {StatType::Acc,120} }
-		//,{ {StatType::CRate,60}, {StatType::CDmg,100} }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -310,18 +310,16 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Minor },
-			{ StatType::Atk, MatchOptions::ArtFactor::Max },
-			{ StatType::Def, MatchOptions::ArtFactor::Minor },
-			//{ StatType::Spd, MatchOptions::ArtFactor::Max },
-			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
-			{ StatType::CDmg, MatchOptions::ArtFactor::Moderate },
-			//{ StatType::Acc, MatchOptions::ArtFactor::Major },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 70 } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 160 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 90 } },
 		}
 		,{  }
 		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal }
-		,{ {StatType::Spd,160}, {StatType::Acc,90} }
-		,{ {StatType::CRate,70}/*, {StatType::CDmg,90}*/ }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -329,6 +327,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
 #endif
 	/*
+	Artefact{ ArtType::Weapon, ArtSet::CRate, 5, 16, StatType::Atk, { {StatType::Acc,20,2}, {StatType::CRate,17}, {StatType::Res,18,1}, {StatType::CDmg,5} }, ChampionName::Voitelnica },
+	Artefact{ ArtType::Helmet, ArtSet::CRate, 5, 16, StatType::HP, { {StatType::Atk_p,10,2}, {StatType::CDmg,11}, {StatType::HP_p,5,1}, {StatType::CRate,5} }, ChampionName::Voitelnica },
+	Artefact( ArtType::Shield, ArtSet::DivSpeed, 5, 16, StatType::Def, { {StatType::Acc,20,1}, {StatType::Spd,9,1}, {StatType::Def_p,5,1}, {StatType::CDmg,6} }, ChampionName::Voitelnica ),
+	Artefact{ ArtType::Gloves, ArtSet::Acc, 6, 16, StatType::Atk_p, { {StatType::CRate,20}, {StatType::Spd,5,2}, {StatType::HP_p,5,1}, {StatType::Def_p,7,1} }, ChampionName::Voitelnica },
+	Artefact{ ArtType::Chest, ArtSet::Acc, 5, 16, StatType::Atk_p, { {StatType::Def_p,5,1}, {StatType::CDmg,15}, {StatType::Acc,10,2}, {StatType::Res,9} }, ChampionName::Voitelnica },
+	Artefact( ArtType::Boots, ArtSet::DivSpeed, 5, 16, StatType::Spd, { {StatType::Atk_p,14,2}, {StatType::Atk,15,12}, {StatType::CRate,9} }, ChampionName::Voitelnica ),
 1>Weapon: [CRate]    6* (16)       { {Acc,22}, {CRate,17}, {Res,19}, {CDmg,5}, }
 1>Helmet: [CRate]    5* (12)       { {Atk_p,10}, {CDmg,11}, {HP_p,5}, }
 1>Shield: [DivSpeed] 5* (12)       { {Acc,20}, {Spd,9}, {Def_p,5}, }
@@ -343,19 +347,42 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  MatchOptions::ArtFactor::Minor },
-			{ StatType::Def, MatchOptions::ArtFactor::Max },
-			{ StatType::CRate, MatchOptions::ArtFactor::Moderate },
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Def, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 0, 80 } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 160 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 180 } },
 		}
-		,{  }
-		,{ ArtSet::Vamp, ArtSet::Atk, ArtSet::Cruel, ArtSet::DivAtk }
-		,{ {StatType::Spd,160}, {StatType::Acc,180} }
-		,{ {StatType::CRate,80}/*, {StatType::CDmg,90}*/ }
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::Cruel, ArtSet::DivAtk }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
 #ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Yuliana, matching );
+#endif
+	/*
+	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Zargala )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatFactorMode::Minor } },
+			{ StatType::Atk, { MatchOptions::StatFactorMode::Max } },
+			{ StatType::CRate, { MatchOptions::StatFactorMode::Modrt, 80 } },
+			{ StatType::CDmg, { MatchOptions::StatFactorMode::Modrt } },
+			{ StatType::Spd, { MatchOptions::StatFactorMode::Max, 165 } },
+			{ StatType::Acc, { MatchOptions::StatFactorMode::Max, 120 } },
+		}
+		,{  }
+		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal, ArtSet::DivLife }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Zargala, matching );
 #endif
 	/*
 	*/

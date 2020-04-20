@@ -171,6 +171,7 @@ const char* to_string( const ChampionName& name )
 	{
 		CASE_RETURN_STRING( ChampionName, Alura );
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
+		CASE_RETURN_STRING( ChampionName, Gorgorab );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
 		CASE_RETURN_STRING( ChampionName, Hatun );
 		CASE_RETURN_STRING( ChampionName, Kael );
@@ -181,6 +182,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );
 		CASE_RETURN_STRING( ChampionName, Voitelnica );
 		CASE_RETURN_STRING( ChampionName, Yuliana );
+		CASE_RETURN_STRING( ChampionName, Zargala );
 	}
 	_ASSERTE( !"unreachable code" );
 	return "";

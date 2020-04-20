@@ -13,7 +13,7 @@ bool check_stat_input_error( const Stat& stat )
 		case StatType::Atk:			return stat.Value >= 16;
 		case StatType::HP:			return stat.Value >= 100;
 		case StatType::Def:			return stat.Value >= 15;
-		case StatType::Atk_p:		return stat.Value < 20;
+		case StatType::Atk_p:		return stat.Value <= 24;
 		case StatType::HP_p:		return stat.Value <= 24;
 		case StatType::Def_p:		return stat.Value <= 21;
 	}
@@ -317,10 +317,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{ 35, 80, 125, 170, 265 }
 				};
 				static const stat_table_t Atk_Def_banner = {
-					//      0  4  8  12  16
-					/*4*/{ 24, 0, 0, 0, 285 },
-					/*5*/{ 38, 0, 0, 0, 338 },
-					/*6*/{ 53, 0, 0, 0, 0 }
+					//      0  4    8  12  16
+					/*4*/{ 24, 0,   0, 0, 285 },
+					/*5*/{ 38, 0, 156, 0, 338 },
+					/*6*/{ 53, 0,   0, 0, 0 }
 				};
 				static const stat_table_t HP_general = {
 					//      0     4     8    12    16
@@ -360,7 +360,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 				};
 				static const stat_table_t Acc_Res = {
 					//      0  4   8  12  16
-					/*4*/{  8, 0,  0, 0, 64 },
+					/*4*/{  8, 0, 30, 0, 64 },
 					/*5*/{ 12, 0, 38, 0, 78 },
 					/*6*/{ 16, 0,  0, 0, 96 },
 				};
@@ -759,8 +759,7 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 
 /////////////////////////////////////////////////////////////////////////////
 
-MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
-							std::map<StatType, int> min_caps, std::map<StatType, int> max_caps )
+MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter )
 	//,ConsiderMaxLevels( consider_max_lvl )
 {
 	for ( ArtSet set : req_filter )
@@ -773,22 +772,10 @@ MatchOptions::MatchOptions( std::map<StatType, ArtFactor> factors, std::vector<A
 	}
 	for ( const auto& p : factors )
 	{
+		const auto& f = Factors[stl::enum_to_int( p.first )] = p.second;
 		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
-		Factors[stl::enum_to_int( p.first )] = p.second;
-	}
-	for ( const auto& p : min_caps )
-	{
-		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
-		_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
-		//Factors[stl::enum_to_int( p.first )] = ArtFactor::MinCap;
-		MinCap[stl::enum_to_int( p.first )] = p.second;
-	}
-	for ( const auto& p : max_caps )
-	{
-		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
-		//_ASSERTE( Factor(p.first) == ArtFactor::NotInterested );
-		//Factors[stl::enum_to_int( p.first )] = ArtFactor::MaxCap;		"max cap" is additional limitation
-		MaxCap[stl::enum_to_int( p.first )] = p.second;
+		_ASSERTE( !f.HasMinCap() && !f.HasMaxCap() || f.Mode!=StatFactorMode::NotInterested );
+		_ASSERTE( !f.HasMinCap() || !f.HasMaxCap() || f.MinCap<p.second.MaxCap );
 	}
 
 	static bool inventory_logged = false;
@@ -882,10 +869,13 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13185, 1415, 740,  96,  15, 50,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::ColdHeart:
-			return Champion( { 13710, 1376, 738,  94,  15, 57,  30, 0 }, Element::Void, name );
+			return Champion( { 13710, 1376, 738,  94,  15+5, 57,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Gorgorab:
+			return Champion( { 16860, 1015, 1015,  92,  15, 50,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Gromoboy:
-			return Champion( { 15855, 727, 1443,  97,  15, 50,  30, 0 }, Element::Void, name );
+			return Champion( { 15855, 727, 1443,  97,  15+5, 50,  30, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Hatun:
 			return Champion( { 15690, 980, 1156,  97,  15, 50,  30, 0 }, Element::Green, name );
@@ -897,7 +887,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
-			return Champion( { 17175, 881, 1002,  106,  15, 50,  30, 0 }, Element::Blue, name );
+			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::SteelSkull:
 			return Champion( { 15030, 1244, 892,  104,  15, 50,  30, 0 }, Element::Green, name );
@@ -909,10 +899,13 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 15255, 1319, 963,  101,  15, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Voitelnica:
-			return Champion( { 10440, 907, 534,  97,  15, 50,  30, 0 }, Element::Red, name );
+			return Champion( { 10440, 907, 534,  97,  15+5, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Yuliana:
-			return Champion( { 15195, 1354, 870,  103,  15, 50,  30, 0+50 }, Element::Blue, name );
+			return Champion( { 15360, 1398, 881,  103,  15, 60,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Zargala:
+			return Champion( { 16380, 1374, 779,  103,  15+5, 60+10,  30, 0+10 }, Element::Red, name );
 			break;
 	}
 	_ASSERTE( !"not yet supported" );
