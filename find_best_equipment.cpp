@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Zargala;
+const ChampionName Champion_to_suitup = ChampionName::Yuliana;
 
 #define DISPLAY_BEST_POOL
 
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate,{ MatchOptions::StatInfluence::Modrt, 80 } },
+			{ StatType::CRate,{ 80 } },
 			{ StatType::Spd,  { 160 } },
 			{ StatType::Acc,  { 180 } },
 		}
@@ -361,6 +361,13 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 	FindAndReportBestForChampion( ChampionName::Yuliana, matching );
 #endif
 	/*
+Weapon: [Vamp]     5* (12)       { {HP_p,5}, {Atk_p,5}, {Acc,35}, }
+Helmet: [Vamp]     5* (16)       { {HP_p,10}, {Acc,19}, {Spd,4}, {Def_p,5}, }
+Shield: [Speed]    5* (12)       { {Acc,17}, {HP_p,10}, {Res,10}, }
+Gloves: [Speed]    6* (12) CRate { {Acc,29}, {HP,301}, {Atk,50}, {Def_p,7}, }
+Chest:  [Vamp]     5* (8)  Def_p { {Spd,9}, {Def,16}, }
+Boots:  [Vamp]     4* (8)  Spd   { {Atk_p,4}, {Acc,25}, }
+Ring:   []         5* (16) HP    { {Def_p,13}, {HP_p,7}, {Atk_p,7}, {Def,27}, }
 	*/
 }
 

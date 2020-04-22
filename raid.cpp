@@ -902,10 +902,10 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 10440, 907, 534,  97,  15+5, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Yuliana:
-			return Champion( { 15360, 1398, 881,  103,  15, 60,  30, 0 }, Element::Blue, name );
+			return Champion( { 15360, 1398, 881,  103,  15+5, 60,  30, 0+10 }, Element::Blue, name );
 			break;
 		case ChampionName::Zargala:
-			return Champion( { 16380, 1374, 779,  103,  15+5, 60+10,  30, 0+10 }, Element::Red, name );
+			return Champion( { 16380, 1374, 779,  103,  15+5, 60+10,  30, 0+10+16 }, Element::Red, name );
 			break;
 	}
 	_ASSERTE( !"not yet supported" );
