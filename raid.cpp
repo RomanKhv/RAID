@@ -774,7 +774,7 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 	{
 		const auto& f = Factors[stl::enum_to_int( p.first )] = p.second;
 		_ASSERTE( debug::IsValidStatForChampion( p.first ) );
-		_ASSERTE( !f.HasMinCap() && !f.HasMaxCap() || f.Mode!=StatInfluence::NotInterested );
+		_ASSERTE( f.HasMinCap() || f.Mode!=StatInfluence::NotInterested );
 		_ASSERTE( !f.HasMinCap() || !f.HasMaxCap() || f.MinCap<p.second.MaxCap );
 	}
 
@@ -884,7 +884,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Krisk:
-			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10 }, Element::Void, name );
+			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10+10 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
@@ -896,7 +896,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 16185, 881, 1343,  95,  15, 50,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
-			return Champion( { 15255, 1319, 963,  101,  15, 50,  30, 0 }, Element::Red, name );
+			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );
 			break;
 		case ChampionName::Voitelnica:
 			return Champion( { 10440, 907, 534,  97,  15+5, 50,  30, 0 }, Element::Red, name );

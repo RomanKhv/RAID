@@ -11,9 +11,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Yuliana;
+const ChampionName Champion_to_suitup = ChampionName::VisirOvelis;
 
 #define DISPLAY_BEST_POOL
+
+#define MINOR_SETS ,ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie,ArtSet::Shield,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -168,9 +170,9 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::HP,  { MatchOptions::StatInfluence::Max } },
 			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate, { MatchOptions::StatInfluence::Modrt, 60 } },
+			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt, 70 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Spd, { 140 } },
 			{ StatType::Acc, { 120 } },
@@ -184,13 +186,12 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 	FindAndReportBestForChampion( ChampionName::Krisk, matching );
 #endif
 	/*
-Weapon: [Vamp]     5* (12)       { {Spd,5}, {Acc,33}, {HP,458}, }
-Helmet: [Vamp]     5* (16)       { {Def_p,6}, {Acc,28}, {CRate,6}, {Res,11}, }
-Shield: [Acc]      5* (16)       { {HP_p,7}, {Def_p,7}, {CDmg,15}, {CRate,16}, }
-Gloves: [DivLife]  6* (12) Def_p { {HP_p,11}, {Def,27}, {Acc,10}, {CRate,18}, }
-Chest:  [Vamp]     5* (16) HP_p  { {Atk_p,10}, {CRate,6}, {Def_p,5}, {HP,351}, }
-Boots:  [Vamp]     5* (8)  Spd   { {Res,18}, {Acc,20}, }
-Necklace:[]        5* (0)  HP    { {Def,16}, {Acc,8}, {Atk,21}, }
+1>Weapon: [Vamp]     5* (8)        { {HP,263}, {CRate,14}, {Acc,8}, {Spd,5}, }
+1>Helmet: [Vamp]     5* (16)       { {Def_p,6}, {Acc,28}, {CRate,6}, {Res,11}, }
+1>Shield: [DivLife]  6* (8)        { {HP_p,11}, {Def_p,5}, {HP,800}, {Res,10}, }
+1>Gloves: [DivLife]  6* (16) Def_p { {HP_p,12}, {Def,37}, {Acc,12}, {CRate,23}, }
+1>Chest:  [Vamp]     5* (16) HP_p  { {Atk_p,11}, {CRate,6}, {Def_p,6}, {HP,526}, }
+1>Boots:  [Vamp]     5* (16) Spd   { {Res,19}, {Acc,21}, {Def_p,7}, {HP_p,6}, }
 	*/
 }
 
@@ -278,17 +279,26 @@ Boots:  [Vamp]     5* (12) Spd   { {Acc,29}, {Atk,22}, {HP,137}, }
 BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 {
 	const MatchOptions matching(
+		//{
+		//	{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
+		//	//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+		//	{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
+		//	{ StatType::CRate, { MatchOptions::StatInfluence::Minor } },
+		//	{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
+		//	{ StatType::Spd,  { 150 } },
+		//	{ StatType::Acc,  { 120 } },
+		//}
+		//,{ ArtSet::Immortal }
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
 			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate, { MatchOptions::StatInfluence::Minor } },
-			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
-			{ StatType::Spd,  { 150 } },
-			{ StatType::Acc,  { 120 } },
+			{ StatType::Spd,  { 160 } },
+			{ StatType::Acc,  { 180 } },
 		}
-		,{ /*ArtSet::Vamp*/ ArtSet::Immortal }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ ArtSet::Immortal, ArtSet::Immortal }
+		//,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel MINOR_SETS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
@@ -296,12 +306,15 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
 #endif
 	/*
-Weapon: [Immortal] 5* (12)       { {CRate,10}, {Acc,18}, {HP_p,5}, {HP,689}, }
-Helmet: [Immortal] 5* (12)       { {Acc,35}, {CDmg,5}, {Def_p,5}, }
-Shield: [Speed]    5* (12)       { {HP_p,10}, {Acc,10}, {Def_p,16}, }
-Gloves: [HP]       6* (12) Def_p { {Atk_p,5}, {Acc,42}, {HP,343}, {CDmg,6}, }
-Chest:  [HP]       5* (16) Def_p { {Atk_p,10}, {CRate,11}, {CDmg,10}, {Res,8}, }
-Boots:  [Speed]    5* (12) Spd   { {Def_p,9}, {Acc,19}, {Res,19}, }
+Weapon: [Immortal] 5* (16)       { {CRate,10}, {Acc,26}, {HP_p,7}, {HP,864}, }
+Helmet: [Immortal] 5* (16)       { {Spd,9}, {Res,10}, {Acc,29}, {HP_p,10}, }
+Shield: [Immortal] 5* (8)        { {Def_p,15}, {Spd,4}, }
+Gloves: [HP]       6* (16) Def_p { {Atk_p,6}, {Acc,42}, {HP,518}, {CDmg,12}, }
+Chest:  [HP]       5* (16) Def_p { {Atk_p,11}, {CRate,11}, {CDmg,10}, {Res,10}, }
+Boots:  [Immortal] 5* (16) Spd   { {Acc,18}, {HP_p,10}, {CRate,11}, {Atk,37}, }
+Ring:   []         5* (12) HP    { {HP_p,6}, {Def_p,14}, {Atk,22}, }
+Necklace:[]        5* (0)  Atk   { {Acc,9}, }
+Banner: []         5* (8)  Acc   { {Def,43}, {HP_p,12}, {Spd,6}, }
 	*/
 }
 

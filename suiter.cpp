@@ -34,15 +34,15 @@ const ChampionStats::values_t Ref_Stat_Values = {
 	/*StatType::Def*/ 3500,
 	/*StatType::Spd*/ 150,
 	/*StatType::CRate*/ 100,
-	/*StatType::CDmg*/ 190,
+	/*StatType::CDmg*/ 150,
 	/*StatType::Res*/ 100,
 	/*StatType::Acc*/ 150,
 };
 
 const ChampionStats::values_t Def_Max_Stat_Caps = {	// 0 - no cap/no penalty
 	/*StatType::HP*/   0,
-	/*StatType::Atk*/  3500,
-	/*StatType::Def*/  3500,
+	/*StatType::Atk*/  0,
+	/*StatType::Def*/  0,
 	/*StatType::Spd*/  0,
 	/*StatType::CRate*/ 100,
 	/*StatType::CDmg*/ 0,
@@ -69,7 +69,6 @@ const float fK_max = 1;
 
 inline float FactorK( MatchOptions::StatInfluence f )
 {
-	_ASSERTE( f >= MatchOptions::StatInfluence::Minor && f <= MatchOptions::StatInfluence::Max );
 	static const float fks[5] = {
 		fK_ignore, fK_minor, fK_moderate, fK_major, fK_max
 	};
@@ -113,8 +112,6 @@ bool EstimateMinCap( const int value, const int ref_value, const int width, floa
 
 int GetActualMaxCap( StatType st, const MatchOptions::StatFactor& f )
 {
-#ifdef WEAK_EXCESS_LIMIT
-#else
 	const int global_max_stat_cap = Def_Max_Stat_Caps[stl::enum_to_int( st )];
 	const int champ_max_stat_cap = f.MaxCap;
 	if ( champ_max_stat_cap || global_max_stat_cap )
@@ -136,7 +133,6 @@ int GetActualMaxCap( StatType st, const MatchOptions::StatFactor& f )
 		}
 	}
 	else
-#endif
 		return 0;
 }
 
@@ -152,7 +148,7 @@ Weight
 
 float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matching )
 {
-	float est = 0;
+	float total_est = 0;
 
 #ifdef WEAK_EXCESS_LIMIT
 	static const ChampionStats::StatList optimized_stat_list = {
@@ -165,45 +161,47 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 		if ( f.IgnoreStat() )
 			continue;
 
-		const int stat_value = ch_stats[st];
+		int stat_value = ch_stats[st];
+		const int max_stat_cap = GetActualMaxCap( st, f );
+		if ( max_stat_cap && stat_value > max_stat_cap )
+		{
+			stat_value = max_stat_cap;
+		}
+
 		float e = 0;
+		bool e_calculated = false;
 
 		if ( f.HasMinCap() )
 		{
 			const int tol = Excess_Tolerance[stl::enum_to_int( st )];
 			if ( stat_value <= (f.MinCap - tol/2) )
 				return 0.f;	//too small => not accepted
+
+			const int ref_stat_value = Ref_Stat_Values[stl::enum_to_int( st )];
+			const float e_min = (float)f.MinCap / ref_stat_value;
 			if ( stat_value < f.MinCap )
 			{
-				e = linerp( stat_value, f.MinCap - tol/2, 0.f, f.MinCap, 1.f );
-				est += e;
+				e = linerp( stat_value, f.MinCap - tol/2, 0.f, f.MinCap, e_min );
+				total_est += e;
 				continue;
 			}
-
-			e = 1.f;
+			else {
+				const float fk = FactorK( f.Mode );
+				e = (f.MinCap + fk * (stat_value - f.MinCap)) / ref_stat_value;
+				e_calculated = true;
+			}
 		}
 
-		const float fk = FactorK( f.Mode );
-
-		const int ref_stat_value = Ref_Stat_Values[ stl::enum_to_int(st) ];
-		const int max_stat_cap   = GetActualMaxCap( st, f );
-		if ( max_stat_cap && stat_value > max_stat_cap )
+		if ( !e_calculated )
 		{
-			_ASSERTE( false );
-	//		const int tol = Excess_Tolerance[stl::enum_to_int( st )];
-	//		const int excessive_threshold = max_stat_cap + tol;
-	//		if ( stat_value > excessive_threshold )
-	//			continue;	//stat got too high, give 0 estimation (or "return 0;" ?)
-	//		else {
-	//			e = linerp( stat_value, max_stat_cap, 1, excessive_threshold, 0 );
-	//		}
-		}
-		else {
-			if ( !f.HasMinCap() )
-				e = (float)stat_value / ref_stat_value;
+			const int ref_stat_value = Ref_Stat_Values[stl::enum_to_int( st )];
+			const float fk = FactorK( f.Mode );
+			e = fk * (float)stat_value / ref_stat_value;
+			e_calculated = true;
 		}
 
-		est += fk * e;
+		_ASSERTE( e_calculated );
+		total_est += e;
 	}
 #else
 	// MinCap is most strong filter => so test it firstly
@@ -253,7 +251,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 		}
 	}
 #endif
-	return est;
+	return total_est;
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -20,8 +20,8 @@ struct MatchOptions
 		int MaxCap = 0;
 		StatFactor() = default;
 		StatFactor( StatInfluence m, int max_cap = 0 ) : Mode(m), MinCap(0), MaxCap(max_cap) {}
-		StatFactor( int min_cap, int max_cap = 0 ) : Mode(StatInfluence::Max), MinCap(min_cap), MaxCap(max_cap) {}
-		bool IgnoreStat() const { return Mode == StatInfluence::NotInterested; }
+		StatFactor( int min_cap, StatInfluence excessK = StatInfluence::NotInterested, int max_cap = 0 ) : Mode(excessK), MinCap(min_cap), MaxCap(max_cap) {}
+		bool IgnoreStat() const { return Mode == StatInfluence::NotInterested && !HasMinCap(); }
 		bool HasMinCap() const { return MinCap > 0; }
 		bool HasMaxCap() const { return MaxCap > 0; }
 	};
