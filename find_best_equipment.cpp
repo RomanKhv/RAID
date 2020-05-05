@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::VisirOvelis;
+const ChampionName Champion_to_suitup = ChampionName::Gorgorab;
 
 #define DISPLAY_BEST_POOL
 
@@ -32,7 +32,9 @@ void report_stats_and_eq( const ChampionStats& final_stats, const Equipment& eq,
 	}
 
 	// equipment
-	log << to_string( eq ) << '\n';
+	log << to_string( eq, false );
+	//log << to_string( eq, true );
+	log << '\n';
 }
 
 void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& matching )
@@ -111,6 +113,24 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 
 #ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Alura, matching );
+#endif
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd,  { 230, MatchOptions::StatInfluence::Max } },
+		}
+		,{ ArtSet::Speed }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+#ifdef RUN_FIND
+	FindAndReportBestForChampion( ChampionName::Gorgorab, matching );
 #endif
 }
 
@@ -233,10 +253,11 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
 			//{ StatType::CRate, { MatchOptions::StatFactorMode::Minor } },
 			//{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Spd, { 150 } },
-			{ StatType::Acc, { 160 } },
+			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 180 } },
 		}
-		,{ /*ArtSet::Vamp ArtSet::Immortal*/ }
+		,{ ArtSet::Immortal, ArtSet::Immortal }
+		//,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
@@ -251,12 +272,11 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
-			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
 			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
 			{ StatType::CRate,{ MatchOptions::StatInfluence::Modrt, 50 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 60 } },
-			{ StatType::Spd,  { 150 } },
-			{ StatType::Acc,  { 130 } },
+			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 180 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
@@ -390,6 +410,8 @@ BOOST_AUTO_TEST_CASE( FindBest_Zargala )
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Atk,  { MatchOptions::StatInfluence::Max } },
+			//{ StatType::Def,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { 1800 } },
 			{ StatType::CRate,{ 80 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Spd,  { 165 } },

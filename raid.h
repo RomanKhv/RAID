@@ -99,8 +99,24 @@ enum class ArtSet
 	Svirepost,		//Relentless
 	Savage,			//Жестокость
 	Taunting,		//Насмешка
+	Revenge,		//Месть
 
 	count,
+
+	Bannerets,
+	SupremeElves,
+	HolyOrden,
+	Barbarians,
+	Ogrins,
+	Snakes,
+	Werewolfs,
+	Orks,
+	Demons,
+	Deads,
+	DarkElves,
+	Renegates,
+	Dworves,
+
 	_FourBegin = Vamp
 };
 
@@ -138,9 +154,10 @@ struct Artefact
 	boost::container::static_vector<Stat,4> AddStats;
 
 	ChampionName Owner = ChampionName::none;
+	std::string Comment;
 	
 	Artefact() = default;
-	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat>, ChampionName owner = ChampionName::none );
+	Artefact( ArtType, ArtSet, int stars, int level, StatType, std::vector<Stat>, ChampionName owner = ChampionName::none, const char* comment = nullptr );
 	void Reset();
 	bool Initialized() const { return Stars > 0; }
 	bool IsBasic() const { _ASSERTE(Initialized()); return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }

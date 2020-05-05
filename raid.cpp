@@ -23,7 +23,7 @@ bool check_stat_input_error( const Stat& stat )
 /////////////////////////////////////////////////////////////////////////////
 
 Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mainstat, std::vector<Stat> addstats,
-					ChampionName owner)
+					ChampionName owner, const char* comment )
 	:Type(type)
 	,Set(set)
 	,Stars(stars)
@@ -32,6 +32,9 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	,Owner(owner)
 {
 	_MainStat.Type = mainstat;
+	if ( comment )
+		Comment = comment;
+
 	_ASSERTE( Initialized() );
 	_ASSERTE( debug::IsValidStatForArt( mainstat, type ) );
 	_ASSERTE( debug::IsGoodStatForArt( mainstat, type ) );
@@ -360,8 +363,8 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 				};
 				static const stat_table_t Acc_Res = {
 					//      0  4   8  12  16
-					/*4*/{  8, 0, 30, 0, 64 },
-					/*5*/{ 12, 0, 38, 0, 78 },
+					/*4*/{  8, 0, 30, 41, 64 },
+					/*5*/{ 12, 0, 38, 50, 78 },
 					/*6*/{ 16, 0,  0, 0, 96 },
 				};
 
@@ -813,6 +816,9 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 		 art.Owner != ch_name )
 		return false;
 
+	if ( !art.IsBasic() )
+		return true;
+
 	if ( !IsSetAccepted( art.Set ) )
 		return false;
 
@@ -872,7 +878,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13710, 1376, 738,  94,  15+5, 57,  30, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Gorgorab:
-			return Champion( { 16860, 1015, 1015,  92,  15, 50,  30, 0 }, Element::Blue, name );
+			return Champion( { 17670, 1057, 1068,  97,  15, 50,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Gromoboy:
 			return Champion( { 15855, 727, 1443,  97,  15+5, 50,  30, 0 }, Element::Void, name );
@@ -890,7 +896,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::SteelSkull:
-			return Champion( { 15030, 1244, 892,  104,  15, 50,  30, 0 }, Element::Green, name );
+			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Tyrel:
 			return Champion( { 16185, 881, 1343,  95,  15, 50,  45, 0 }, Element::Blue, name );

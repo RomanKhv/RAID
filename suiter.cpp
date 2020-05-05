@@ -471,6 +471,13 @@ void FindBestEquipment2( const std::vector<Artefact>& inventory, const Champion&
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
 	SeparateInventory( inventory, matching, ch.Name, arts_by_type );
 
+	if ( auto v = stl::get_value_ptr( arts_by_type, ArtType::Ring ) )
+		_ASSERTE( v->size() <= 1 );
+	if ( auto v = stl::get_value_ptr( arts_by_type, ArtType::Necklace ) )
+		_ASSERTE( v->size() <= 1 );
+	if ( auto v = stl::get_value_ptr( arts_by_type, ArtType::Banner ) )
+		_ASSERTE( v->size() <= 1 );
+
 	EqEstPool best;
 	FindBestEquipment2( arts_by_type, ch, matching, best );
 

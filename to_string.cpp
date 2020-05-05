@@ -72,6 +72,7 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, Frost );
 		CASE_RETURN_STRING( ArtSet, Daze );
 		CASE_RETURN_STRING( ArtSet, Immunitet );
+		CASE_RETURN_STRING( ArtSet, Revenge );
 		CASE_RETURN_STRING( ArtSet, Vozmezdie );
 		CASE_RETURN_STRING( ArtSet, Shield );
 		CASE_RETURN_STRING( ArtSet, Doblest );
@@ -86,39 +87,70 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, DivCritRate );
 		CASE_RETURN_STRING( ArtSet, DivLife );
 		CASE_RETURN_STRING( ArtSet, DivSpeed );
+
+		CASE_RETURN_STRING( ArtSet, Bannerets );
+		CASE_RETURN_STRING( ArtSet, SupremeElves );
+		CASE_RETURN_STRING( ArtSet, HolyOrden );
+		CASE_RETURN_STRING( ArtSet, Barbarians );
+		CASE_RETURN_STRING( ArtSet, Ogrins );
+		CASE_RETURN_STRING( ArtSet, Snakes );
+		CASE_RETURN_STRING( ArtSet, Werewolfs );
+		CASE_RETURN_STRING( ArtSet, Orks );
+		CASE_RETURN_STRING( ArtSet, Demons );
+		CASE_RETURN_STRING( ArtSet, Deads );
+		CASE_RETURN_STRING( ArtSet, DarkElves );
+		CASE_RETURN_STRING( ArtSet, Renegates );
+		CASE_RETURN_STRING( ArtSet, Dworves );
 		case ArtSet::None: return {};
 	}
 	_ASSERTE( !"not yet supported" );
 	return "";
 }
 
-std::string to_string( const Artefact& art )
+std::string to_string( const Artefact& art, bool format_as_code )
 {
 	std::stringstream ss;
-	ss.width(8);	ss << std::left << (to_string(art.Type) + ":");
-	ss.width(11);	ss << (boost::format("[%s]") % to_string(art.Set) ).str();
-	ss << art.Stars << "* (";
-	ss.width(4); ss << (boost::format("%d)") % art.Level).str();
-	ss.width(6); ss << std::left;
-	switch ( art.Type )
+	if ( !format_as_code )
 	{
-		case ArtType::Weapon:
-		case ArtType::Helmet:
-		case ArtType::Shield:
-			ss << "";
-			break;
-		default:
-			ss << to_string( art.MainStatType() );
-			break;
-	};
-	if ( !art.AddStats.empty() )
-	{
-		ss << "{ ";
+		ss.width( 8 );	ss << std::left << (to_string( art.Type ) + ":");
+		ss.width( 11 );	ss << (boost::format( "[%s]" ) % to_string( art.Set )).str();
+		ss << art.Stars << "* (";
+		ss.width( 4 ); ss << (boost::format( "%d)" ) % art.Level).str();
+		ss.width( 6 ); ss << std::left;
+		switch ( art.Type )
+		{
+			case ArtType::Weapon:
+			case ArtType::Helmet:
+			case ArtType::Shield:
+				ss << "";
+				break;
+			default:
+				ss << to_string( art.MainStatType() );
+				break;
+		};
+		if ( !art.AddStats.empty() )
+		{
+			ss << "{ ";
+			for ( const Stat& s : art.AddStats )
+			{
+				ss << "{" << to_string( s.Type ) << "," << s.Value << "}, ";
+			}
+			ss << "}";
+		}
+		if ( !art.Comment.empty() )
+			ss << " " << art.Comment;
+	}
+	else {
+		ss << "Artefact( ArtType::" << to_string( art.Type );
+		ss << ", ArtSet::" << to_string( art.Set );
+		ss << ", " << art.Stars << ", " << art.Level;
+		ss << ", StatType::" << to_string( art.MainStatType() );
+		ss << ", { ";
 		for ( const Stat& s : art.AddStats )
 		{
-			ss << "{" << to_string(s.Type) << "," << s.Value << "}, ";
+			ss << "{StatType::" << to_string( s.Type ) << "," << s.BaseValue << "}, ";
 		}
-		ss << "}";
+		ss << "} ),";
 	}
 	return ss.str();
 }
@@ -137,28 +169,28 @@ std::string to_string( const ChampionStats& stats )
 	return ss.str();
 }
 
-std::string to_string( const Equipment& eq )
+std::string to_string( const Equipment& eq, bool format_as_code )
 {
 	std::stringstream ss;
 	for ( const Artefact& art : eq.Arts )
 	{
 		if ( art.Initialized() )
 		{
-			ss << to_string( art ) << "\n";
+			ss << to_string( art, format_as_code ) << "\n";
 		}
 	}
 	//suppress_last_symbol( ss );
 	return ss.str();
 }
 
-std::string to_string( const EquipmentRef& eq )
+std::string to_string( const EquipmentRef& eq, bool format_as_code )
 {
 	std::stringstream ss;
 	for ( const Artefact* art : eq.Arts )
 	{
 		if ( art && art->Initialized() )
 		{
-			ss << to_string( *art ) << "\n";
+			ss << to_string( *art, format_as_code ) << "\n";
 		}
 	}
 	//suppress_last_symbol( ss );

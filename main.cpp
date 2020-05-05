@@ -727,13 +727,11 @@ BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 
 BOOST_AUTO_TEST_CASE( test_champ_relations )
 {
-	const ChampionStats Hatun = GetCurrentFinalStatsFor( ChampionName::Hatun );
-	const ChampionStats Voitelnica = GetCurrentFinalStatsFor( ChampionName::Voitelnica );
-	const ChampionStats Zargala = GetCurrentFinalStatsFor( ChampionName::Zargala );
-	const ChampionStats Kael = GetCurrentFinalStatsFor( ChampionName::Kael );
-	BOOST_CHECK_GT( Hatun.Spd, Voitelnica.Spd );
-	//BOOST_CHECK_GT( Voitelnica.Spd, Kael.Spd );
-	BOOST_CHECK_GT( Zargala.Spd, Kael.Spd );
+	const ChampionStats zaliv = GetCurrentFinalStatsFor( ChampionName::Gorgorab/*Hatun*/ );
+	const ChampionStats raskol = GetCurrentFinalStatsFor( ChampionName::Zargala );
+	const ChampionStats dd = GetCurrentFinalStatsFor( ChampionName::Kael );
+	BOOST_CHECK_GT( zaliv.Spd, raskol.Spd );
+	BOOST_CHECK_GT( raskol.Spd, dd.Spd );
 }
 
 //#ifndef DEBUG_FIND_BEST
@@ -811,5 +809,17 @@ BOOST_AUTO_TEST_CASE( test_CurrentStats )
 	}
 }
 //#endif
+
+#ifdef _DEBUG
+BOOST_AUTO_TEST_CASE( display_current_set )
+{
+	const ChampionName name = ChampionName::SteelSkull;
+
+	const Equipment eq = GetCurrentEquipmentFor( name );
+	BOOST_CHECK_GE( eq.Size(), 6 );
+	BOOST_TEST_MESSAGE( "\nCurrent equipment of " << to_string(name) << ":" );
+	BOOST_TEST_MESSAGE( to_string( eq, false ) );
+}
+#endif
 
 #endif
