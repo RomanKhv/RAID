@@ -15,7 +15,7 @@ const ChampionName Champion_to_suitup = ChampionName::Gorgorab;
 
 #define DISPLAY_BEST_POOL
 
-#define MINOR_SETS ,ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie,ArtSet::Shield,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
+#define MINOR_SETS ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +39,7 @@ void report_stats_and_eq( const ChampionStats& final_stats, const Equipment& eq,
 
 void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& matching )
 {
+#ifdef RUN_FIND
 	if ( name != Champion_to_suitup )
 		return;
 
@@ -87,6 +88,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	{
 		file << out_string;
 	}
+#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -111,16 +113,14 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Alura, matching );
-#endif
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::HP,   { MatchOptions::StatInfluence::Major } },
 			{ StatType::Def,  { MatchOptions::StatInfluence::Major } },
 			{ StatType::Spd,  { 230, MatchOptions::StatInfluence::Max } },
 		}
@@ -129,9 +129,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Gorgorab, matching );
-#endif
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
@@ -139,29 +137,18 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Def,  { MatchOptions::StatInfluence::Major } },
-			{ StatType::CRate,{ MatchOptions::StatInfluence::Minor, 60 } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ 50, MatchOptions::StatInfluence::Minor, 60 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 100 } },
-			{ StatType::Spd,  { 150 } },
-			{ StatType::Acc,  { 110 } },
+			{ StatType::Spd,  { 160 } },
+			{ StatType::Acc,  { 140 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Gromoboy, matching );
-#endif
-	/*
-Weapon: [Vamp]     5* (16)       { {CDmg,6}, {CRate,15}, {Atk_p,5}, {Acc,9}, }
-Helmet: [Acc]      5* (12)       { {Spd,9}, {CRate,10}, }
-Shield: [Vamp]     6* (12)       { {Acc,11}, {CRate,19}, {HP,423}, }
-Gloves: [Vamp]     5* (8)  Def_p { {Def,21}, {HP_p,17}, }
-Chest:  [DivLife]  6* (16) Def_p { {Spd,6}, {Def,29}, {HP_p,14}, {Acc,41}, }
-Boots:  [Vamp]     5* (16) Spd   { {Acc,19}, {HP_p,10}, {CRate,4}, {Atk_p,4}, }
-Ring:   []         5* (12) HP    { {Def,51}, {Def_p,6}, {HP_p,6}, }
-	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Kael )
@@ -181,9 +168,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Kael )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Kael, matching );
-#endif
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Krisk )
@@ -194,25 +179,15 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
 			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt, 70 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
-			{ StatType::Spd, { 140 } },
-			{ StatType::Acc, { 120 } },
+			{ StatType::Spd, { 160 } },
+			{ StatType::Acc, { 130 } },
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Krisk, matching );
-#endif
-	/*
-1>Weapon: [Vamp]     5* (8)        { {HP,263}, {CRate,14}, {Acc,8}, {Spd,5}, }
-1>Helmet: [Vamp]     5* (16)       { {Def_p,6}, {Acc,28}, {CRate,6}, {Res,11}, }
-1>Shield: [DivLife]  6* (8)        { {HP_p,11}, {Def_p,5}, {HP,800}, {Res,10}, }
-1>Gloves: [DivLife]  6* (16) Def_p { {HP_p,12}, {Def,37}, {Acc,12}, {CRate,23}, }
-1>Chest:  [Vamp]     5* (16) HP_p  { {Atk_p,11}, {CRate,6}, {Def_p,6}, {HP,526}, }
-1>Boots:  [Vamp]     5* (16) Spd   { {Res,19}, {Acc,21}, {Def_p,7}, {HP_p,6}, }
-	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Lekar )
@@ -230,18 +205,45 @@ BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Lekar, matching );
-#endif
-	/*
-Weapon: [Speed]    5* (16)       { {CRate,11}, {HP_p,9}, {Spd,5}, {Res,8}, }
-Helmet: [HP]       6* (16)       { {Spd,29}, {HP_p,8}, {Res,13}, {Atk_p,7}, }
-Shield: [HP]       6* (12)       { {CRate,7}, {Acc,22}, {Def_p,16}, {Res,11}, }
-Gloves: [Speed]    5* (8)  CRate { {Atk,21}, {Def,20}, {Spd,14}, }
-Chest:  [HP]       5* (13) Def_p { {HP_p,5}, {Spd,5}, {Atk_p,6}, }
-Boots:  [HP]       6* (4)  Def_p { {CRate,12}, {CDmg,6}, {HP,209}, }
-Ring:   []         5* (8)  Atk   { {Def,62}, {Atk_p,6}, {Def_p,7}, }
-	*/
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Mavzolejnik )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Def, { 2300, MatchOptions::StatInfluence::Max } },
+			//{ StatType::Res, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 180 } },
+		}
+		,{ ArtSet::Immortal }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+	FindAndReportBestForChampion( ChampionName::Mavzolejnik, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Rotos )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Major, 95 } },
+			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			//{ StatType::Acc, { 100, MatchOptions::StatInfluence::Minor } },
+		}
+		,{  }
+		,{ ArtSet::Vamp, ArtSet::Immortal, MINOR_SETS }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+
+	FindAndReportBestForChampion( ChampionName::Rotos, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
@@ -262,9 +264,7 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::SteelSkull, matching );
-#endif
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
@@ -283,17 +283,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Tyrel, matching );
-#endif
-	/*
-Weapon: [Def]      4* (12)       { {CRate,11}, {Acc,16}, {HP_p,5}, }
-Helmet: [Vamp]     5* (16)       { {Atk_p,5}, {Acc,31}, {HP_p,4}, {Def,17}, }
-Shield: [Vamp]     5* (8)        { {CRate,9}, {HP,185}, }
-Gloves: [Def]      5* (16) Def_p { {Spd,14}, {Acc,11}, {CRate,6}, {Res,10}, }
-Chest:  [Vamp]     5* (16) Def_p { {CDmg,9}, {CRate,10}, {Res,11}, {HP,464}, }
-Boots:  [Vamp]     5* (12) Spd   { {Acc,29}, {Atk,22}, {HP,137}, }
-	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
@@ -318,13 +308,11 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 		}
 		,{ ArtSet::Immortal, ArtSet::Immortal }
 		//,{ ArtSet::Vamp }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel MINOR_SETS }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
-#endif
 	/*
 Weapon: [Immortal] 5* (16)       { {CRate,10}, {Acc,26}, {HP_p,7}, {HP,864}, }
 Helmet: [Immortal] 5* (16)       { {Spd,9}, {Res,10}, {Acc,29}, {HP_p,10}, }
@@ -355,9 +343,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
-#endif
 	/*
 	Artefact{ ArtType::Weapon, ArtSet::CRate, 5, 16, StatType::Atk, { {StatType::Acc,20,2}, {StatType::CRate,17}, {StatType::Res,18,1}, {StatType::CDmg,5} }, ChampionName::Voitelnica },
 	Artefact{ ArtType::Helmet, ArtSet::CRate, 5, 16, StatType::HP, { {StatType::Atk_p,10,2}, {StatType::CDmg,11}, {StatType::HP_p,5,1}, {StatType::CRate,5} }, ChampionName::Voitelnica },
@@ -382,7 +368,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 			{ StatType::HP,   { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
 			{ StatType::CRate,{ 80 } },
-			{ StatType::Spd,  { 160 } },
+			{ StatType::Spd,  { 165 } },
 			{ StatType::Acc,  { 180 } },
 		}
 		,{ ArtSet::Vamp }
@@ -390,18 +376,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Yuliana, matching );
-#endif
-	/*
-Weapon: [Vamp]     5* (12)       { {HP_p,5}, {Atk_p,5}, {Acc,35}, }
-Helmet: [Vamp]     5* (16)       { {HP_p,10}, {Acc,19}, {Spd,4}, {Def_p,5}, }
-Shield: [Speed]    5* (12)       { {Acc,17}, {HP_p,10}, {Res,10}, }
-Gloves: [Speed]    6* (12) CRate { {Acc,29}, {HP,301}, {Atk,50}, {Def_p,7}, }
-Chest:  [Vamp]     5* (8)  Def_p { {Spd,9}, {Def,16}, }
-Boots:  [Vamp]     4* (8)  Spd   { {Atk_p,4}, {Acc,25}, }
-Ring:   []         5* (16) HP    { {Def_p,13}, {HP_p,7}, {Atk_p,7}, {Def,27}, }
-	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Zargala )
@@ -422,9 +397,5 @@ BOOST_AUTO_TEST_CASE( FindBest_Zargala )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
-#ifdef RUN_FIND
 	FindAndReportBestForChampion( ChampionName::Zargala, matching );
-#endif
-	/*
-	*/
 }

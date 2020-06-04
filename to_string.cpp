@@ -205,10 +205,13 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
 		CASE_RETURN_STRING( ChampionName, Gorgorab );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
+		CASE_RETURN_STRING( ChampionName, Hangar );
 		CASE_RETURN_STRING( ChampionName, Hatun );
 		CASE_RETURN_STRING( ChampionName, Kael );
 		CASE_RETURN_STRING( ChampionName, Krisk );
 		CASE_RETURN_STRING( ChampionName, Lekar );
+		CASE_RETURN_STRING( ChampionName, Mavzolejnik );
+		CASE_RETURN_STRING( ChampionName, Rotos );
 		CASE_RETURN_STRING( ChampionName, SteelSkull );
 		CASE_RETURN_STRING( ChampionName, Tyrel );
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );

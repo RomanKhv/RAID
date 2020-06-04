@@ -320,10 +320,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{ 35, 80, 125, 170, 265 }
 				};
 				static const stat_table_t Atk_Def_banner = {
-					//      0  4    8  12  16
-					/*4*/{ 24, 0,   0, 0, 285 },
-					/*5*/{ 38, 0, 156, 0, 338 },
-					/*6*/{ 53, 0,   0, 0, 0 }
+					//      0  4    8   12   16
+					/*4*/{ 24, 0,   0,   0, 285 },
+					/*5*/{ 38, 0, 156, 215, 338 },
+					/*6*/{ 53, 0,   0,   0,   0 }
 				};
 				static const stat_table_t HP_general = {
 					//      0     4     8    12    16
@@ -332,10 +332,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{ 600, 1277, 1954, 2631, 4080 }
 				};
 				static const stat_table_t HP_banner = {
-					//      0   4  8  12   16
-					/*4*/{ 390, 0, 0, 0, 4260 },
-					/*5*/{ 675, 0, 0, 0, 5220 },
-					/*6*/{ 900, 0, 0, 0, 0 }
+					//      0   4  8   12    16
+					/*4*/{ 390, 0, 0,    0, 4260 },
+					/*5*/{ 675, 0, 0,    0, 5220 },
+					/*6*/{ 900, 0, 0, 3947, 6120 }
 				};
 				static const stat_table_t Atk_HP_Def_percent_CR = {
 					//      0   4   8  12  16
@@ -350,8 +350,8 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{  0, 0, 0, 0,  0 },
 				};
 				static const stat_table_t CDmg_necklace = {
-					//     0  4  8 12  16
-					/*4*/{ 4, 0, 0, 0, 25 },
+					//     0  4   8 12  16
+					/*4*/{ 4, 0, 12, 0, 25 },
 					/*5*/{ 5, 0, 0, 0, 33 },
 					/*6*/{ 6, 0, 0, 0, 0 },
 				};
@@ -894,6 +894,12 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Mavzolejnik:
+			return Champion( { 19485, 1057, 947,  104,  15, 50,  30, 0 }, Element::Green, name );
+			break;
+		case ChampionName::Rotos:
+			return Champion( { 11895, 1520, 1266,  90,  15, 63,  40, 0 }, Element::Green, name );
 			break;
 		case ChampionName::SteelSkull:
 			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
