@@ -121,10 +121,10 @@ BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Major } },
-			{ StatType::Def,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::Def,  { 2200, MatchOptions::StatInfluence::Max } },
 			{ StatType::Spd,  { 230, MatchOptions::StatInfluence::Max } },
 		}
-		,{ ArtSet::Speed }
+		,{ ArtSet::Speed, ArtSet::Speed }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
@@ -181,8 +181,10 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Spd, { 160 } },
 			{ StatType::Acc, { 130 } },
+			{ StatType::Res, { 100 } },
 		}
-		,{ ArtSet::Vamp }
+		//,{ ArtSet::Vamp }
+		,{ ArtSet::Immortal }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
