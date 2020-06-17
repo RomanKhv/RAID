@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Gorgorab;
+const ChampionName Champion_to_suitup = ChampionName::Tyrel;
 
 #define DISPLAY_BEST_POOL
 
@@ -91,7 +91,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	{
 		file << out_string;
 	}
-	BOOST_TEST_MESSAGE( (boost::format("%s") % (boost::filesystem::current_path()/file_name).string()).str() );
+	BOOST_TEST_MESSAGE( (boost::format("%s\n") % (boost::filesystem::current_path()/file_name).string()).str() );
 #endif
 }
 
@@ -278,14 +278,15 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate,{ MatchOptions::StatInfluence::Modrt, 50 } },
-			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 60 } },
+			{ StatType::Def,  { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ 60, MatchOptions::StatInfluence::Modrt, 80 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 100 } },
 			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Acc, { 180 } },
+			{ StatType::Acc, { 180-10 } }
 		}
 		,{ ArtSet::Vamp }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ ChampionName::Gromoboy }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 

@@ -334,7 +334,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 				static const stat_table_t HP_banner = {
 					//      0   4  8   12    16
 					/*4*/{ 390, 0, 0,    0, 4260 },
-					/*5*/{ 675, 0, 0,    0, 5220 },
+					/*5*/{ 675, 0, 0, 3347, 5220 },
 					/*6*/{ 900, 0, 0, 3947, 6120 }
 				};
 				static const stat_table_t Atk_HP_Def_percent_CR = {
@@ -350,10 +350,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{  0, 0, 0, 0,  0 },
 				};
 				static const stat_table_t CDmg_necklace = {
-					//     0  4   8 12  16
-					/*4*/{ 4, 0, 12, 0, 25 },
-					/*5*/{ 5, 0, 0, 0, 33 },
-					/*6*/{ 6, 0, 0, 0, 0 },
+					//     0   4   8  12  16
+					/*4*/{ 4,  0, 12,  0, 25 },
+					/*5*/{ 5, 11, 16,  0, 33 },
+					/*6*/{ 6,  0,  0,  0,  0 },
 				};
 				static const stat_table_t Spd_all = {
 					//     0   4   8  12  16
@@ -365,7 +365,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					//      0  4   8  12  16
 					/*4*/{  8, 0, 30, 41, 64 },
 					/*5*/{ 12, 0, 38, 50, 78 },
-					/*6*/{ 16, 0,  0, 0, 96 },
+					/*6*/{ 16, 0,  0,  0, 96 },
 				};
 
 namespace debug {
@@ -911,7 +911,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Tyrel:
-			return Champion( { 16185, 881, 1343,  95,  15, 50,  45, 0 }, Element::Blue, name );
+			return Champion( { 16185, 881, 1343,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );
