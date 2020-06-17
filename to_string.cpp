@@ -137,6 +137,8 @@ std::string to_string( const Artefact& art, bool format_as_code )
 			}
 			ss << "}";
 		}
+		if ( art.Owner != ChampionName::none )
+			ss << "   " << to_string( art.Owner );
 		if ( !art.Comment.empty() )
 			ss << " " << art.Comment;
 	}

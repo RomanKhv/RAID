@@ -29,6 +29,7 @@ struct MatchOptions
 
 	std::map<ArtSet, int> RequiedSets;
 	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
+	enum_index_map<ChampionName,ChampionName::count,bool> Undressable;
 
 	static const bool ConsiderMaxLevels = true;
 	static const bool ConsiderMaxLevelsForNonBasicArts = false;	//no data, so far too expensive
@@ -37,7 +38,8 @@ struct MatchOptions
 	MatchOptions() = default;
 	MatchOptions( std::map<StatType, StatFactor>,
 				  std::vector<ArtSet> req_filter = {},
-				  std::set<ArtSet> exclusion_filter = {} );
+				  std::set<ArtSet> exclusion_filter = {},
+				  std::set<ChampionName> providers = {} );
 
 	bool IsInputOK() const;
 	const StatFactor& Factor( StatType st ) const

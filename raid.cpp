@@ -762,7 +762,8 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 
 /////////////////////////////////////////////////////////////////////////////
 
-MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter )
+MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
+							std::set<ChampionName> providers )
 	//,ConsiderMaxLevels( consider_max_lvl )
 {
 	for ( ArtSet set : req_filter )
@@ -772,6 +773,10 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 	for ( ArtSet set : exclusion_filter )
 	{
 		ExcludedSets[set] = true;
+	}
+	for ( ChampionName name : providers )
+	{
+		Undressable[name] = true;
 	}
 	for ( const auto& p : factors )
 	{
@@ -813,7 +818,8 @@ bool MatchOptions::IsSetAccepted( ArtSet set ) const
 bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) const
 {
 	if ( art.Owner != ChampionName::none &&
-		 art.Owner != ch_name )
+		 art.Owner != ch_name && 
+		 !Undressable[ch_name] )
 		return false;
 
 	if ( !art.IsBasic() )

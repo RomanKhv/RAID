@@ -2,6 +2,8 @@
 #include <fstream>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/test_tools.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 #include "suiter.h"
 #include "to_string.h"
 
@@ -82,12 +84,14 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	const std::string out_string = log.str();
 	BOOST_TEST_MESSAGE( out_string );
 
+	boost::filesystem::path file_name = std::string("__") + name_string + "__.champ";
 	std::ofstream file;
-	file.open( std::string("__") + name_string + "__.champ" );
+	file.open( file_name.c_str() );
 	if ( file.is_open() )
 	{
 		file << out_string;
 	}
+	BOOST_TEST_MESSAGE( (boost::format("%s") % (boost::filesystem::current_path()/file_name).string()).str() );
 #endif
 }
 
@@ -304,9 +308,9 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
-			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def,  { 2700, MatchOptions::StatInfluence::Major } },
 			{ StatType::Spd,  { 160 } },
-			{ StatType::Acc,  { 180 } },
+			{ StatType::Acc,  { 200 } },
 		}
 		,{ ArtSet::Immortal, ArtSet::Immortal }
 		//,{ ArtSet::Vamp }
@@ -315,17 +319,6 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 	BOOST_CHECK( matching.IsInputOK() );
 
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
-	/*
-Weapon: [Immortal] 5* (16)       { {CRate,10}, {Acc,26}, {HP_p,7}, {HP,864}, }
-Helmet: [Immortal] 5* (16)       { {Spd,9}, {Res,10}, {Acc,29}, {HP_p,10}, }
-Shield: [Immortal] 5* (8)        { {Def_p,15}, {Spd,4}, }
-Gloves: [HP]       6* (16) Def_p { {Atk_p,6}, {Acc,42}, {HP,518}, {CDmg,12}, }
-Chest:  [HP]       5* (16) Def_p { {Atk_p,11}, {CRate,11}, {CDmg,10}, {Res,10}, }
-Boots:  [Immortal] 5* (16) Spd   { {Acc,18}, {HP_p,10}, {CRate,11}, {Atk,37}, }
-Ring:   []         5* (12) HP    { {HP_p,6}, {Def_p,14}, {Atk,22}, }
-Necklace:[]        5* (0)  Atk   { {Acc,9}, }
-Banner: []         5* (8)  Acc   { {Def,43}, {HP_p,12}, {Spd,6}, }
-	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
@@ -346,21 +339,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 	BOOST_CHECK( matching.IsInputOK() );
 
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
-	/*
-	Artefact{ ArtType::Weapon, ArtSet::CRate, 5, 16, StatType::Atk, { {StatType::Acc,20,2}, {StatType::CRate,17}, {StatType::Res,18,1}, {StatType::CDmg,5} }, ChampionName::Voitelnica },
-	Artefact{ ArtType::Helmet, ArtSet::CRate, 5, 16, StatType::HP, { {StatType::Atk_p,10,2}, {StatType::CDmg,11}, {StatType::HP_p,5,1}, {StatType::CRate,5} }, ChampionName::Voitelnica },
-	Artefact( ArtType::Shield, ArtSet::DivSpeed, 5, 16, StatType::Def, { {StatType::Acc,20,1}, {StatType::Spd,9,1}, {StatType::Def_p,5,1}, {StatType::CDmg,6} }, ChampionName::Voitelnica ),
-	Artefact{ ArtType::Gloves, ArtSet::Acc, 6, 16, StatType::Atk_p, { {StatType::CRate,20}, {StatType::Spd,5,2}, {StatType::HP_p,5,1}, {StatType::Def_p,7,1} }, ChampionName::Voitelnica },
-	Artefact{ ArtType::Chest, ArtSet::Acc, 5, 16, StatType::Atk_p, { {StatType::Def_p,5,1}, {StatType::CDmg,15}, {StatType::Acc,10,2}, {StatType::Res,9} }, ChampionName::Voitelnica },
-	Artefact( ArtType::Boots, ArtSet::DivSpeed, 5, 16, StatType::Spd, { {StatType::Atk_p,14,2}, {StatType::Atk,15,12}, {StatType::CRate,9} }, ChampionName::Voitelnica ),
-1>Weapon: [CRate]    6* (16)       { {Acc,22}, {CRate,17}, {Res,19}, {CDmg,5}, }
-1>Helmet: [CRate]    5* (12)       { {Atk_p,10}, {CDmg,11}, {HP_p,5}, }
-1>Shield: [DivSpeed] 5* (12)       { {Acc,20}, {Spd,9}, {Def_p,5}, }
-1>Gloves: [Acc]      6* (12) Atk_p { {CRate,20}, {Spd,5}, {HP_p,5}, }
-1>Chest:  [Acc]      5* (12) Atk_p { {Def_p,5}, {CDmg,15}, {Acc,10}, }
-1>Boots:  [DivSpeed] 5* (12) Spd   { {Atk_p,14}, {Atk,20}, {CRate,9}, }
-1>Ring:   []         5* (8)  HP    { {Atk_p,16}, {HP_p,5}, }
-	*/
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
