@@ -672,6 +672,7 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	}
 }
 
+#ifdef _DEBUG
 BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 {
 	//CRate penalty on excess +1 shouldn't be stronger than bonus of +1000 HP
@@ -724,14 +725,17 @@ BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 	//BOOST_TEST_MESSAGE( est_current << " vs " << est_new );
 	//BOOST_CHECK_LT( est_current, est_new );
 }
+#endif
 
 BOOST_AUTO_TEST_CASE( test_champ_relations )
 {
 	const ChampionStats zaliv = GetCurrentFinalStatsFor( ChampionName::Gorgorab/*Hatun*/ );
 	const ChampionStats raskol = GetCurrentFinalStatsFor( ChampionName::Zargala );
 	const ChampionStats dd = GetCurrentFinalStatsFor( ChampionName::Kael );
+	const ChampionStats dd2 = GetCurrentFinalStatsFor( ChampionName::Rotos );
 	BOOST_CHECK_GT( zaliv.Spd, raskol.Spd );
 	BOOST_CHECK_GT( raskol.Spd, dd.Spd );
+	BOOST_CHECK_GT( raskol.Spd, dd2.Spd );
 }
 
 //#ifndef DEBUG_FIND_BEST
@@ -813,7 +817,7 @@ BOOST_AUTO_TEST_CASE( test_CurrentStats )
 #ifdef _DEBUG
 BOOST_AUTO_TEST_CASE( display_current_set )
 {
-	const ChampionName name = ChampionName::Gorgorab;
+	const ChampionName name = ChampionName::Gromoboy;
 
 	const Equipment eq = GetCurrentEquipmentFor( name );
 	BOOST_CHECK_GE( eq.Size(), 6 );

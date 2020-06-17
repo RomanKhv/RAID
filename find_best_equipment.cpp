@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-const ChampionName Champion_to_suitup = ChampionName::Tyrel;
+const ChampionName Champion_to_suitup = ChampionName::Gromoboy;
 
 #define DISPLAY_BEST_POOL
 
@@ -50,7 +50,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	log << "\n  " << name_string << ":\n";
 
 #ifndef DISPLAY_BEST_POOL
-	ChampionExt ch = ChampionFactory::Gromoboy();
+	ChampionExt ch = ChampionFactory::();
 	const Equipment eq = FindRealBestEquipment( ch, matching );
 #ifndef DEBUG_FIND_BEST
 	BOOST_CHECK_GE( eq.Size(), 6 );
@@ -58,7 +58,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 
 	// Report: new stats
 	const ChampionStats final_stats = ch.TotalStats();
-	report_stats_and_eq( final_stats, eq, ChampionFactory::Gromoboy() );
+	report_stats_and_eq( final_stats, eq, ChampionFactory::() );
 #else
 	const Champion ch = Champion::ByName( name );
 
@@ -142,13 +142,13 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate,{ 50, MatchOptions::StatInfluence::Minor, 60 } },
+			{ StatType::CRate,{ 60, MatchOptions::StatInfluence::Minor, 75 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 100 } },
 			{ StatType::Spd,  { 160 } },
-			{ StatType::Acc,  { 140 } },
+			{ StatType::Acc,  { 160 } },
 		}
 		,{ ArtSet::Vamp }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 
