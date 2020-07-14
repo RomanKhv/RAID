@@ -672,6 +672,40 @@ BOOST_AUTO_TEST_CASE( test_Best )
 	}
 }
 
+//BOOST_AUTO_TEST_CASE( verify_Best )
+//{
+//	const std::vector<Artefact> inventory = {
+//			Artefact( ArtType::Weapon, ArtSet::Speed, 6, 16, StatType::Atk, { {StatType::HP_p,6}, {StatType::Spd,12}, {StatType::HP,816}, {StatType::Acc,31}, } ),
+//			Artefact( ArtType::Helmet, ArtSet::DivLife, 6, 12, StatType::HP, { {StatType::Spd,16}, {StatType::Atk_p,7}, {StatType::CDmg,13}, } ),
+//			Artefact( ArtType::Shield, ArtSet::Speed, 5, 16, StatType::Def, { {StatType::HP,197}, {StatType::CDmg,15}, {StatType::Spd,12}, {StatType::Acc,10}, } ),
+//			Artefact( ArtType::Gloves, ArtSet::Def, 5, 16, StatType::Def_p, { {StatType::Spd,13}, {StatType::Acc,9}, {StatType::CRate,6}, {StatType::Res,8}, } ),
+//			Artefact( ArtType::Chest, ArtSet::Speed, 5, 8, StatType::HP_p, { {StatType::HP,418}, {StatType::Spd,10}, } ),
+//			Artefact( ArtType::Boots, ArtSet::Speed, 5, 16, StatType::Spd, { {StatType::Def_p,9}, {StatType::Acc,19}, {StatType::Res,19}, {StatType::Atk,16}, } ),
+//			Artefact( ArtType::Ring, ArtSet::Deads, 4, 12, StatType::Def, { {StatType::HP_p,13}, {StatType::Atk_p,4}, {StatType::Def_p,4}, } ),
+//			Artefact( ArtType::Banner, ArtSet::Deads, 5, 13, StatType::Def, { {StatType::Atk_p,16}, {StatType::Def_p,6}, {StatType::Spd,10}, } ),
+//	};
+//	{
+//		Champion ch = Champion::ByName( ChampionName::Gorgorab );
+//		const MatchOptions matching(
+//			{
+//				{ StatType::HP,   { 31000, MatchOptions::StatInfluence::Major } },
+//				{ StatType::Def,  { 2800, MatchOptions::StatInfluence::Max } },
+//				{ StatType::Spd,  { 240, MatchOptions::StatInfluence::Max } },
+//			}
+//			, { ArtSet::Speed, ArtSet::Speed }
+//			, { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+//			, { ChampionName::Hatun, ChampionName::Lekar, ChampionName::Mavzolejnik }
+//		);
+//		Equipment eq;
+//		FindBestEquipment( inventory, ch, matching, eq );
+//		BOOST_CHECK_EQUAL( eq.Size(), 8 );
+//
+//		const ChampionStats final_stats = FinalStats( ch, eq );
+//		BOOST_TEST_MESSAGE( to_string( final_stats ) );
+//		BOOST_CHECK_GT( final_stats.Def, matching.Factor(StatType::Def).MinCap );
+//	}
+//}
+
 #ifdef _DEBUG
 BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 {
@@ -817,12 +851,16 @@ BOOST_AUTO_TEST_CASE( test_CurrentStats )
 #ifdef _DEBUG
 BOOST_AUTO_TEST_CASE( display_current_set )
 {
-	const ChampionName name = ChampionName::Gromoboy;
+	extern const ChampionName Champion_to_suitup;
+	const ChampionName name = Champion_to_suitup;
+	//const ChampionName name = ChampionName::Gromoboy;
 
 	const Equipment eq = GetCurrentEquipmentFor( name );
 	BOOST_CHECK_GE( eq.Size(), 6 );
 	BOOST_TEST_MESSAGE( "\nCurrent equipment of " << to_string(name) << ":" );
 	BOOST_TEST_MESSAGE( to_string( eq, false ) );
+	const ChampionStats stats = GetCurrentFinalStatsFor( name );
+	BOOST_TEST_MESSAGE( to_string( stats ) );
 }
 #endif
 

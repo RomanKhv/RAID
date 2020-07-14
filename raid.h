@@ -327,6 +327,8 @@ extern const Hall _MyHall;
 
 /////////////////////////////////////////////////////////////////////////////
 
+ChampionStats FinalStats( const Champion&, const Equipment& );
+
 extern const std::vector<Artefact> _MyArts;
 Equipment GetCurrentEquipmentFor( ChampionName );
 ChampionStats GetCurrentArtsStatsFor( ChampionName );

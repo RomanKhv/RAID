@@ -6,7 +6,7 @@
 #include "profiler.h"
 #include "to_string.h"
 
-#ifndef DEBUG_FIND_BEST
+#if !defined DEBUG_FIND_BEST && !defined _DEBUG
 	#define USE_TBB
 #endif
 #ifdef USE_TBB
@@ -50,6 +50,21 @@ const ChampionStats::values_t Def_Max_Stat_Caps = {	// 0 - no cap/no penalty
 	/*StatType::Acc*/  0,
 };
 
+#ifdef WEAK_EXCESS_LIMIT
+
+const ChampionStats::values_t Min_Cap_Tol = {	// 0 - no cap/no penalty
+	/*StatType::HP*/   2000,
+	/*StatType::Atk*/  500,
+	/*StatType::Def*/  500,
+	/*StatType::Spd*/  20,
+	/*StatType::CRate*/ 25,
+	/*StatType::CDmg*/ 20,
+	/*StatType::Res*/  20,
+	/*StatType::Acc*/  10,
+};
+
+#else
+
 const ChampionStats::values_t Excess_Tolerance = {	//weight: 1 -> (tol width) -> 0
 	/*StatType::HP*/   Ref_Stat_Values[ stl::enum_to_int(StatType::HP) ] * 40 / 100,
 	/*StatType::Atk*/  1500,
@@ -60,6 +75,8 @@ const ChampionStats::values_t Excess_Tolerance = {	//weight: 1 -> (tol width) ->
 	/*StatType::Res*/  Ref_Stat_Values[ stl::enum_to_int(StatType::Res) ] * 40 / 100,
 	/*StatType::Acc*/  20,
 };
+
+#endif
 
 const float fK_ignore = 0;
 const float fK_minor = 0.25f;
@@ -153,7 +170,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 #ifdef WEAK_EXCESS_LIMIT
 	static const ChampionStats::StatList optimized_stat_list = {
 		StatType::Spd, StatType::Acc, StatType::CRate,								// mincap stats first
-		StatType::HP, StatType::Atk, StatType::Def, StatType::CDmg, StatType::Res
+		StatType::Def, StatType::HP, StatType::Atk, StatType::CDmg, StatType::Res
 	};
 	for ( StatType st : optimized_stat_list )
 	{
@@ -173,15 +190,15 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 
 		if ( f.HasMinCap() )
 		{
-			const int tol = Excess_Tolerance[stl::enum_to_int( st )];
-			if ( stat_value <= (f.MinCap - tol/2) )
+			const int abs_min = f.MinCap - Min_Cap_Tol[stl::enum_to_int( st )] ;
+			if ( stat_value <= abs_min )
 				return 0.f;	//too small => not accepted
 
 			const int ref_stat_value = Ref_Stat_Values[stl::enum_to_int( st )];
 			const float e_min = (float)f.MinCap / ref_stat_value;
 			if ( stat_value < f.MinCap )
 			{
-				e = linerp( stat_value, f.MinCap - tol/2, 0.f, f.MinCap, e_min );
+				e = linerp( stat_value, abs_min, 0.f, f.MinCap, e_min );
 				total_est += e;
 				continue;
 			}

@@ -860,6 +860,13 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 
 /////////////////////////////////////////////////////////////////////////////
 
+ChampionStats FinalStats( const Champion& ch, const Equipment& eq )
+{
+	ChampionStats arts_bonus_stats;
+	ApplyEquipment( eq, ch.BasicStats, arts_bonus_stats, false, MatchOptions::ConsiderMaxLevels );
+	return ch.TotalStats( arts_bonus_stats );
+}
+
 Equipment GetCurrentEquipmentFor( ChampionName name )
 {
 	_ASSERTE( name != ChampionName::none );
