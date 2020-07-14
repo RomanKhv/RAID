@@ -152,6 +152,10 @@ std::string to_string( const Artefact& art, bool format_as_code )
 		{
 			ss << "{StatType::" << to_string( s.Type ) << "," << s.BaseValue << "}, ";
 		}
+		if ( art.Owner != ChampionName::none )
+		{
+			ss << ", {ChampionName::" << to_string( art.Owner );
+		}
 		ss << "} ),";
 	}
 	return ss.str();
@@ -213,6 +217,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Krisk );
 		CASE_RETURN_STRING( ChampionName, Lekar );
 		CASE_RETURN_STRING( ChampionName, Mavzolejnik );
+		CASE_RETURN_STRING( ChampionName, Razen );
 		CASE_RETURN_STRING( ChampionName, Rotos );
 		CASE_RETURN_STRING( ChampionName, SteelSkull );
 		CASE_RETURN_STRING( ChampionName, Tyrel );

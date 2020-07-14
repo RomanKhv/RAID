@@ -134,6 +134,7 @@ enum class ChampionName
 	Krisk,
 	Lekar,
 	Mavzolejnik,
+	Razen,
 	Rotos,
 	SteelSkull,
 	Tyrel,

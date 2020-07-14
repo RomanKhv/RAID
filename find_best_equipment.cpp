@@ -151,8 +151,25 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Gromoboy, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Hangar )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,   { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate,{ 60, MatchOptions::StatInfluence::Minor, 80 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor, 100 } },
+			{ StatType::Spd,  { 160 } },
+			{ StatType::Acc,  { 160 } },
+		}
+		,{ ArtSet::Immortal }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Hangar, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Kael )
@@ -171,7 +188,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Kael )
 		,{ ArtSet::Def }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Kael, matching );
 }
 
@@ -179,20 +195,19 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 {
 	const MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt, 70 } },
+			{ StatType::HP,  { 50000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt, 80 } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Spd, { 160 } },
 			{ StatType::Acc, { 130 } },
-			{ StatType::Res, { 100 } },
+			//{ StatType::Res, { 100 } },
 		}
-		//,{ ArtSet::Vamp }
-		,{ ArtSet::Immortal }
+		,{ ArtSet::Vamp }
+		//,{ ArtSet::Immortal }
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Krisk, matching );
 }
 
@@ -210,7 +225,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Lekar, matching );
 }
 
@@ -228,8 +242,25 @@ BOOST_AUTO_TEST_CASE( FindBest_Mavzolejnik )
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Mavzolejnik, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Razen )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Major, 80 } },
+			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 170, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Razen, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Rotos )
@@ -248,7 +279,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Rotos )
 		,{ ArtSet::Vamp, ArtSet::Immortal, MINOR_SETS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Rotos, matching );
 }
 
@@ -264,12 +294,11 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Acc, { 180 } },
 		}
-		,{ ArtSet::Immortal, ArtSet::Immortal }
-		//,{ ArtSet::Vamp }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		//,{ ArtSet::Immortal, ArtSet::Immortal }
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::DivLife }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::SteelSkull, matching );
 }
 
@@ -289,7 +318,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 		,{ ChampionName::Gromoboy }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Tyrel, matching );
 }
 
@@ -318,7 +346,6 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
 }
 
@@ -338,7 +365,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
 }
 
@@ -356,7 +382,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Yuliana )
 		,{ ArtSet::Atk, ArtSet::Cruel, ArtSet::DivAtk }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Yuliana, matching );
 }
 
@@ -377,6 +402,5 @@ BOOST_AUTO_TEST_CASE( FindBest_Zargala )
 		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal, ArtSet::DivLife }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
-
 	FindAndReportBestForChampion( ChampionName::Zargala, matching );
 }

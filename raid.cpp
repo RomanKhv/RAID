@@ -15,7 +15,7 @@ bool check_stat_input_error( const Stat& stat )
 		case StatType::Def:			return stat.Value >= 15;
 		case StatType::Atk_p:		return stat.Value <= 24;
 		case StatType::HP_p:		return stat.Value <= 24;
-		case StatType::Def_p:		return stat.Value <= 21;
+		case StatType::Def_p:		return stat.Value <= 22;
 	}
 	return true;
 }
@@ -902,10 +902,13 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Mavzolejnik:
-			return Champion( { 19485, 1057, 947,  104,  15, 50,  30, 0 }, Element::Green, name );
+			return Champion( { 19485, 1057, 947,  104,  15, 50,  30, 0 }, Element::Red, name );
+			break;
+		case ChampionName::Razen:
+			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Rotos:
-			return Champion( { 11895, 1520, 1266,  90,  15, 63,  40, 0 }, Element::Green, name );
+			return Champion( { 11895, 1520, 1266,  90,  15, 63,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::SteelSkull:
 			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
