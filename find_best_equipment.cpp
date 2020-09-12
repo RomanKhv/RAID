@@ -100,7 +100,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 /////////////////////////////////////////////////////////////////////////////
 
 /*
-- Always compile and run MatchOptions instanciation to verify input data in Debug configurations
+- Always compile and run MatchOptions instantiation to verify input data in Debug configurations
 */
 
 BOOST_AUTO_TEST_CASE( FindBest_Alura )
@@ -108,14 +108,15 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt } },
 			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Spd, { 140 } },
-			{ StatType::Acc, { 80 } },
+			{ StatType::Acc, { 140 } },
 		}
 		,{ ArtSet::Vamp }
-		,{ ArtSet::HP, ArtSet::DivLife }
+		,{ /*ArtSet::HP,*/ ArtSet::DivLife, MINOR_SETS }
 		,{ MINOR_CHAMPIONS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
@@ -127,11 +128,11 @@ BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,   { 31000, MatchOptions::StatInfluence::Major } },
-			{ StatType::Def,  { 2800, MatchOptions::StatInfluence::Max } },
-			{ StatType::Spd,  { 240, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def,  { 2800, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd,  { 260, MatchOptions::StatInfluence::Max } },
 		}
 		,{ ArtSet::Speed, ArtSet::Speed }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ ArtSet::Atk, ArtSet::CRate, ArtSet::CritDmg, ArtSet::Cruel, ArtSet::DivAtk, ArtSet::DivCritRate, MINOR_SETS }
 		,{ ChampionName::Hatun, ChampionName::Lekar, ChampionName::Mavzolejnik, MINOR_CHAMPIONS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
