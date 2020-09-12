@@ -14,7 +14,7 @@ const Hall _MyHall({
 
 const std::vector<Artefact> _MyArts =
 {
-	// Каэль
+	// пїЅпїЅпїЅпїЅпїЅ
 	Artefact{ ArtType::Weapon, ArtSet::Atk, 6, 16, StatType::Atk, { {StatType::Atk_p,7,1}, {StatType::HP_p,18,1}, {StatType::Spd,10}, {StatType::Res,11,3} }, ChampionName::Kael },
 	Artefact{ ArtType::Helmet, ArtSet::Vamp, 4, 16, StatType::HP, { {StatType::Atk_p,11,1}, {StatType::HP_p,7,1}, {StatType::CRate,4}, {StatType::CDmg,5} }, ChampionName::Kael },
 	Artefact{ ArtType::Shield, ArtSet::Vamp, 4, 16, StatType::Def, { {StatType::CDmg,11}, {StatType::Acc,13,2}, {StatType::HP_p,4,1}, {StatType::CRate,4} }, ChampionName::Kael },
@@ -30,7 +30,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Chest, ArtSet::Speed, 4, 16, StatType::Def_p, { {StatType::HP_p,10,1}, {StatType::Spd,4,1}, {StatType::Atk_p,4}, {StatType::Res,7,2} }, ChampionName::Hatun },
 	Artefact{ ArtType::Boots, ArtSet::Speed, 5, 16, StatType::Spd, { {StatType::Atk,28,5}, {StatType::HP_p,5,1}, {StatType::CDmg,5}, {StatType::Def_p,5,1} }, ChampionName::Hatun },
 
-	// Стальной Череп
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 
 	// HP
@@ -286,6 +286,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Boots, ArtSet::Speed, 5, 16, StatType::Spd, { {StatType::Atk,37}, {StatType::CRate,11}, {StatType::Def_p,4}, {StatType::Res,10} } },
 	Artefact{ ArtType::Boots, ArtSet::Speed, 5, 16, StatType::Spd, { {StatType::Res,17,2}, {StatType::Acc,8,1}, {StatType::HP,234,100}, {StatType::Atk,23} } },
 	Artefact( ArtType::Boots, ArtSet::Speed, 5, 16, StatType::Spd, { {StatType::Def_p,9,1}, {StatType::Acc,19,2}, {StatType::Res,19,2}, {StatType::Atk,16,5} } ),
+	Artefact( ArtType::Boots, ArtSet::Speed, 5, 8, StatType::Spd, { {StatType::CDmg,5}, {StatType::CRate,4}, {StatType::Atk_p,16} } ),
 	  Artefact{ ArtType::Boots, ArtSet::Speed, 5, 16, StatType::HP_p, { {StatType::Atk,32,10}, {StatType::Spd,10}, {StatType::CRate,4}, {StatType::CDmg,4} }, ChampionName::Mavzolejnik },
 	Artefact{ ArtType::Boots, ArtSet::Speed, 4, 8, StatType::Spd, { {StatType::Def_p,7}, {StatType::CDmg,8} } },
 	  Artefact{ ArtType::Boots, ArtSet::Speed, 4, 16, StatType::Spd, { {StatType::Def_p,13,1}, {StatType::Atk_p,4,1}, {StatType::Acc,8,1}, {StatType::HP_p,5,1} }, ChampionName::Yuliana },
@@ -365,7 +366,7 @@ const std::vector<Artefact> _MyArts =
 	//
 	Artefact( ArtType::Boots, ArtSet::Resist, 5, 1, StatType::Spd, { {StatType::CRate,5}, {StatType::Def_p,5} } ),
 
-	// Ступор
+	// пїЅпїЅпїЅпїЅпїЅпїЅ
 	Artefact( ArtType::Gloves, ArtSet::Daze, 5, 8, StatType::HP_p, { {StatType::Acc,19}, {StatType::Atk_p,6}, {StatType::Def_p,9} } ),
 	Artefact( ArtType::Chest, ArtSet::Daze, 5, 8, StatType::HP_p, { {StatType::CRate,6}, {StatType::Atk_p,6}, {StatType::Def_p,14} } ),
 	Artefact( ArtType::Chest, ArtSet::Daze, 5, 8, StatType::HP_p, { {StatType::Atk_p,6}, {StatType::CRate,14} } ),
@@ -380,7 +381,7 @@ const std::vector<Artefact> _MyArts =
 	// Immunitet
 	Artefact( ArtType::Gloves, ArtSet::Immunitet, 5, 8, StatType::HP_p, { {StatType::CRate,14}, {StatType::CDmg,5} } ),
 
-	// Гибель
+	// пїЅпїЅпїЅпїЅпїЅпїЅ
 	Artefact( ArtType::Gloves, ArtSet::Gibel, 5, 8, StatType::CRate, { {StatType::HP_p,5}, {StatType::Atk_p,15} } ),
 
 	//
@@ -595,13 +596,13 @@ const std::vector<Artefact> _MyArts =
 	Artefact( ArtType::Boots, ArtSet::DivSpeed, 5, 16, StatType::Spd, { {StatType::Atk_p,14,2}, {StatType::Atk,15,12}, {StatType::CRate,9} }, ChampionName::Zargala ),
 #endif
 
-	// Варвары
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	//Artefact{ ArtType::Ring, ArtSet::Barbarians, 5, 8, StatType::HP, { {StatType::Atk_p,8,1}, {StatType::Def_p,9,1} }, ChampionName:: },
 	Artefact{ ArtType::Ring, ArtSet::Barbarians, 5, 12, StatType::HP, { {StatType::HP_p,10,2}, {StatType::Atk_p,6,2}, {StatType::Def_p,15,2} }, ChampionName::Zargala },
 	Artefact{ ArtType::Necklace, ArtSet::Barbarians, 5, 8, StatType::Atk, { {StatType::Res,8,2}, {StatType::Acc,28}, {StatType::HP,172,100} }, ChampionName::Zargala },
 	Artefact{ ArtType::Banner, ArtSet::Barbarians, 5, 12, StatType::Def, { {StatType::Atk,31,10}, {StatType::Atk_p,11,1}, {StatType::HP,355,100} }, ChampionName::Zargala },
 
-	// Священный Орден
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	Artefact( ArtType::Ring, ArtSet::HolyOrden, 5, 12, StatType::HP, { {StatType::Def,46,5}, {StatType::Def_p,5,1}, {StatType::HP_p,5,1} }, ChampionName::Gromoboy ),
 	Artefact{ ArtType::Ring, ArtSet::HolyOrden, 5, 16, StatType::HP, { {StatType::Def_p,11,2}, {StatType::HP_p,5,2}, {StatType::Atk_p,5,2}, {StatType::Def,17,10} }, ChampionName::Yuliana },
 	Artefact( ArtType::Necklace, ArtSet::HolyOrden, 5, 8, StatType::CDmg, { {StatType::HP,673,150}, {StatType::Acc,19,2} }, ChampionName::Gromoboy ),
@@ -631,12 +632,12 @@ const std::vector<Artefact> _MyArts =
 	Artefact( ArtType::Banner, ArtSet::Deads, 5, 16, StatType::Def, { {StatType::Spd,9,4}, {StatType::HP_p,11,3}, {StatType::Def_p,5,3}, {StatType::HP,445} }, ChampionName::Gorgorab ),
 	Artefact( ArtType::Banner, ArtSet::Deads, 4, 12, StatType::Def, { {StatType::Spd,11,1}, {StatType::HP,252}, {StatType::HP_p,7,1} }, ChampionName::Mavzolejnik ),
 
-	// Ящеролюды
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Artefact{ ArtType::Ring, ArtSet::Snakes, 5, 12, StatType::Def, { {StatType::Def_p,11,1}, {StatType::Atk,13,5}, {StatType::HP,556,100} }, ChampionName::Krisk },
 	Artefact{ ArtType::Necklace, ArtSet::Snakes, 5, 12, StatType::HP, { {StatType::CDmg,11}, {StatType::Atk,32}, {StatType::Acc,21,3} }, ChampionName::Krisk },
 	Artefact{ ArtType::Banner, ArtSet::Snakes, 6, 12, StatType::HP, { {StatType::HP_p,6,1}, {StatType::Def_p,17,1}, {StatType::Atk,15,5} }, ChampionName::Krisk },
 
-	// Высшие Эльфы
+	// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	//Artefact{ ArtType::Ring, ArtSet::SupremeElves, 5, 8, StatType::Atk, { {StatType::Def,57,5}, {StatType::Atk_p,5,1}, {StatType::Def_p,6,1} }, ChampionName:: },
 	Artefact{ ArtType::Ring, ArtSet::SupremeElves, 5, 16, StatType::Def, { {StatType::Def_p,10,1}, {StatType::Atk_p,9,1}, {StatType::HP_p,5,1}, {StatType::Atk,21,5} }, ChampionName::Tyrel },
 	Artefact{ ArtType::Necklace, ArtSet::SupremeElves, 5, 8, StatType::HP, { {StatType::Acc,8}, {StatType::Atk,50}, {StatType::CDmg,5}, {StatType::Def,15} }, ChampionName::Tyrel },
