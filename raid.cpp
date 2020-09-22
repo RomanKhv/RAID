@@ -763,8 +763,9 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 /////////////////////////////////////////////////////////////////////////////
 
 MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
-							std::set<ChampionName> providers )
+							std::set<ChampionName> providers, ArtTier art_tier_cap )
 	//,ConsiderMaxLevels( consider_max_lvl )
+	:ArtTierCap( art_tier_cap )
 {
 	for ( ArtSet set : req_filter )
 	{
@@ -828,7 +829,20 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	if ( !IsSetAccepted( art.Set ) )
 		return false;
 
+	if ( !IsArtAcceptedByTier( art ) )
+		return false;
+
 	return true;
+}
+
+bool MatchOptions::IsArtAcceptedByTier( const Artefact& art ) const
+{
+	const ArtTier at = GetArtTier( art );
+
+	if ( ArtTierCap==ArtTier::T1 && at==ArtTier::T3 )
+		return false;
+
+	return stl::enum_to_int(at) >= stl::enum_to_int(ArtTierCap);
 }
 
 bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
@@ -887,8 +901,14 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Alura:
 			return Champion( { 13185, 1415, 740,  96,  15, 50,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::BlackKnight:
+			return Champion( { 22470, 914, 1167,  100,  15, 57,  50, 0 }, Element::Red, name );
+			break;
 		case ChampionName::ColdHeart:
 			return Champion( { 13710, 1376, 738,  94,  15+5, 57,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Foly:
+			return Champion( { 15030, 1476, 1101,  105,  15+5, 63,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Gorgorab:
 			return Champion( { 17670, 1057, 1068,  97,  15, 50,  30, 0 }, Element::Blue, name );
@@ -902,11 +922,17 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Kael:
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Killian:
+			return Champion( { 13215, 1432, 1266,  98,  15, 63,  30, 10 }, Element::Blue, name );
+			break;
 		case ChampionName::Krisk:
 			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10+10 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Mashalled:
+			return Champion( { 17835, 1454, 936,  103,  15+5, 63,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Mavzolejnik:
 			return Champion( { 19485, 1057, 947,  104,  15, 50,  30, 0 }, Element::Red, name );
@@ -916,6 +942,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266,  90,  15, 63,  40, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Sohaty:
+			return Champion( { 20970, 859, 1046,  107,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::SteelSkull:
 			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );

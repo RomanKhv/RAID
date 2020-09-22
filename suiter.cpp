@@ -271,6 +271,31 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	return total_est;
 }
 
+ArtTier GetArtTier( const Artefact& art )
+{
+	if ( art.Stars <= 4 )
+		return ArtTier::T3;
+
+	if ( art.Type==ArtType::Boots && art.MainStatType()==StatType::Spd )
+		return ArtTier::T1;
+
+	for ( const Stat& s : art.AddStats )
+	{
+		static const int SpeedSubStatThreshold = 15;
+		if ( s.Type==StatType::Spd && s.Value>=SpeedSubStatThreshold )
+			return ArtTier::T1;
+		if ( IsFlatArtStat( s.Type ) )
+		{
+			if ( art.Stars == 6 )
+				return ArtTier::T2;
+			else
+				return ArtTier::T3;
+		}
+	}
+
+	return ArtTier::T2;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 EqEstPool::EqEstPool()

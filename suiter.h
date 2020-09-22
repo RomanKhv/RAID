@@ -4,6 +4,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+enum class ArtTier {
+	T1,		// speed boots, high speed sub-stat, ...
+	T2,		// non-flat sub-stats, ...
+	T3,		// flat sub-stats
+};
+
 struct MatchOptions
 {
 	enum class StatInfluence {
@@ -13,6 +19,7 @@ struct MatchOptions
 		Major = 3,
 		Max = 4,
 	};
+
 	struct StatFactor
 	{
 		StatInfluence Mode = StatInfluence::NotInterested;
@@ -25,10 +32,12 @@ struct MatchOptions
 		bool HasMinCap() const { return MinCap > 0; }
 		bool HasMaxCap() const { return MaxCap > 0; }
 	};
+
 	StatFactor Factors[ChampionStats::Count];		// StatType -> StatFactorMode
 
 	std::map<ArtSet, int> RequiedSets;
 	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
+	ArtTier ArtTierCap = ArtTier::T1;
 	enum_index_map<ChampionName,ChampionName::count,bool> Undressable;
 
 	static const bool ConsiderMaxLevels = true;
@@ -39,7 +48,8 @@ struct MatchOptions
 	MatchOptions( std::map<StatType, StatFactor>,
 				  std::vector<ArtSet> req_filter = {},
 				  std::set<ArtSet> exclusion_filter = {},
-				  std::set<ChampionName> providers = {} );
+				  std::set<ChampionName> providers = {},
+				  ArtTier art_tier_cap = ArtTier::T1 );
 
 	bool IsInputOK() const;
 	const StatFactor& Factor( StatType st ) const
@@ -50,9 +60,22 @@ struct MatchOptions
 	bool IsSetAccepted( ArtSet ) const;
 	bool IsArtAccepted( const Artefact&, ChampionName ) const;
 	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
+
+private:
+	bool IsArtAcceptedByTier( const Artefact& ) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
+
+inline bool IsFlatArtStat( StatType t )
+{
+	BOOST_STATIC_ASSERT( stl::enum_to_int(StatType::HP)  == 0 );
+	BOOST_STATIC_ASSERT( stl::enum_to_int(StatType::Atk) == 1 );
+	BOOST_STATIC_ASSERT( stl::enum_to_int(StatType::Def) == 2 );
+	return stl::enum_to_int(t) <= stl::enum_to_int(StatType::Def);
+}
+
+ArtTier GetArtTier( const Artefact& );
 
 bool EstimateMinCap( int value, int ref_value, int width, float& est );
 float EstimateEquipment( const ChampionStats&, const MatchOptions& );

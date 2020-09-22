@@ -13,13 +13,13 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Gorgorab;
+extern const ChampionName Champion_to_suitup = ChampionName::Sohaty;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
 
-#define MINOR_CHAMPIONS ChampionName::Alura, ChampionName::Hangar
+#define MINOR_CHAMPIONS ChampionName::Alura, ChampionName::Hangar, ChampionName::Sohaty
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -123,6 +123,25 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 	FindAndReportBestForChampion( ChampionName::Alura, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_BlackKnight )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Major } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 140 } },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::DivLife, MINOR_SETS }
+		,{ MINOR_CHAMPIONS }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::BlackKnight, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
 {
 	const MatchOptions matching(
@@ -197,6 +216,26 @@ BOOST_AUTO_TEST_CASE( FindBest_Kael )
 	FindAndReportBestForChampion( ChampionName::Kael, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Killian )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { MatchOptions::StatInfluence::Modrt, 60 } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 155 } },
+			{ StatType::Acc, { 115 } },
+		}
+		,{ ArtSet::Vamp }
+		,{ ArtSet::Def }
+		,{ MINOR_CHAMPIONS }
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Killian, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 {
 	const MatchOptions matching(
@@ -223,7 +262,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
-			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			//{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
 			{ StatType::CRate, { 90 } },
 			{ StatType::Spd, { 170 } },
@@ -298,10 +337,10 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 	const MatchOptions matching(
 		{
 			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
-			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			//{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
-			//{ StatType::CRate, { MatchOptions::StatFactorMode::Minor } },
-			//{ StatType::CDmg, { MatchOptions::StatFactorMode::Minor } },
+			//{ StatType::CRate, { MatchOptions::StatInfluence::Minor } },
+			//{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Acc, { 180 } },
 		}
@@ -312,6 +351,27 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::SteelSkull, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Sohaty )
+{
+	const MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Major } },
+			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 150, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 160 } },
+		}
+		,{ ArtSet::Vamp }
+		,{  }
+		,{  }
+		, ArtTier::T2
+	);
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Sohaty, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
@@ -338,7 +398,7 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 	const MatchOptions matching(
 		//{
 		//	{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
-		//	//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+		//	//{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
 		//	{ StatType::Def,  { MatchOptions::StatInfluence::Max } },
 		//	{ StatType::CRate, { MatchOptions::StatInfluence::Minor } },
 		//	{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
@@ -348,7 +408,7 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 		//,{ ArtSet::Immortal }
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
-			//{ StatType::Atk, { MatchOptions::StatFactorMode::Minor } },
+			//{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def,  { 2700, MatchOptions::StatInfluence::Major } },
 			{ StatType::Spd,  { 160 } },
 			{ StatType::Acc,  { 200 } },
