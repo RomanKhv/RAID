@@ -79,8 +79,9 @@ enum class ArtSet
 	DivCritRate,
 	DivLife,
 	DivSpeed,
+	Zhivuchest,		//HP+10%, Def+10%
+	Rastoropnost,	//Acc+40, Speed+5%
 	//4
-	Rastoropnost,
 	Vamp,
 	Gibel,
 	Mest,
@@ -143,6 +144,7 @@ enum class ChampionName
 	Rotos,
 	Sohaty,
 	SteelSkull,
+	Straholud,
 	Tyrel,
 	VisirOvelis,
 	Voitelnica,

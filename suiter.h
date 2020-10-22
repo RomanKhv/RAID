@@ -50,6 +50,7 @@ struct MatchOptions
 				  std::set<ArtSet> exclusion_filter = {},
 				  std::set<ChampionName> providers = {},
 				  ArtTier art_tier_cap = ArtTier::T1 );
+	void AllowSets( std::set<ArtSet> );
 
 	bool IsInputOK() const;
 	const StatFactor& Factor( StatType st ) const

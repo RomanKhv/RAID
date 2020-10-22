@@ -87,6 +87,8 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, DivCritRate );
 		CASE_RETURN_STRING( ArtSet, DivLife );
 		CASE_RETURN_STRING( ArtSet, DivSpeed );
+		CASE_RETURN_STRING( ArtSet, Zhivuchest );
+		CASE_RETURN_STRING( ArtSet, Rastoropnost );
 
 		CASE_RETURN_STRING( ArtSet, Bannerets );
 		CASE_RETURN_STRING( ArtSet, SupremeElves );
@@ -225,6 +227,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Rotos );
 		CASE_RETURN_STRING( ChampionName, Sohaty );
 		CASE_RETURN_STRING( ChampionName, SteelSkull );
+		CASE_RETURN_STRING( ChampionName, Straholud );
 		CASE_RETURN_STRING( ChampionName, Tyrel );
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );
 		CASE_RETURN_STRING( ChampionName, Voitelnica );

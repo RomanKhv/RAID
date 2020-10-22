@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Sohaty;
+extern const ChampionName Champion_to_suitup = ChampionName::Straholud;
 
 #define DISPLAY_BEST_POOL
 
@@ -372,6 +372,25 @@ BOOST_AUTO_TEST_CASE( FindBest_Sohaty )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Sohaty, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Straholud )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 150, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 200 } },
+		}
+		,{ ArtSet::Immortal }
+		//,{ ArtSet::Def, ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::Speed, ArtSet::CRate, ArtSet::CritDmg, ArtSet::Acc, ArtSet::Immortal, ArtSet::DivCritRate, ArtSet::DivLife, ArtSet::DivSpeed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Straholud, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Tyrel )

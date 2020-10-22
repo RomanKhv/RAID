@@ -179,6 +179,8 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 	CHECK_SET_BONUS( ArtSet::HP,       HP, 1500 );
 	CHECK_SET_BONUS( ArtSet::Immortal, HP, 1500 );
 	CHECK_SET_BONUS( ArtSet::DivLife,  HP, 1500 );
+	CHECK_SET_BONUS( ArtSet::Zhivuchest, HP, 1000 );
+	CHECK_SET_BONUS( ArtSet::Zhivuchest, Def, 100 );
 	CHECK_SET_BONUS( ArtSet::Atk,    Atk, 150 );
 	CHECK_SET_BONUS( ArtSet::Cruel,  Atk, 150 );
 	CHECK_SET_BONUS( ArtSet::DivAtk, Atk, 150 );
@@ -187,6 +189,8 @@ BOOST_AUTO_TEST_CASE( test_SetBonus )
 	CHECK_SET_BONUS( ArtSet::DivSpeed, Spd, 12 );
 	CHECK_SET_BONUS( ArtSet::Resist, Res, 40 );
 	CHECK_SET_BONUS( ArtSet::Acc, Acc, 40 );
+	CHECK_SET_BONUS( ArtSet::Rastoropnost, Acc, 40 );
+	CHECK_SET_BONUS( ArtSet::Rastoropnost, Spd, 5 );
 }
 
 BOOST_AUTO_TEST_CASE( test_ApplyStat )

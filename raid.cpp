@@ -492,6 +492,8 @@ int SetSize( ArtSet set )
 		case ArtSet::DivCritRate:
 		case ArtSet::DivLife:
 		case ArtSet::DivSpeed:
+		case ArtSet::Zhivuchest:
+		case ArtSet::Rastoropnost:
 			return 2;
 	}
 	return 4;
@@ -583,6 +585,12 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 				add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, 15 + (compensation ? DivHPCompensation : 0) );
 			}
 			break;
+		case ArtSet::Zhivuchest:
+			{
+				add_percent_bonus<&ChampionStats::HP>( arts_bonus_stats, basic_stats, 10 );
+				add_percent_bonus<&ChampionStats::Def>( arts_bonus_stats, basic_stats, 10 );
+			}
+			break;
 		case ArtSet::Atk:
 			{
 				add_percent_bonus<&ChampionStats::Atk>( arts_bonus_stats, basic_stats, 15 );
@@ -642,6 +650,12 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 		case ArtSet::Acc:
 			{
 				arts_bonus_stats.Acc += 40;
+			}
+			break;
+		case ArtSet::Rastoropnost:
+			{
+				arts_bonus_stats.Acc += 40;
+				add_percent_bonus<&ChampionStats::Spd>( arts_bonus_stats, basic_stats, 5 );
 			}
 			break;
 	}
@@ -792,6 +806,15 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 		std::printf( "Inventory: %I64u items\n", _MyArts.size() );
 		inventory_logged = true;
 	}
+}
+
+void MatchOptions::AllowSets( std::set<ArtSet> sets )
+{
+	//std::fill( ExcludedSets.begin(), ExcludedSets.end(), true );
+	for ( bool& f : ExcludedSets )
+		f = true;
+	for ( ArtSet set : sets )
+		ExcludedSets[set] = false;
 }
 
 bool MatchOptions::IsInputOK() const
@@ -949,6 +972,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::SteelSkull:
 			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
 			break;
+		case ChampionName::Straholud:
+			return Champion( { 22965, 958, 815,  95,  15, 50,  45, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Tyrel:
 			return Champion( { 16185, 881, 1343,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
@@ -983,3 +1009,9 @@ ChampionStats GetCurrentFinalStatsFor( ChampionName name )
 	const Champion ch = Champion::ByName( name );
 	return ch.TotalStats( GetCurrentArtsStatsFor( name ) );
 }
+
+#ifdef _DEBUG
+template <typename IMAP>
+int index_map_iterator<IMAP>::_instances_counter = 0;
+#endif
+

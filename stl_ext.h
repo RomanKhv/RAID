@@ -72,7 +72,7 @@ void copy_map_to_array( const std::map<ENUM, VALUE_TYPE>& m, VALUE_TYPE arr[] )
 
 /////////////////////////////////////////////////////////////////////////////
 
-//#define INDEX_MAP_READY_FOR_RANGE_FOR
+#define INDEX_MAP_READY_FOR_RANGE_FOR
 
 template <typename IMAP>
 struct index_map_iterator
@@ -117,9 +117,13 @@ struct index_map_iterator
 	}
 
 #ifdef INDEX_MAP_READY_FOR_RANGE_FOR
-	const this_type& operator*() const
+	const typename IMAP::mapped_type& operator*() const
 	{
-		return *this;
+		return _map[_index];
+	}
+	typename IMAP::mapped_type& operator*()
+	{
+		return _map[_index];
 	}
 #endif
 
