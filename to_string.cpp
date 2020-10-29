@@ -229,6 +229,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, SteelSkull );
 		CASE_RETURN_STRING( ChampionName, Straholud );
 		CASE_RETURN_STRING( ChampionName, Tyrel );
+		CASE_RETURN_STRING( ChampionName, VGalek );
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );
 		CASE_RETURN_STRING( ChampionName, Voitelnica );
 		CASE_RETURN_STRING( ChampionName, Yuliana );

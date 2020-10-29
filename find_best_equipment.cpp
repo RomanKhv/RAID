@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Straholud;
+extern const ChampionName Champion_to_suitup = ChampionName::VGalek;
 
 #define DISPLAY_BEST_POOL
 
@@ -410,6 +410,26 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Tyrel, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_VelikiyGalek )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Major, 36000 } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 100, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 200 } },
+		}
+		//,{ ArtSet::Immortal }
+		//,{ ArtSet::Def, ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::Def, ArtSet::Zhivuchest } );
+	matching.RequireSpeedBoots( true );
+
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::VGalek, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )

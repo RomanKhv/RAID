@@ -9,7 +9,7 @@
 
 enum /*class*/ ArtType
 {
-	None = -1,	//-1 is good for finding algorytm errors
+	None = -1,	//-1 is good for finding algorithm errors
 
 	Weapon,
 	Helmet,
@@ -21,6 +21,8 @@ enum /*class*/ ArtType
 	Ring,
 	Necklace,
 	Banner,
+
+	NBasic = 6,
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -146,6 +148,7 @@ enum class ChampionName
 	SteelSkull,
 	Straholud,
 	Tyrel,
+	VGalek,
 	VisirOvelis,
 	Voitelnica,
 	Yuliana,

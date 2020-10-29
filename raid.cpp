@@ -779,7 +779,7 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
 							std::set<ChampionName> providers, ArtTier art_tier_cap )
 	//,ConsiderMaxLevels( consider_max_lvl )
-	:ArtTierCap( art_tier_cap )
+	//:ArtTierCap( art_tier_cap )
 {
 	for ( ArtSet set : req_filter )
 	{
@@ -817,6 +817,14 @@ void MatchOptions::AllowSets( std::set<ArtSet> sets )
 		ExcludedSets[set] = false;
 }
 
+void MatchOptions::RequireSpeedBoots( bool speed_boots )
+{
+	if ( speed_boots )
+		StatOnArt[ArtType::Boots] = StatType::Spd;
+	else
+		StatOnArt[ArtType::Boots] = boost::none;
+}
+
 bool MatchOptions::IsInputOK() const
 {
 	int total_req_art_count = 0;
@@ -852,21 +860,24 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	if ( !IsSetAccepted( art.Set ) )
 		return false;
 
-	if ( !IsArtAcceptedByTier( art ) )
-		return false;
+	//if ( !IsArtAcceptedByTier( art ) )
+	//	return false;
+
+	if ( StatOnArt[art.Type].has_value() )
+	{
+		if ( art.MainStatType() != StatOnArt[art.Type] )
+			return false;
+	}
 
 	return true;
 }
 
-bool MatchOptions::IsArtAcceptedByTier( const Artefact& art ) const
-{
-	const ArtTier at = GetArtTier( art );
-
-	if ( ArtTierCap==ArtTier::T1 && at==ArtTier::T3 )
-		return false;
-
-	return stl::enum_to_int(at) >= stl::enum_to_int(ArtTierCap);
-}
+//bool MatchOptions::IsArtAcceptedByTier( const Artefact& art ) const
+//{
+//	const ArtTier at = GetArtTier( art );
+//
+//	return stl::enum_to_int(at) >= stl::enum_to_int(ArtTierCap);
+//}
 
 bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 {
@@ -977,6 +988,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Tyrel:
 			return Champion( { 16185, 881, 1343,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::VGalek:
+			return Champion( { 15195, 1332, 958,  98,  15, 60,  30, 0+0 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );
