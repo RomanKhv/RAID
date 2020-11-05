@@ -323,7 +323,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					//      0   4    8   12   16
 					/*4*/{ 24,  0, 128,   0, 285 },
 					/*5*/{ 38, 96, 156, 215, 338 },
-					/*6*/{ 53,  0,   0,   0,   0 }
+					/*6*/{ 53,  0,   0, 255, 398 }
 				};
 				static const stat_table_t HP_general = {
 					//      0     4     8    12    16
@@ -332,10 +332,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{ 600, 1277, 1954, 2631, 4080 }
 				};
 				static const stat_table_t HP_banner = {
-					//      0   4    8    12    16
-					/*4*/{ 390, 0,    0,    0, 4260 },
-					/*5*/{ 675, 0, 2457, 3347, 5220 },
-					/*6*/{ 900, 0,    0, 3947, 6120 }
+					//      0     4     8    12    16
+					/*4*/{ 390,    0,    0,    0, 4260 },
+					/*5*/{ 675, 1566, 2457, 3347, 5220 },
+					/*6*/{ 900,    0,    0, 3947, 6120 }
 				};
 				static const stat_table_t Atk_HP_Def_percent_CR = {
 					//      0   4   8  12  16
@@ -352,20 +352,20 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 				static const stat_table_t CDmg_necklace = {
 					//     0   4   8  12  16
 					/*4*/{ 4,  0, 12,  0, 25 },
-					/*5*/{ 5, 11, 16,  0, 33 },
-					/*6*/{ 6,  0,  0,  0, 40 },
+					/*5*/{ 5, 11, 16, 21, 33 },
+					/*6*/{ 6,  0, 19,  0, 40 },
 				};
 				static const stat_table_t Spd_all = {
 					//     0   4   8  12  16
 					/*4*/{ 4, 10, 16, 22, 35 },
 					/*5*/{ 5, 12, 19, 26, 40 },
-					/*6*/{ 6, 00, 00, 29, 45 },
+					/*6*/{ 6, 14, 21, 29, 45 },
 				};
 				static const stat_table_t Acc_Res = {
-					//      0  4   8  12  16
-					/*4*/{  8, 0, 30, 41, 64 },
-					/*5*/{ 12, 0, 38, 50, 78 },
-					/*6*/{ 16, 0,  0,  0, 96 },
+					//      0   4   8  12  16
+					/*4*/{  8,  0, 30, 41, 64 },
+					/*5*/{ 12, 25, 38, 50, 78 },
+					/*6*/{ 16,  0,  0,  0, 96 },
 				};
 
 namespace debug {
@@ -815,6 +815,8 @@ void MatchOptions::AllowSets( std::set<ArtSet> sets )
 		f = true;
 	for ( ArtSet set : sets )
 		ExcludedSets[set] = false;
+	for ( const auto& p : RequiedSets )
+		ExcludedSets[p.first] = false;
 }
 
 void MatchOptions::RequireSpeedBoots( bool speed_boots )
@@ -939,7 +941,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 22470, 914, 1167,  100,  15, 57,  50, 0 }, Element::Red, name );
 			break;
 		case ChampionName::ColdHeart:
-			return Champion( { 13710, 1376, 738,  94,  15+5, 57,  30, 0 }, Element::Void, name );
+			return Champion( { 13710, 1376, 738,  94,  15+5, 57+10,  30, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Foly:
 			return Champion( { 15030, 1476, 1101,  105,  15+5, 63,  30, 0 }, Element::Blue, name );
@@ -975,7 +977,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Rotos:
-			return Champion( { 11895, 1520, 1266,  90,  15, 63,  40, 0 }, Element::Blue, name );
+			return Champion( { 11895, 1520, 1266,  90,  15+5, 63+10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Sohaty:
 			return Champion( { 20970, 859, 1046,  107,  15, 50,  30, 0 }, Element::Green, name );
@@ -984,13 +986,13 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Straholud:
-			return Champion( { 22965, 958, 815,  95,  15, 50,  45, 0 }, Element::Blue, name );
+			return Champion( { 22965, 958, 815,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Tyrel:
 			return Champion( { 16185, 881, 1343,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::VGalek:
-			return Champion( { 15195, 1332, 958,  98,  15, 60,  30, 0+0 }, Element::Blue, name );
+			return Champion( { 15195, 1332, 958,  98,  15, 60,  30, 0+10 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );

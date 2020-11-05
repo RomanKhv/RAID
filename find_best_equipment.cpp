@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::VGalek;
+extern const ChampionName Champion_to_suitup = ChampionName::ColdHeart;
 
 #define DISPLAY_BEST_POOL
 
@@ -140,6 +140,27 @@ BOOST_AUTO_TEST_CASE( FindBest_BlackKnight )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::BlackKnight, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_ColdHeart )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Atk, { 2500, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 1600, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 170 } },
+			{ StatType::Acc, { 190 } },
+		}
+		,{ ArtSet::Vamp }
+	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::Zhivuchest } );
+	matching.RequireSpeedBoots( true );
+
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::ColdHeart, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
@@ -374,21 +395,22 @@ BOOST_AUTO_TEST_CASE( FindBest_Sohaty )
 	FindAndReportBestForChampion( ChampionName::Sohaty, matching );
 }
 
-BOOST_AUTO_TEST_CASE( FindBest_Straholud )
+BOOST_AUTO_TEST_CASE( FindBest_Straholud_no_accuracy )
 {
 	MatchOptions matching(
 		{
 			{ StatType::HP,  { MatchOptions::StatInfluence::Max } },
 			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Spd, { 150, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Acc, { 200 } },
+			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			//{ StatType::Acc, { 190 } },
 		}
 		,{ ArtSet::Immortal }
-		//,{ ArtSet::Def, ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, MINOR_SETS }
 	);
-	matching.AllowSets( { ArtSet::HP, ArtSet::Speed, ArtSet::CRate, ArtSet::CritDmg, ArtSet::Acc, ArtSet::Immortal, ArtSet::DivCritRate, ArtSet::DivLife, ArtSet::DivSpeed } );
+	matching.AllowSets( { ArtSet::HP, ArtSet::Immortal, ArtSet::DivLife, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg/*, ArtSet::Acc, ArtSet::Rastoropnost*/ } );
+	matching.RequireSpeedBoots( true );
+
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Straholud, matching );
 }
