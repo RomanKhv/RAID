@@ -294,6 +294,16 @@ BOOST_AUTO_TEST_CASE( test_StatValuesByLevel )
 				}
 }
 
+BOOST_AUTO_TEST_CASE( test_InventoryCorrectness )
+{
+	const Champion ch = Champion::ByName( ChampionName::ColdHeart );
+	for ( const Artefact& art : _MyArts )
+	{
+		ChampionStats stats;
+		ApplyArtBonus( art, ch.BasicStats, stats, true, false );
+	}
+}
+
 EquipmentRef convert( const Equipment& ref_eq )
 {
 	EquipmentRef eq;

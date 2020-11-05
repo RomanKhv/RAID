@@ -41,7 +41,6 @@ const std::vector<Artefact> _MyArts =
 
 	Artefact{ ArtType::Helmet, ArtSet::HP, 6, 8, StatType::HP, { {StatType::Res,22}, {StatType::Def_p,5}, {StatType::CDmg,11} } },
 	Artefact{ ArtType::Helmet, ArtSet::HP, 5, 16, StatType::HP, { {StatType::Acc,27}, {StatType::HP_p,4}, {StatType::Atk,20}, {StatType::CDmg,6} } },
-	Artefact{ ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, { {StatType::CRate,11}, {StatType::Atk_p,10} } },
 	Artefact{ ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, { {StatType::Acc,21}, {StatType::CDmg,9} } },
 
 	Artefact{ ArtType::Shield, ArtSet::HP, 6, 12, StatType::Def, { {StatType::Spd,12}, {StatType::Acc,18}, {StatType::Res,21} } },
@@ -166,7 +165,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Weapon, ArtSet::Acc, 5, 8, StatType::Atk, { {StatType::Spd,14}, {StatType::Atk_p,5} } },
 	//Artefact{ ArtType::Weapon, ArtSet::Acc, 5, 12, StatType::Atk, { {StatType::Acc,18}, {StatType::CRate,10} } },
 
-	Artefact{ ArtType::Helmet, ArtSet::Acc, 6, 12, StatType::HP, { {StatType::Def_p,13}, {StatType::Atk_p,12}, {StatType::Acc,21} } },
+	  Artefact( ArtType::Helmet, ArtSet::Acc, 6, 16, StatType::HP, { {StatType::Def_p,13,2}, {StatType::Atk_p,12,2}, {StatType::Acc,21,1}, {StatType::CRate,5} }, ChampionName::Alura ),
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP, { {StatType::Def_p,9,1}, {StatType::Spd,4,1}, {StatType::Res,28,2}, {StatType::CRate,9} } },
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP, { {StatType::Atk_p,11}, {StatType::CRate,6}, {StatType::Spd,14}, {StatType::Acc,20} } },
 	Artefact{ ArtType::Helmet, ArtSet::Acc, 5, 16, StatType::HP, { {StatType::Spd,8}, {StatType::Atk_p,16}, {StatType::CRate,9}, {StatType::CDmg,4} } },
@@ -195,7 +194,7 @@ const std::vector<Artefact> _MyArts =
 	  Artefact{ ArtType::Gloves, ArtSet::Acc, 6, 16, StatType::Atk_p, { {StatType::CRate,20}, {StatType::Spd,5,2}, {StatType::HP_p,5,1}, {StatType::Def_p,7,1} }, ChampionName::Zargala/*Voitelnica*/ },
 		Artefact{ ArtType::Gloves, ArtSet::Acc, 6, 12, StatType::Def_p, { {StatType::CRate,7}, {StatType::CDmg,16}, {StatType::Spd,6} } },
 	Artefact{ ArtType::Gloves, ArtSet::Acc, 5, 12, StatType::CRate, { {StatType::Def_p,4}, {StatType::Res,37}, {StatType::Acc,9} } },
-	Artefact{ ArtType::Gloves, ArtSet::Acc, 5, 12, StatType::CRate, { {StatType::Atk,19}, {StatType::Acc,21}, {StatType::Def_p,14}, {StatType::HP_p,5} } },
+	  Artefact( ArtType::Gloves, ArtSet::Acc, 5, 16, StatType::CRate, { {StatType::Atk,19,15}, {StatType::Acc,21,1}, {StatType::Def_p,19,1}, {StatType::HP_p,5,1} }, ChampionName::Alura ),
 	Artefact{ ArtType::Gloves, ArtSet::Acc, 5, 12, StatType::Atk_p, { {StatType::CDmg,10}, {StatType::Def_p,9} } },
 	Artefact{ ArtType::Gloves, ArtSet::Acc, 5, 8, StatType::Atk_p, { {StatType::Res,28}, {StatType::Spd,5} } },
 	Artefact{ ArtType::Gloves, ArtSet::Acc, 5, 8, StatType::Def_p, { {StatType::Res,19}, {StatType::CRate,11} } },
@@ -302,7 +301,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 16, StatType::Atk, { {StatType::CDmg,6}, {StatType::CRate,15}, {StatType::Atk_p,5,1}, {StatType::Acc,9,2} } },
 	  Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::Spd,4,1}, {StatType::Acc,31,2}, {StatType::HP,358,100} }, ChampionName::Razen },
 	Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::Atk_p,9}, {StatType::CRate,6}, {StatType::Res,10} } },
-	Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::Atk_p,14}, {StatType::HP_p,6}, {StatType::CRate,6} } },
+	  Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 16, StatType::Atk, { {StatType::Atk_p,14,2}, {StatType::HP_p,6,2}, {StatType::CRate,6}, {StatType::Res,10,2} }, ChampionName::Alura },
 	Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::Acc,9}, {StatType::Atk_p,16}, {StatType::Spd,5} } },
 	Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::CDmg,4}, {StatType::Atk_p,16}, {StatType::HP_p,4} } },
 	Artefact{ ArtType::Weapon, ArtSet::Vamp, 5, 12, StatType::Atk, { {StatType::CRate,11}, {StatType::Spd,8}, {StatType::Atk_p,4} } },
@@ -330,7 +329,7 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Helmet, ArtSet::Vamp, 5, 12, StatType::HP, { {StatType::Spd,5}, {StatType::CRate,14}, {StatType::Def_p,5} } },
 	Artefact{ ArtType::Helmet, ArtSet::Vamp, 5, 12, StatType::HP, { {StatType::HP_p,10}, {StatType::Spd,8}, {StatType::Acc,11} } },
 
-	Artefact{ ArtType::Shield, ArtSet::Vamp, 6, 16, StatType::Def, { {StatType::Spd,17}, {StatType::Def_p,6}, {StatType::CRate,6}, {StatType::CDmg,7} } },
+	  Artefact( ArtType::Shield, ArtSet::Vamp, 6, 16, StatType::Def, { {StatType::Spd,17,1}, {StatType::Def_p,6,1}, {StatType::CRate,6}, {StatType::CDmg,7} }, ChampionName::Alura ),
 	  Artefact{ ArtType::Shield, ArtSet::Vamp, 6, 16, StatType::Def, { {StatType::HP_p,11}, {StatType::Def_p,13}, {StatType::Res,9,1}, {StatType::Spd,5,1} }, ChampionName::Yuliana },
 	  Artefact{ ArtType::Shield, ArtSet::Vamp, 6, 16, StatType::Def, { {StatType::Acc,11,2}, {StatType::CRate,19}, {StatType::HP,423,100}, {StatType::Def_p,6,1} }, ChampionName::Gromoboy },
 	  Artefact{ ArtType::Shield, ArtSet::Vamp, 6, 12, StatType::Def, { {StatType::CDmg,7}, {StatType::Spd,17}, {StatType::Def_p,5} }, ChampionName::Krisk },
@@ -365,13 +364,13 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 12, StatType::HP_p, { {StatType::Res,31}, {StatType::Def_p,6}, {StatType::Def,18} } },
 	Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 12, StatType::HP_p, { {StatType::Acc,30}, {StatType::Spd,5}, {StatType::CDmg,6} } },
 	Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 12, StatType::Def_p, { {StatType::Spd,9}, {StatType::HP_p,10}/*, {StatType::Atk,20}*/ } },
-	Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 12, StatType::HP_p, { {StatType::Spd,14}, {StatType::Acc,11}, {StatType::HP,360} } },
+	  Artefact( ArtType::Chest, ArtSet::Vamp, 5, 12, StatType::HP_p, { {StatType::Spd,14}, {StatType::Acc,11}, {StatType::HP,360} }, ChampionName::Alura ),
 	Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 12, StatType::Def_p, { {StatType::Atk_p,10}, {StatType::Res,21}, {StatType::CDmg,5} } },
 	  Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 16, StatType::Def_p, { {StatType::CDmg,9}, {StatType::CRate,10}, {StatType::Res,9,2}, {StatType::HP,364,100} }, ChampionName::Tyrel },
 	  Artefact{ ArtType::Chest, ArtSet::Vamp, 5, 16, StatType::HP_p, { {StatType::Atk_p,10,1}, {StatType::CRate,6}, {StatType::Def_p,5,1}, {StatType::HP,351,175} }, ChampionName::Krisk },
 
 	Artefact{ ArtType::Boots, ArtSet::Vamp, 6, 8, StatType::Atk_p, { {StatType::CRate,7}, {StatType::Def_p,12}, {StatType::Atk,26}, {StatType::HP_p,11} } },
-	Artefact{ ArtType::Boots, ArtSet::Vamp, 6, 16, StatType::Spd, { {StatType::CRate,20}, {StatType::Def_p,6}, {StatType::HP_p,6}, {StatType::Atk,28} } },
+	  Artefact( ArtType::Boots, ArtSet::Vamp, 6, 16, StatType::Spd, { {StatType::CRate,20}, {StatType::Def_p,6,2}, {StatType::HP_p,6,2}, {StatType::Atk,28,15} }, ChampionName::Alura ),
 	  Artefact( ArtType::Boots, ArtSet::Vamp, 6, 16, StatType::Spd, { {StatType::HP_p,18,2}, {StatType::Atk_p,12,2}, {StatType::Atk,18,15}, {StatType::Acc,10,2} }, ChampionName::ColdHeart ),
 	Artefact{ ArtType::Boots, ArtSet::Vamp, 6, 16, StatType::Spd, { {StatType::CDmg,13}, {StatType::Atk_p,12}, {StatType::Res,11}, {StatType::Def,21} } },
 	Artefact{ ArtType::Boots, ArtSet::Vamp, 5, 16, StatType::Spd, { {StatType::Def_p,8}, {StatType::Atk_p,11}, {StatType::CDmg,5}, {StatType::Res,10} } },
@@ -705,6 +704,11 @@ const std::vector<Artefact> _MyArts =
 	Artefact{ ArtType::Banner, ArtSet::DarkElves, 5, 16, StatType::Acc, { {StatType::Def,38,5}, {StatType::HP_p,15,1}, {StatType::Spd,5+1}, {StatType::Def_p,5,1} }, ChampionName::VisirOvelis },
 	Artefact{ ArtType::Banner, ArtSet::DarkElves, 5, 16, StatType::Acc, { {StatType::HP,183,275}, {StatType::Spd,10,1}, {StatType::HP_p,15,3}, {StatType::Def,19,15} }, ChampionName::ColdHeart },
 	//Artefact{ ArtType::Banner, ArtSet::None, 4, 8, StatType::Acc, { {StatType::HP,394}, {StatType::HP_p,9}, {StatType::Def_p,3} }, ChampionName::VisirOvelis },
+
+	// Демоны
+	Artefact{ ArtType::Ring, ArtSet::Demons, 5, 12, StatType::Def, { {StatType::Def_p,6,1}, {StatType::Atk_p,16,3}, {StatType::Atk,19,12} }, ChampionName::Alura },
+	Artefact{ ArtType::Necklace, ArtSet::Demons, 5, 12, StatType::CDmg, { {StatType::Atk,34,9}, {StatType::Acc,17,2}, {StatType::Res,9,2} }, ChampionName::Alura },
+	Artefact{ ArtType::Banner, ArtSet::Demons, 6, 12, StatType::Acc, { {StatType::HP_p,17,1}, {StatType::Atk_p,6,2}, {StatType::Def_p,6,2} }, ChampionName::Alura },
 
 	// Werevolves
 	Artefact( ArtType::Ring, ArtSet::Werewolfs, 5, 8, StatType::Def, { {StatType::Atk_p,10}, {StatType::Atk,21}, {StatType::HP_p,8,1} }, ChampionName::SteelSkull ),

@@ -321,13 +321,13 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 				};
 				static const stat_table_t Atk_Def_banner = {
 					//      0   4    8   12   16
-					/*4*/{ 24,  0, 128,   0, 285 },
+					/*4*/{ 24,  0, 128, 180, 285 },
 					/*5*/{ 38, 96, 156, 215, 338 },
 					/*6*/{ 53,  0,   0, 255, 398 }
 				};
 				static const stat_table_t HP_general = {
 					//      0     4     8    12    16
-					/*4*/{ 260,    0, 1286, 1800, 2840 },
+					/*4*/{ 260,  773, 1286, 1800, 2840 },
 					/*5*/{ 450, 1044, 1638, 2231, 3480 },
 					/*6*/{ 600, 1277, 1954, 2631, 4080 }
 				};
@@ -344,10 +344,10 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					/*6*/{ 10, 20, 29, 39, 60 },
 				};
 				static const stat_table_t CDmg_general = {
-					//      0  4  8 12  16
-					/*4*/{  8, 0,  0, 0,  0 },
-					/*5*/{ 10, 0, 31, 0, 65 },
-					/*6*/{ 12, 0, 38, 0, 80 },
+					//      0  4  8   12  16
+					/*4*/{  8, 0,  0,  0,  0 },
+					/*5*/{ 10, 0, 31, 42, 65 },
+					/*6*/{ 12, 0, 38,  0, 80 },
 				};
 				static const stat_table_t CDmg_necklace = {
 					//     0   4   8  12  16
@@ -365,7 +365,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					//      0   4   8  12  16
 					/*4*/{  8,  0, 30, 41, 64 },
 					/*5*/{ 12, 25, 38, 50, 78 },
-					/*6*/{ 16,  0,  0,  0, 96 },
+					/*6*/{ 16,  0,  0, 62, 96 },
 				};
 
 namespace debug {
@@ -935,7 +935,7 @@ Champion Champion::ByName( ChampionName name )
 	switch ( name )
 	{
 		case ChampionName::Alura:
-			return Champion( { 13185, 1415, 740,  96,  15, 50,  30, 0 }, Element::Blue, name );
+			return Champion( { 14040, 1575, 793,  96,  15+5, 60+10,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::BlackKnight:
 			return Champion( { 22470, 914, 1167,  100,  15, 57,  50, 0 }, Element::Red, name );

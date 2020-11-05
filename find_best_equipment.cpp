@@ -13,13 +13,13 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::ColdHeart;
+extern const ChampionName Champion_to_suitup = ChampionName::Alura;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
 
-#define MINOR_CHAMPIONS ChampionName::Alura, ChampionName::Hangar, ChampionName::Sohaty
+#define MINOR_CHAMPIONS ChampionName::Hangar, ChampionName::Sohaty
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -105,20 +105,21 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 
 BOOST_AUTO_TEST_CASE( FindBest_Alura )
 {
-	const MatchOptions matching(
+	MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatInfluence::Major } },
-			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Spd, { 140 } },
-			{ StatType::Acc, { 140 } },
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 2500, MatchOptions::StatInfluence::Major, 3000 } },
+			{ StatType::Def, { 1600, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Minor, 95 } },
+			//{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 170 } },
+			{ StatType::Acc, { 190 } },
 		}
 		,{ ArtSet::Vamp }
-		,{ /*ArtSet::HP,*/ ArtSet::DivLife, MINOR_SETS }
-		,{ MINOR_CHAMPIONS }
 	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::Zhivuchest } );
+	matching.RequireSpeedBoots( true );
+
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Alura, matching );
 }
