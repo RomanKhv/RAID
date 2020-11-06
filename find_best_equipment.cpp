@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Alura;
+extern const ChampionName Champion_to_suitup = ChampionName::Foly;
 
 #define DISPLAY_BEST_POOL
 
@@ -162,6 +162,27 @@ BOOST_AUTO_TEST_CASE( FindBest_ColdHeart )
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::ColdHeart, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Foly )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Atk, { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 160 } },
+			{ StatType::Acc, { 180 } },
+		}
+		,{ ArtSet::Vamp }
+	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::Zhivuchest } );
+	matching.RequireSpeedBoots( true );
+
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Foly, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )

@@ -944,7 +944,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13710, 1376, 738,  94,  15+5, 57+10,  30, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Foly:
-			return Champion( { 15030, 1476, 1101,  105,  15+5, 63,  30, 0 }, Element::Blue, name );
+			return Champion( { 15030, 1476, 1101,  105,  15+5, 63+10,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Gorgorab:
 			return Champion( { 17670, 1057, 1068,  97,  15, 50,  30, 0 }, Element::Blue, name );
