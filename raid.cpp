@@ -13,7 +13,7 @@ bool check_stat_input_error( const Stat& stat )
 		case StatType::Atk:			return stat.Value >= 16;
 		case StatType::HP:			return stat.Value >= 100;
 		case StatType::Def:			return stat.Value >= 15;
-		case StatType::Atk_p:		return stat.Value <= 24;
+		case StatType::Atk_p:		return stat.Value <= 25;
 		case StatType::HP_p:		return stat.Value <= 24;
 		case StatType::Def_p:		return stat.Value <= 22;
 	}
@@ -800,6 +800,7 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 		_ASSERTE( f.HasMinCap() || f.Mode!=StatInfluence::NotInterested );
 		_ASSERTE( !f.HasMinCap() || !f.HasMaxCap() || f.MinCap<p.second.MaxCap );
 	}
+	StatOnArt[ArtType::Boots] = StatType::Spd;
 
 	static bool inventory_logged = false;
 	if ( !inventory_logged ) {
@@ -853,7 +854,7 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 {
 	if ( art.Owner != ChampionName::none &&
 		 art.Owner != ch_name && 
-		 !Undressable[ch_name] )
+		 !Undressable[art.Owner] )
 		return false;
 
 	if ( !art.IsBasic() )
@@ -937,11 +938,17 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Alura:
 			return Champion( { 14040, 1575, 793,  96,  15+5, 60+10,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Arbitr:
+			return Champion( { 21135, 1068, 1101,  110,  15, 50,  30, 10 }, Element::Void, name );
+			break;
 		case ChampionName::BlackKnight:
 			return Champion( { 22470, 914, 1167,  100,  15, 57,  50, 0 }, Element::Red, name );
 			break;
 		case ChampionName::ColdHeart:
 			return Champion( { 13710, 1376, 738,  94,  15+5, 57+10,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Fein:
+			return Champion( { 13710, 1663, 727,  99,  15, 57,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Foly:
 			return Champion( { 15030, 1476, 1101,  105,  15+5, 63+10,  30, 0 }, Element::Blue, name );
@@ -949,8 +956,14 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Gorgorab:
 			return Champion( { 17670, 1057, 1068,  97,  15, 50,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::GornyKorol:
+			return Champion( { 31050, 1432, 1112,  85,  15, 63,  90, 0 }, Element::Red, name );
+			break;
 		case ChampionName::Gromoboy:
 			return Champion( { 15855, 727, 1443,  97,  15+5, 50,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Hangar:
+			return Champion( { 21975, 826, 1288+75,  98,  15+5, 50+10,  45, 10 }, Element::Void, name );
 			break;
 		case ChampionName::Hatun:
 			return Champion( { 15690, 980, 1156,  97,  15, 50,  30, 0 }, Element::Green, name );
@@ -962,7 +975,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13215, 1432, 1266,  98,  15, 63,  30, 10 }, Element::Blue, name );
 			break;
 		case ChampionName::Krisk:
-			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10+10 }, Element::Void, name );
+			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10+10+50 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
@@ -983,7 +996,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 20970, 859, 1046,  107,  15, 50,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::SteelSkull:
-			return Champion( { 16020, 1277, 958,  111,  15, 50,  30, 0 }, Element::Green, name );
+			return Champion( { 16020, 1277, 958,  111,  15+5, 50+10,  30, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Straholud:
 			return Champion( { 22965, 958, 815,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
@@ -992,7 +1005,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 16185, 881, 1343,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::VGalek:
-			return Champion( { 15195, 1332, 958,  98,  15, 60,  30, 0+10 }, Element::Blue, name );
+			return Champion( { 15195, 1332, 958,  98,  15+5, 60+10,  30, 0+10 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );

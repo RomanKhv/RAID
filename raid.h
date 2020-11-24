@@ -129,10 +129,13 @@ enum class ChampionName
 	none = -1,
 
 	Alura,
+	Arbitr,
 	BlackKnight,
 	ColdHeart,
+	Fein,
 	Foly,
 	Gorgorab,
+	GornyKorol,
 	Gromoboy,
 	Hangar,
 	Hatun,

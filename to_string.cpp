@@ -210,10 +210,13 @@ const char* to_string( const ChampionName& name )
 	switch ( name )
 	{
 		CASE_RETURN_STRING( ChampionName, Alura );
+		CASE_RETURN_STRING( ChampionName, Arbitr );
 		CASE_RETURN_STRING( ChampionName, BlackKnight );
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
+		CASE_RETURN_STRING( ChampionName, Fein );
 		CASE_RETURN_STRING( ChampionName, Foly );
 		CASE_RETURN_STRING( ChampionName, Gorgorab );
+		CASE_RETURN_STRING( ChampionName, GornyKorol );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
 		CASE_RETURN_STRING( ChampionName, Hangar );
 		CASE_RETURN_STRING( ChampionName, Hatun );
