@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Fein )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Major } },
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Major } },
 			{ StatType::Def, { 2800, MatchOptions::StatInfluence::Max } },
 			{ StatType::Spd, { 180 } },
 			{ StatType::Acc, { 220 } },
@@ -351,6 +351,27 @@ BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Lekar, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Mashalled )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 170 } },
+			{ StatType::Acc, { 200 } },
+		}
+		,{  }
+		,{  }
+		,{ MINOR_CHAMPIONS }
+	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Rastoropnost } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Mashalled, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Mavzolejnik )

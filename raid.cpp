@@ -10,12 +10,12 @@ bool check_stat_input_error( const Stat& stat )
 {
 	switch ( stat.Type )
 	{
+		case StatType::HP:			return stat.BaseValue >= 100;
 		case StatType::Atk:			return stat.Value >= 16;
-		case StatType::HP:			return stat.Value >= 100;
 		case StatType::Def:			return stat.Value >= 15;
-		case StatType::Atk_p:		return stat.Value <= 25;
-		case StatType::HP_p:		return stat.Value <= 24;
-		case StatType::Def_p:		return stat.Value <= 22;
+		case StatType::Atk_p:		return stat.BaseValue <= 24;
+		case StatType::HP_p:		return stat.BaseValue <= 24;
+		case StatType::Def_p:		return stat.BaseValue <= 22;
 	}
 	return true;
 }
@@ -351,9 +351,9 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 				};
 				static const stat_table_t CDmg_necklace = {
 					//     0   4   8  12  16
-					/*4*/{ 4,  0, 12,  0, 25 },
+					/*4*/{ 4,  8, 12, 16, 25 },
 					/*5*/{ 5, 11, 16, 21, 33 },
-					/*6*/{ 6,  0, 19,  0, 40 },
+					/*6*/{ 6,  0, 19, 26, 40 },
 				};
 				static const stat_table_t Spd_all = {
 					//     0   4   8  12  16
@@ -858,7 +858,9 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 		return false;
 
 	if ( !art.IsBasic() )
-		return true;
+	{
+		return art.Owner == ch_name;
+	}
 
 	if ( !IsSetAccepted( art.Set ) )
 		return false;
@@ -953,6 +955,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Foly:
 			return Champion( { 15030, 1476, 1101,  105,  15+5, 63+10,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Gala:
+			return Champion( { 18165, 1432, 661,  97,  15+5, 60+10,  60, 0 }, Element::Void, name );
+			break;
 		case ChampionName::Gorgorab:
 			return Champion( { 17670, 1057, 1068,  97,  15, 50,  30, 0 }, Element::Blue, name );
 			break;
@@ -961,6 +966,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Gromoboy:
 			return Champion( { 15855, 727, 1443,  97,  15+5, 50,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Guard:
+			return Champion( { 15030, 1531, 771,  93,  15+5, 50+10,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Hangar:
 			return Champion( { 21975, 826, 1288+75,  98,  15+5, 50+10,  45, 10 }, Element::Void, name );
@@ -978,7 +986,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10+10+50 }, Element::Void, name );
 			break;
 		case ChampionName::Lekar:
-			return Champion( { 17175, 881, 1002,  106,  15+5, 50,  30, 0 }, Element::Blue, name );
+			return Champion( { 17175, 881, 1002,  106,  15+5, 50+10,  30, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Mashalled:
 			return Champion( { 17835, 1454, 936,  103,  15+5, 63,  30, 0 }, Element::Green, name );
@@ -991,6 +999,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266,  90,  15+5, 63+10,  40, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Skilla:
+			return Champion( { 191980, 859, 1387+70,  95,  15+5, 63+10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Sohaty:
 			return Champion( { 20970, 859, 1046,  107,  15, 50,  30, 0 }, Element::Green, name );
