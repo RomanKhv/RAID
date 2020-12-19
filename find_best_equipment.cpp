@@ -123,6 +123,28 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 	FindAndReportBestForChampion( ChampionName::Alura, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Arbitr )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 50000, MatchOptions::StatInfluence::Minor } },
+			//{ StatType::Atk, { 2500, MatchOptions::StatInfluence::Major, 3000 } },
+			{ StatType::Def, { 2700, MatchOptions::StatInfluence::Minor } },
+			//{ StatType::CRate, { 80, MatchOptions::StatInfluence::Minor, 95 } },
+			//{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 285, MatchOptions::StatInfluence::Max } },
+			{ StatType::Acc, { 170 } },
+		}
+		,{  }
+		,{  }
+		,{ ChampionName::Hatun, ChampionName::Lekar/*, ChampionName::Mavzolejnik*/, ChampionName::Hangar, MINOR_CHAMPIONS }
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Zhivuchest } );
+
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Arbitr, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_BlackKnight )
 {
 	const MatchOptions matching(
@@ -184,16 +206,16 @@ BOOST_AUTO_TEST_CASE( FindBest_Foly )
 	MatchOptions matching(
 		{
 			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Major } },
-			{ StatType::Atk, { 3000, MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 3100, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 1900, MatchOptions::StatInfluence::Minor } },
 			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Minor } },
-			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Spd, { 160 } },
-			{ StatType::Acc, { 180 } },
+			{ StatType::CDmg, { 180, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 170 } },
+			{ StatType::Acc, { 190 } },
 		}
 		,{ ArtSet::Vamp }
 	);
-	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::Zhivuchest } );
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Zhivuchest } );
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Foly, matching );
@@ -252,6 +274,26 @@ BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Gromoboy, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Guard )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,   { 32000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { 1700, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg,  { 120, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd,  { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc,  { 200, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ /*ArtSet::Vamp*/ }
+		,{}
+		,{ MINOR_CHAMPIONS }
+	);
+	matching.AllowSets( { ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Zhivuchest, ArtSet::Immortal } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Guard, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Hangar )
@@ -337,18 +379,19 @@ BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 
 BOOST_AUTO_TEST_CASE( FindBest_Lekar )
 {
-	const MatchOptions matching(
+	MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Modrt } },
 			//{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
-			{ StatType::Def, { MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate, { 90 } },
-			{ StatType::Spd, { 170 } },
+			{ StatType::Def, { 2800, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 85, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 200, MatchOptions::StatInfluence::Modrt } },
 		}
-		,{ ArtSet::Speed }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
+		,{ /*ArtSet::Speed*/ }
+		,{  }
 		,{ MINOR_CHAMPIONS }
 	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Rastoropnost, ArtSet::CRate } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Lekar, matching );
 }
