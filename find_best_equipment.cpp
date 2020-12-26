@@ -13,13 +13,13 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Hangar;
+extern const ChampionName Champion_to_suitup = ChampionName::Gala;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
 
-#define MINOR_CHAMPIONS ChampionName::Hangar, ChampionName::Sohaty
+#define MINOR_CHAMPIONS ChampionName::Gala, ChampionName::Sohaty
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -108,8 +108,8 @@ BOOST_AUTO_TEST_CASE( FindBest_Alura )
 	MatchOptions matching(
 		{
 			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { 2500, MatchOptions::StatInfluence::Major, 3000 } },
-			{ StatType::Def, { 1600, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { 2000, MatchOptions::StatInfluence::Major, 3000 } },
+			{ StatType::Def, { 1800, MatchOptions::StatInfluence::Minor } },
 			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Minor, 95 } },
 			//{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Spd, { 170 } },
@@ -219,6 +219,24 @@ BOOST_AUTO_TEST_CASE( FindBest_Foly )
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Foly, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Gala )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 1900, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 85, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { 130, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 165 } },
+		}
+	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, /*ArtSet::Speed, ArtSet::DivSpeed,*/ ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Immortal } );
+
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Gala, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Gorgorab )
@@ -497,21 +515,19 @@ BOOST_AUTO_TEST_CASE( FindBest_SteelSkull )
 
 BOOST_AUTO_TEST_CASE( FindBest_Sohaty )
 {
-	const MatchOptions matching(
+	MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatInfluence::Major } },
-			{ StatType::Def, { MatchOptions::StatInfluence::Major } },
-			{ StatType::CRate, { 60, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Spd, { 150, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Acc, { 160 } },
+			{ StatType::HP,  { 33000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { 2200, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { 110, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 190 } },
 		}
 		,{ ArtSet::Vamp }
-		,{  }
-		,{  }
-		, ArtTier::T2
 	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Speed, ArtSet::Acc, ArtSet::Rastoropnost } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Sohaty, matching );
 }

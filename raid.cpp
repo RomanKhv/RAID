@@ -1004,7 +1004,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 191980, 859, 1387+70,  95,  15+5, 63+10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Sohaty:
-			return Champion( { 20970, 859, 1046,  107,  15, 50,  30, 0 }, Element::Green, name );
+			return Champion( { 20970, 859, 1046,  107,  15+5, 50+10,  30, 0+10 }, Element::Green, name );
 			break;
 		case ChampionName::SteelSkull:
 			return Champion( { 16020, 1277, 958,  111,  15+5, 50+10,  30, 0 }, Element::Green, name );
