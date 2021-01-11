@@ -779,7 +779,7 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
 							std::set<ChampionName> providers, ArtTier art_tier_cap )
 	//,ConsiderMaxLevels( consider_max_lvl )
-	//:ArtTierCap( art_tier_cap )
+	:ArtTierCap( art_tier_cap )
 {
 	for ( ArtSet set : req_filter )
 	{
@@ -865,8 +865,8 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	if ( !IsSetAccepted( art.Set ) )
 		return false;
 
-	//if ( !IsArtAcceptedByTier( art ) )
-	//	return false;
+	if ( !IsArtAcceptedByTier( art ) )
+		return false;
 
 	if ( StatOnArt[art.Type].has_value() )
 	{
@@ -877,12 +877,12 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	return true;
 }
 
-//bool MatchOptions::IsArtAcceptedByTier( const Artefact& art ) const
-//{
-//	const ArtTier at = GetArtTier( art );
-//
-//	return stl::enum_to_int(at) >= stl::enum_to_int(ArtTierCap);
-//}
+bool MatchOptions::IsArtAcceptedByTier( const Artefact& art ) const
+{
+	const ArtTier at = GetArtTier( art );
+
+	return stl::enum_to_int(at) >= stl::enum_to_int(ArtTierCap);
+}
 
 bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 {
@@ -970,6 +970,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Guard:
 			return Champion( { 15030, 1531, 771,  93,  15+5, 50+10,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Hakkorn:
+			return Champion( { 23790, 848, 1145,  99,  15, 50,  50, 10 }, Element::Blue, name );
+			break;
 		case ChampionName::Hangar:
 			return Champion( { 21975, 826, 1288+75,  98,  15+5, 50+10,  45, 10 }, Element::Void, name );
 			break;
@@ -993,6 +996,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Mavzolejnik:
 			return Champion( { 19485, 1057, 947,  104,  15, 50,  30, 0 }, Element::Red, name );
+			break;
+		case ChampionName::Molly:
+			return Champion( { 18495, 881, 1465,  107,  15, 50,  80, 10 }, Element::Green, name );
 			break;
 		case ChampionName::Razen:
 			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );

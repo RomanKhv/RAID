@@ -273,27 +273,28 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 
 ArtTier GetArtTier( const Artefact& art )
 {
-	//if ( art.Stars <= 4 )
-	//	return ArtTier::T3;
-
-	//if ( art.Type==ArtType::Boots && art.MainStatType()==StatType::Spd )
-	//	return ArtTier::T1;
-
-	for ( const Stat& s : art.AddStats )
-	{
-		static const int SpeedSubStatThreshold = 17;
-		if ( s.Type==StatType::Spd && s.Value>=SpeedSubStatThreshold )
-			return ArtTier::T1;
-		//if ( IsFlatArtStat( s.Type ) )
-		//{
-		//	if ( art.Stars == 6 )
-		//		return ArtTier::T2;
-		//	else
-		//		return ArtTier::T3;
-		//}
-	}
-
-	return ArtTier::T2;
+	return ( art.Stars == 6 ) ? ArtTier::T1 : ArtTier::T2;
+// 	//if ( art.Stars <= 4 )
+// 	//	return ArtTier::T3;
+// 
+// 	//if ( art.Type==ArtType::Boots && art.MainStatType()==StatType::Spd )
+// 	//	return ArtTier::T1;
+// 
+// 	for ( const Stat& s : art.AddStats )
+// 	{
+// 		static const int SpeedSubStatThreshold = 17;
+// 		if ( s.Type==StatType::Spd && s.Value>=SpeedSubStatThreshold )
+// 			return ArtTier::T1;
+// 		//if ( IsFlatArtStat( s.Type ) )
+// 		//{
+// 		//	if ( art.Stars == 6 )
+// 		//		return ArtTier::T2;
+// 		//	else
+// 		//		return ArtTier::T3;
+// 		//}
+// 	}
+// 
+// 	return ArtTier::T2;
 }
 
 /////////////////////////////////////////////////////////////////////////////

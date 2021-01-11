@@ -647,17 +647,31 @@ BOOST_AUTO_TEST_CASE( test_join )
 	}
 }
 
-//BOOST_AUTO_TEST_CASE( Test_TierFiltering )
-//{
-//	const MatchOptions m1( {}, {}, {}, {}, ArtTier::T1 );
-//	const MatchOptions m2;
-//	//const MatchOptions m3( {}, {}, {}, {}, ArtTier::T3 );
+BOOST_AUTO_TEST_CASE( Test_TierFiltering )
+{
+	const MatchOptions m;
+	const MatchOptions m1( {}, {}, {}, {}, ArtTier::T1 );
+	const MatchOptions m2( {}, {}, {}, {}, ArtTier::T2 );
 //	BOOST_CHECK( m1.ArtTierCap == ArtTier::T1 );
 //	BOOST_CHECK( m2.ArtTierCap == ArtTier::T2 );
 //	{
 //		const Artefact art( ArtType::Boots, ArtSet::Vamp, 5, 0, StatType::Spd, {} );
 //		BOOST_CHECK( GetArtTier(art) == ArtTier::T2 );
 //	}
+	{
+		const Artefact art( ArtType::Helmet, ArtSet::Vamp, 6, 0, StatType::HP, { {StatType::Spd,17}, {StatType::Atk,20} } );
+		BOOST_CHECK( GetArtTier(art) == ArtTier::T1 );
+		BOOST_CHECK( m.IsArtAccepted( art, ChampionName::none ) );
+		BOOST_CHECK( m1.IsArtAccepted( art, ChampionName::none ) );
+		BOOST_CHECK( !m2.IsArtAccepted( art, ChampionName::none ) );
+	}
+	{
+		const Artefact art( ArtType::Helmet, ArtSet::Vamp, 5, 0, StatType::HP, { {StatType::Spd,17}, {StatType::Atk,20} } );
+		BOOST_CHECK( GetArtTier(art) == ArtTier::T2 );
+		BOOST_CHECK( m.IsArtAccepted( art, ChampionName::none ) );
+		BOOST_CHECK( m1.IsArtAccepted( art, ChampionName::none ) );
+		BOOST_CHECK( m2.IsArtAccepted( art, ChampionName::none ) );
+	}
 //	{
 //		const Artefact art( ArtType::Helmet, ArtSet::Vamp, 5, 0, StatType::HP, { {StatType::Spd,17}, {StatType::Atk,20} } );
 //		BOOST_CHECK( GetArtTier(art) == ArtTier::T1 );
@@ -691,7 +705,7 @@ BOOST_AUTO_TEST_CASE( test_join )
 //	//	const Artefact art( ArtType::Boots, ArtSet::Vamp, 4, 0, StatType::Spd, { {StatType::Spd,15} } );
 //	//	BOOST_CHECK( GetArtTier(art) == ArtTier::T3 );
 //	//}
-//}
+}
 
 const std::map<StatType, MatchOptions::StatFactor> All_Stats_Moderate = {
 	{ StatType::HP,  {MatchOptions::StatInfluence::Modrt} },

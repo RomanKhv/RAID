@@ -220,6 +220,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, GornyKorol );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
 		CASE_RETURN_STRING( ChampionName, Guard );
+		CASE_RETURN_STRING( ChampionName, Hakkorn );
 		CASE_RETURN_STRING( ChampionName, Hangar );
 		CASE_RETURN_STRING( ChampionName, Hatun );
 		CASE_RETURN_STRING( ChampionName, Kael );
@@ -228,6 +229,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Lekar );
 		CASE_RETURN_STRING( ChampionName, Mashalled );
 		CASE_RETURN_STRING( ChampionName, Mavzolejnik );
+		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Razen );
 		CASE_RETURN_STRING( ChampionName, Rotos );
 		CASE_RETURN_STRING( ChampionName, Skilla );

@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 enum class ArtTier {
-	T1,		// high speed sub-stat, ...
+	T1,		// 6lvl
 	T2,		// ...
 };
 
@@ -38,7 +38,7 @@ struct MatchOptions
 	std::map<ArtSet, int> RequiedSets;
 	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
 	enum_index_map<ArtType,ArtType::NBasic,boost::optional<StatType>> StatOnArt;
-	//ArtTier ArtTierCap = ArtTier::T2;
+	ArtTier ArtTierCap = ArtTier::T1;
 	enum_index_map<ChampionName,ChampionName::count,bool> Undressable;
 
 	static const bool ConsiderMaxLevels = true;
@@ -50,7 +50,7 @@ struct MatchOptions
 				  std::vector<ArtSet> req_filter = {},
 				  std::set<ArtSet> exclusion_filter = {},
 				  std::set<ChampionName> providers = {},
-				  ArtTier art_tier_cap = ArtTier::T2 );
+				  ArtTier art_tier_cap = ArtTier::T1 );
 	void AllowSets( std::set<ArtSet> );
 	void RequireSpeedBoots(bool);
 
