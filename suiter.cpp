@@ -30,9 +30,9 @@ float linerp( const int x, const int x1, const float y1, const int x2, const flo
 
 const ChampionStats::values_t Ref_Stat_Values = {
 	/*StatType::HP*/ 35000,
-	/*StatType::Atk*/ 3500,
-	/*StatType::Def*/ 3500,
-	/*StatType::Spd*/ 150,
+	/*StatType::Atk*/ 3000,
+	/*StatType::Def*/ 3000,
+	/*StatType::Spd*/ 170,
 	/*StatType::CRate*/ 100,
 	/*StatType::CDmg*/ 150,
 	/*StatType::Res*/ 100,
@@ -54,10 +54,10 @@ const ChampionStats::values_t Def_Max_Stat_Caps = {	// 0 - no cap/no penalty
 
 const ChampionStats::values_t Min_Cap_Tol = {	// 0 - no cap/no penalty
 	/*StatType::HP*/   2000,
-	/*StatType::Atk*/  500,
-	/*StatType::Def*/  500,
+	/*StatType::Atk*/  300,
+	/*StatType::Def*/  300,
 	/*StatType::Spd*/  20,
-	/*StatType::CRate*/ 25,
+	/*StatType::CRate*/ 10,
 	/*StatType::CDmg*/ 20,
 	/*StatType::Res*/  20,
 	/*StatType::Acc*/  10,
@@ -170,7 +170,7 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 #ifdef WEAK_EXCESS_LIMIT
 	static const ChampionStats::StatList optimized_stat_list = {
 		StatType::Spd, StatType::Acc, StatType::CRate,								// mincap stats first
-		StatType::Def, StatType::HP, StatType::Atk, StatType::CDmg, StatType::Res
+		StatType::Def, StatType::HP, StatType::CDmg, StatType::Atk, StatType::Res
 	};
 	for ( StatType st : optimized_stat_list )
 	{
@@ -194,24 +194,38 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 			if ( stat_value <= abs_min )
 				return 0.f;	//too small => not accepted
 
+#ifndef USE_TARGET_VALUES_AS_REF
 			const int ref_stat_value = Ref_Stat_Values[stl::enum_to_int( st )];
-			const float e_min = (float)f.MinCap / ref_stat_value;
+#endif
 			if ( stat_value < f.MinCap )
 			{
+#ifdef USE_TARGET_VALUES_AS_REF
+				e = linerp( stat_value, abs_min, 0.f, f.MinCap, 1 );
+#else
+				const float e_min = (float)f.MinCap / ref_stat_value;
 				e = linerp( stat_value, abs_min, 0.f, f.MinCap, e_min );
+#endif
 				total_est += e;
 				continue;
 			}
 			else {
 				const float fk = FactorK( f.Mode );
+#ifdef USE_TARGET_VALUES_AS_REF
+				e = (f.MinCap + fk * (stat_value - f.MinCap)) / f.MinCap;
+#else
 				e = (f.MinCap + fk * (stat_value - f.MinCap)) / ref_stat_value;
+#endif
 				e_calculated = true;
 			}
 		}
 
 		if ( !e_calculated )
 		{
+#ifdef USE_TARGET_VALUES_AS_REF
+			const int ref_stat_value = f.HasMinCap() ? f.MinCap : Ref_Stat_Values[stl::enum_to_int( st )];
+#else
 			const int ref_stat_value = Ref_Stat_Values[stl::enum_to_int( st )];
+#endif
 			const float fk = FactorK( f.Mode );
 			e = fk * (float)stat_value / ref_stat_value;
 			e_calculated = true;

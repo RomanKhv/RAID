@@ -297,12 +297,19 @@ BOOST_AUTO_TEST_CASE( test_StatValuesByLevel )
 BOOST_AUTO_TEST_CASE( test_InventoryCorrectness )
 {
 	const Champion ch = Champion::ByName( ChampionName::ColdHeart );
+	enum_index_map<ChampionName,ChampionName::count,Equipment> eqs;
 	for ( const Artefact& art : _MyArts )
 	{
 		ChampionStats stats;
 		ApplyArtBonus( art, ch.BasicStats, stats, true, false );
+
+		if ( art.Owner != ChampionName::none )
+		{
+			Artefact& ch_art = eqs[art.Owner][art.Type];
+			BOOST_CHECK( !ch_art.Initialized() );
+			ch_art = art;
+		}
 	}
-	BOOST_CHECK(true);
 }
 
 EquipmentRef convert( const Equipment& ref_eq )
@@ -512,12 +519,22 @@ BOOST_AUTO_TEST_CASE( test_EstimationBasics )
 	}
 	// min cap
 	{
+		ChampionStats ch;
 		const MatchOptions matching(
+#ifdef USE_TARGET_VALUES_AS_REF
+			{
+				{ StatType::CRate, { 50 } },
+			}
+		);
+		ch.CRate = 70;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.0f );
+		ch.CRate = 200;
+		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 1.0f );
+#else
 			{
 				{ StatType::Acc, { 120 } },
 			}
 		);
-		ChampionStats ch;
 		ch.Acc = 110;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0 );
 		ch.Acc = 115;
@@ -528,6 +545,7 @@ BOOST_AUTO_TEST_CASE( test_EstimationBasics )
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.800000012f );
 		ch.Acc = 200;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.800000012f );
+#endif
 	}
 	{
 		const MatchOptions matching(
@@ -538,12 +556,15 @@ BOOST_AUTO_TEST_CASE( test_EstimationBasics )
 		ChampionStats ch;
 		ch.Acc = 110;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0 );
+#ifdef USE_TARGET_VALUES_AS_REF
+#else
 		ch.Acc = 115;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.399999619f );
 		ch.Acc = 120;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.800000012f );
 		ch.Acc = 144;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.879999995f );
+#endif
 	}
 	// Max Cap
 	{
@@ -578,12 +599,15 @@ BOOST_AUTO_TEST_CASE( test_EstimationBasics )
 			}
 		);
 		ChampionStats ch;
+#ifdef USE_TARGET_VALUES_AS_REF
+#else
 		ch.CRate = 60;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.6f );
 		ch.CRate = 78;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.69f );
 		ch.CRate = 95;
 		BOOST_CHECK_EQUAL( EstimateEquipment( ch, matching ), 0.69f );
+#endif
 	}
 }
 
@@ -647,6 +671,7 @@ BOOST_AUTO_TEST_CASE( test_join )
 	}
 }
 
+#ifdef USE_TIERS
 BOOST_AUTO_TEST_CASE( Test_TierFiltering )
 {
 	const MatchOptions m;
@@ -706,6 +731,7 @@ BOOST_AUTO_TEST_CASE( Test_TierFiltering )
 //	//	BOOST_CHECK( GetArtTier(art) == ArtTier::T3 );
 //	//}
 }
+#endif
 
 const std::map<StatType, MatchOptions::StatFactor> All_Stats_Moderate = {
 	{ StatType::HP,  {MatchOptions::StatInfluence::Modrt} },
@@ -851,7 +877,7 @@ BOOST_AUTO_TEST_CASE( test_champ_relations )
 
 //#ifndef DEBUG_FIND_BEST
 
-BOOST_AUTO_TEST_CASE( test_CurrentStats )
+BOOST_AUTO_TEST_CASE( test_StatsCalculation )
 {
 	{
 		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
@@ -877,50 +903,6 @@ BOOST_AUTO_TEST_CASE( test_CurrentStats )
 		//BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
 		//BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
 		//BOOST_CHECK_EQUAL( hall_stats.Acc, 40 );
-	}
-	{
-		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Krisk );
-		//BOOST_CHECK_EQUAL( stats.HP, 20184 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Atk, 266 - 1 );
-		//BOOST_CHECK_EQUAL( stats.Def, 1868 + 2 );
-		//BOOST_CHECK_EQUAL( stats.Spd, 45 );
-		//BOOST_CHECK_EQUAL( stats.CRate, 51 );
-		//BOOST_CHECK_EQUAL( stats.CDmg, 15 );
-		//BOOST_CHECK_EQUAL( stats.Res, 30 );
-		//BOOST_CHECK_EQUAL( stats.Acc, 102 );
-	}
-	{
-		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Lekar );
-		//BOOST_CHECK_EQUAL( stats.HP, 12543-429 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Atk, 503-15 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Def, 1332-25 - 1 );
-		//BOOST_CHECK_EQUAL( stats.Spd, 70-1 );
-		//BOOST_CHECK_EQUAL( stats.CRate, 84 );
-		//BOOST_CHECK_EQUAL( stats.CDmg, 15-4 );
-		//BOOST_CHECK_EQUAL( stats.Res, 8 );
-		//BOOST_CHECK_EQUAL( stats.Acc, 36-9 );
-	}
-	{
-		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::SteelSkull );
-		//BOOST_CHECK_EQUAL( stats.HP, 10209 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Atk, 479 - 1 );
-		//BOOST_CHECK_EQUAL( stats.Def, 1057 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Spd, 70 );
-		//BOOST_CHECK_EQUAL( stats.CRate, 65 );
-		//BOOST_CHECK_EQUAL( stats.CDmg, 5 );
-		//BOOST_CHECK_EQUAL( stats.Res, 24 );
-		//BOOST_CHECK_EQUAL( stats.Acc, 147 );
-	}
-	{
-		const ChampionStats stats = GetCurrentArtsStatsFor( ChampionName::Yuliana );
-		//BOOST_CHECK_EQUAL( stats.HP, 10209 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Atk, 479 - 1 );
-		//BOOST_CHECK_EQUAL( stats.Def, 1057 - 2 );
-		//BOOST_CHECK_EQUAL( stats.Spd, 70 );
-		//BOOST_CHECK_EQUAL( stats.CRate, 65 );
-		//BOOST_CHECK_EQUAL( stats.CDmg, 5 );
-		//BOOST_CHECK_EQUAL( stats.Res, 24 );
-		//BOOST_CHECK_EQUAL( stats.Acc, 147 );
 	}
 }
 //#endif

@@ -13,13 +13,13 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::VGalek;
+extern const ChampionName Champion_to_suitup = ChampionName::Gala;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
 
-#define MINOR_CHAMPIONS ChampionName::Gala, ChampionName::Hakkorn, ChampionName::Molly
+#define MINOR_CHAMPIONS ChampionName::Gala, ChampionName::Hakkorn, ChampionName::Molly, ChampionName::Razen, ChampionName::Revoglas, ChampionName::Skilla
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -167,17 +167,18 @@ BOOST_AUTO_TEST_CASE( FindBest_ColdHeart )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Major } },
-			{ StatType::Atk, { 2500, MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { 1600, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Minor } },
-			{ StatType::CDmg, { MatchOptions::StatInfluence::Modrt } },
+			{ StatType::HP,  { 34000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { 2600, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { 1800, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 70 } },
+			{ StatType::CDmg, { 140, MatchOptions::StatInfluence::Max } },
 			{ StatType::Spd, { 170 } },
 			{ StatType::Acc, { 190 } },
 		}
 		,{ ArtSet::Vamp }
+		,{}, { MINOR_CHAMPIONS }			//(uncomment in case cannot suit up with free gear)
 	);
-	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::Zhivuchest } );
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate } );
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::ColdHeart, matching );
@@ -224,7 +225,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Gala )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,  { 32000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Minor } },
 			{ StatType::Atk, { 3000, MatchOptions::StatInfluence::Max } },
 			{ StatType::Def, { 1900, MatchOptions::StatInfluence::Minor } },
 			{ StatType::CRate, { 85, MatchOptions::StatInfluence::Modrt } },
@@ -504,20 +505,22 @@ BOOST_AUTO_TEST_CASE( FindBest_Razen )
 
 BOOST_AUTO_TEST_CASE( FindBest_Rotos )
 {
-	const MatchOptions matching(
+	MatchOptions matching(
 		{
-			{ StatType::HP,  { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Major, 95 } },
-			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Major } },
-			{ StatType::Spd, { 160, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 3800, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 2400, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 85, MatchOptions::StatInfluence::Major, 95 } },
+			{ StatType::CDmg, { 210, MatchOptions::StatInfluence::Max } },
+			{ StatType::Spd, { 165, MatchOptions::StatInfluence::Minor } },
 			//{ StatType::Acc, { 100, MatchOptions::StatInfluence::Minor } },
 		}
 		,{  }
-		,{ ArtSet::Vamp, ArtSet::Immortal, MINOR_SETS }
+		,{  }
 		,{ MINOR_CHAMPIONS }
 	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Speed,
+						  ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Rotos, matching );
 }
@@ -655,7 +658,6 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 		}
 		,{  }
 		,{ ArtSet::Vamp, ArtSet::Def, ArtSet::HP, ArtSet::Immortal }
-		,{ MINOR_CHAMPIONS }
 	);
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );

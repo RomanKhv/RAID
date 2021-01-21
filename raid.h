@@ -150,6 +150,7 @@ enum class ChampionName
 	Mavzolejnik,
 	Molly,
 	Razen,
+	Revoglas,
 	Rotos,
 	Skilla,
 	Sohaty,
@@ -184,12 +185,12 @@ struct Artefact
 	void Reset();
 	bool Initialized() const { return Stars > 0; }
 	bool IsBasic() const { _ASSERTE(Initialized()); return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }
-	StatType MainStatType() const { return _MainStat.Type; }
+	StatType MainStatType() const { return _MainStat_Actual.Type; }
 	const Stat& GetMainStat( bool consider_max_level ) const;
 
 	static constexpr int SetCount = static_cast<int>( ArtSet::count );
 private:
-	mutable Stat _MainStat;
+	mutable Stat _MainStat_Actual, _MainStat_MaxLvl;
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -231,6 +231,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Mavzolejnik );
 		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Razen );
+		CASE_RETURN_STRING( ChampionName, Revoglas );
 		CASE_RETURN_STRING( ChampionName, Rotos );
 		CASE_RETURN_STRING( ChampionName, Skilla );
 		CASE_RETURN_STRING( ChampionName, Sohaty );

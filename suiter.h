@@ -3,6 +3,9 @@
 #include <boost/optional.hpp>
 #include "raid.h"
 
+//#define USE_TIERS
+#define USE_TARGET_VALUES_AS_REF
+
 /////////////////////////////////////////////////////////////////////////////
 
 enum class ArtTier {
@@ -38,7 +41,7 @@ struct MatchOptions
 	std::map<ArtSet, int> RequiedSets;
 	enum_index_map<ArtSet,ArtSet::count,bool> ExcludedSets;
 	enum_index_map<ArtType,ArtType::NBasic,boost::optional<StatType>> StatOnArt;
-	ArtTier ArtTierCap = ArtTier::T1;
+	const ArtTier ArtTierCap = ArtTier::T1;
 	enum_index_map<ChampionName,ChampionName::count,bool> Undressable;
 
 	static const bool ConsiderMaxLevels = true;

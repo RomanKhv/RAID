@@ -31,7 +31,7 @@ Artefact::Artefact( ArtType type, ArtSet set, int stars, int level, StatType mai
 	,AddStats( addstats.begin(), addstats.end() )
 	,Owner(owner)
 {
-	_MainStat.Type = mainstat;
+	_MainStat_Actual.Type = _MainStat_MaxLvl.Type = mainstat;
 	if ( comment )
 		Comment = comment;
 
@@ -54,16 +54,30 @@ void Artefact::Reset()
 const Stat& Artefact::GetMainStat( bool consider_max_level ) const
 {
 	_ASSERTE( Initialized() );
-	if ( !_MainStat.Initialized() )
+	_ASSERTE( _MainStat_Actual.Type == _MainStat_MaxLvl.Type );
+
+// 	Stat& ms = consider_max_level ? _MainStat_MaxLvl : _MainStat_Actual;
+// 	if ( !ms.Initialized() )
+// 	{
+// 		ms.Value = ms.BaseValue = StatValueForLevel_fast( Type, ms.Type, Stars, consider_max_level ? 16 : Level );
+// 	}
+// #ifdef _DEBUG
+// 	else {
+// 		_ASSERTE( ms.Value == StatValueForLevel_fast( Type, ms.Type, Stars, consider_max_level ? 16 : Level ) );
+// 	}
+// #endif
+// 	return ms;
+	if ( consider_max_level )
 	{
-		_MainStat.Value = _MainStat.BaseValue = StatValueForLevel_fast( Type, _MainStat.Type, Stars, consider_max_level ? 16 : Level );
+		if ( !_MainStat_MaxLvl.Initialized() )
+			_MainStat_MaxLvl.Value = _MainStat_MaxLvl.BaseValue = StatValueForLevel_fast( Type, _MainStat_MaxLvl.Type, Stars, 16 );
+		return _MainStat_MaxLvl;
 	}
-#ifdef _DEBUG
 	else {
-		_ASSERTE( _MainStat.Value == StatValueForLevel_fast( Type, _MainStat.Type, Stars, consider_max_level ? 16 : Level ) );
+		if ( !_MainStat_Actual.Initialized() )
+			_MainStat_Actual.Value = _MainStat_Actual.BaseValue = StatValueForLevel_fast( Type, _MainStat_Actual.Type, Stars, Level );
+		return _MainStat_Actual;
 	}
-#endif
-	return _MainStat;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -865,8 +879,10 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	if ( !IsSetAccepted( art.Set ) )
 		return false;
 
+#ifdef USE_TIERS
 	if ( !IsArtAcceptedByTier( art ) )
 		return false;
+#endif
 
 	if ( StatOnArt[art.Type].has_value() )
 	{
@@ -1004,7 +1020,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Rotos:
-			return Champion( { 11895, 1520, 1266,  90,  15+5, 63+10,  40, 0 }, Element::Blue, name );
+			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Skilla:
 			return Champion( { 191980, 859, 1387+70,  95,  15+5, 63+10,  40, 0 }, Element::Blue, name );
@@ -1019,7 +1035,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 22965, 958, 815,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Tyrel:
-			return Champion( { 16185, 881, 1343,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
+			return Champion( { 16185, 881, 1343+75,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::VGalek:
 			return Champion( { 15195, 1332, 958,  98,  15+5, 60+10,  30, 0+10 }, Element::Blue, name );
