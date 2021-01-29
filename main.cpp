@@ -350,8 +350,12 @@ BOOST_AUTO_TEST_CASE( find_SetsRestrictions )
 		};
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::HP } ).IsEqHasRequiredSets( convert(eq) ) );
 
-		BOOST_CHECK( MatchOptions( {}, {}, { ArtSet::Atk } ).IsArtAccepted( eq[ArtType::Weapon], ChampionName::Gromoboy ) );
-		BOOST_CHECK( !MatchOptions( {}, {}, { ArtSet::Atk } ).IsArtAccepted( eq[ArtType::Shield], ChampionName::Gromoboy ) );
+		{
+			MatchOptions mo;
+			mo.ForbiddenSets( { ArtSet::Atk } );
+			BOOST_CHECK( mo.IsArtAccepted( eq[ArtType::Weapon], ChampionName::Gromoboy ) );
+			BOOST_CHECK( !mo.IsArtAccepted( eq[ArtType::Shield], ChampionName::Gromoboy ) );
+		}
 	}
 	{
 		const Equipment eq = {
@@ -366,9 +370,12 @@ BOOST_AUTO_TEST_CASE( find_SetsRestrictions )
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
 	}
 
-	BOOST_CHECK( MatchOptions( {}, {}, { ArtSet::Atk } ).IsSetAccepted( ArtSet::HP ) );
-	BOOST_CHECK( !MatchOptions( {}, {}, { ArtSet::Atk } ).IsSetAccepted( ArtSet::Atk ) );
-	BOOST_CHECK( !MatchOptions( {}, {}, { ArtSet::Atk, ArtSet::Def } ).IsSetAccepted( ArtSet::Atk ) );
+	MatchOptions mo;
+	mo.ForbiddenSets( { ArtSet::Atk } );
+	BOOST_CHECK( mo.IsSetAccepted( ArtSet::HP ) );
+	BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
+	mo.ForbiddenSets( { ArtSet::Atk, ArtSet::Def } );
+	BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
 }
 
 BOOST_AUTO_TEST_CASE( test_Iterator )
@@ -675,8 +682,8 @@ BOOST_AUTO_TEST_CASE( test_join )
 BOOST_AUTO_TEST_CASE( Test_TierFiltering )
 {
 	const MatchOptions m;
-	const MatchOptions m1( {}, {}, {}, {}, ArtTier::T1 );
-	const MatchOptions m2( {}, {}, {}, {}, ArtTier::T2 );
+	const MatchOptions m1( {}, {}, {}, ArtTier::T1 );
+	const MatchOptions m2( {}, {}, {}, ArtTier::T2 );
 //	BOOST_CHECK( m1.ArtTierCap == ArtTier::T1 );
 //	BOOST_CHECK( m2.ArtTierCap == ArtTier::T2 );
 //	{

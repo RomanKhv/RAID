@@ -790,7 +790,7 @@ Hall::Hall( std::map<Element, std::map<StatType, int>> m )
 
 /////////////////////////////////////////////////////////////////////////////
 
-MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter, std::set<ArtSet> exclusion_filter,
+MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<ArtSet> req_filter/*, std::set<ArtSet> exclusion_filter*/,
 							std::set<ChampionName> providers, ArtTier art_tier_cap )
 	//,ConsiderMaxLevels( consider_max_lvl )
 	:ArtTierCap( art_tier_cap )
@@ -799,10 +799,10 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 	{
 		RequiedSets[set]++;
 	}
-	for ( ArtSet set : exclusion_filter )
-	{
-		ExcludedSets[set] = true;
-	}
+// 	for ( ArtSet set : exclusion_filter )
+// 	{
+// 		ExcludedSets[set] = true;
+// 	}
 	for ( ChampionName name : providers )
 	{
 		Undressable[name] = true;
@@ -834,6 +834,17 @@ void MatchOptions::AllowSets( std::set<ArtSet> sets )
 		ExcludedSets[p.first] = false;
 }
 
+void MatchOptions::ForbiddenSets( std::set<ArtSet> sets )
+{
+	//std::fill( ExcludedSets.begin(), ExcludedSets.end(), true );
+	for ( bool& f : ExcludedSets )
+		f = false;
+	for ( ArtSet set : sets )
+		ExcludedSets[set] = true;
+	for ( const auto& p : RequiedSets )
+		ExcludedSets[p.first] = false;
+}
+
 void MatchOptions::RequireSpeedBoots( bool speed_boots )
 {
 	if ( speed_boots )
@@ -852,6 +863,12 @@ bool MatchOptions::IsInputOK() const
 	_ASSERTE( total_req_art_count <= 6 );
 	if ( total_req_art_count > 6 )
 		return false;
+
+#ifndef USE_TIERS
+	_ASSERTE( ArtTierCap == ArtTier::T1 );
+	if ( ArtTierCap != ArtTier::T1 )
+		return false;
+#endif
 
 	return true;
 }
@@ -882,6 +899,8 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 #ifdef USE_TIERS
 	if ( !IsArtAcceptedByTier( art ) )
 		return false;
+#else
+	_ASSERTE( ArtTierCap == ArtTier::T1 );
 #endif
 
 	if ( StatOnArt[art.Type].has_value() )
@@ -965,6 +984,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::ColdHeart:
 			return Champion( { 13710, 1376, 738,  94,  15+5, 57+10,  30, 0 }, Element::Void, name );
 			break;
+		case ChampionName::Fakhrakin:
+			return Champion( { 14535, 1244, 1090+75,  100,  15+5, 60+10,  30, 0 }, Element::Green, name );
+			break;
 		case ChampionName::Fein:
 			return Champion( { 13710, 1663, 727,  99,  15, 57,  30, 0 }, Element::Green, name );
 			break;
@@ -1007,6 +1029,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Lekar:
 			return Champion( { 17175, 881, 1002,  106,  15+5, 50+10,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Lovec:
+			return Champion( { 16845, 1002, 1178,  103,  15, 50,  45, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Mashalled:
 			return Champion( { 17835, 1454, 936,  103,  15+5, 63,  30, 0 }, Element::Green, name );
 			break;
@@ -1016,14 +1041,20 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Molly:
 			return Champion( { 18495, 881, 1465,  107,  15, 50,  80, 10 }, Element::Green, name );
 			break;
+		case ChampionName::Mu4ka:
+			return Champion( { 12870+810, 688, 542+75,  102,  15, 50,  30, 0 }, Element::Void, name );	//50 lvl
+			break;
 		case ChampionName::Razen:
 			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::SerjantA:
+			return Champion( { 13110, 599, 818+75,  97,  15, 50,  60, 0+10 }, Element::Red, name );
+			break;
 		case ChampionName::Skilla:
-			return Champion( { 191980, 859, 1387+70,  95,  15+5, 63+10,  40, 0 }, Element::Blue, name );
+			return Champion( { 191980, 859, 1387 + 70,  95,  15 + 5, 63 + 10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Sohaty:
 			return Champion( { 20970, 859, 1046,  107,  15+5, 50+10,  30, 0+10 }, Element::Green, name );
@@ -1044,13 +1075,16 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );
 			break;
 		case ChampionName::Voitelnica:
-			return Champion( { 10440, 907, 534,  97,  15+5, 50,  30, 0 }, Element::Red, name );
+			return Champion( { 14700, 1321, 727,  97,  15+5, 57+10,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Yuliana:
 			return Champion( { 15360, 1398, 881,  103,  15+5, 60,  30, 0+10 }, Element::Blue, name );
 			break;
 		case ChampionName::Zargala:
 			return Champion( { 16380, 1374, 779,  103,  15+5, 60+10,  30, 0+10+16 }, Element::Red, name );
+			break;
+		case ChampionName::Zelot:
+			return Champion( { 20460, 818, 1091,  95,  15, 50,  30, 15 }, Element::Green, name );
 			break;
 	}
 	_ASSERTE( !"not yet supported" );

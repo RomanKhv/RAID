@@ -3,7 +3,7 @@
 #include <boost/optional.hpp>
 #include "raid.h"
 
-//#define USE_TIERS
+#define USE_TIERS
 #define USE_TARGET_VALUES_AS_REF
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,10 +51,11 @@ struct MatchOptions
 	MatchOptions() = default;
 	MatchOptions( std::map<StatType, StatFactor>,
 				  std::vector<ArtSet> req_filter = {},
-				  std::set<ArtSet> exclusion_filter = {},
+				  //std::set<ArtSet> exclusion_filter = {},
 				  std::set<ChampionName> providers = {},
 				  ArtTier art_tier_cap = ArtTier::T1 );
 	void AllowSets( std::set<ArtSet> );
+	void ForbiddenSets( std::set<ArtSet> );
 	void RequireSpeedBoots(bool);
 
 	bool IsInputOK() const;
