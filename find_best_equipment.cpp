@@ -13,15 +13,15 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Voitelnica;
+extern const ChampionName Champion_to_suitup = ChampionName::Mashalled;
 
 #define DISPLAY_BEST_POOL
 
-#define MINOR_SETS ArtSet::Gibel,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Reflex,ArtSet::Cursed,ArtSet::Toxic,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Beshenstvo,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage,ArtSet::Taunting
+#define MINOR_SETS ArtSet::Gibel,ArtSet::Cursed,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage/*,ArtSet::Beshenstvo,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Toxic,ArtSet::Reflex,ArtSet::Taunting*/
 
-#define MINOR_CHAMPIONS ChampionName::Gala, ChampionName::Hakkorn, ChampionName::Jareg, ChampionName::Jizoh, \
-						ChampionName::Lovec, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
-						ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot
+#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::Gala, ChampionName::Hakkorn, ChampionName::Jareg, ChampionName::Jizoh, \
+						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
+						ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -86,7 +86,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 #endif
 
 	const std::string out_string = log.str();
-	BOOST_TEST_MESSAGE( out_string );
+	//BOOST_TEST_MESSAGE( out_string );
 
 	boost::filesystem::path file_name = std::string("__") + name_string + "__.champ";
 	std::ofstream file;
@@ -94,8 +94,8 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 	if ( file.is_open() )
 	{
 		file << out_string;
+		BOOST_TEST_MESSAGE( (boost::format("%s\n") % (boost::filesystem::current_path()/file_name).string()).str() );
 	}
-	BOOST_TEST_MESSAGE( (boost::format("%s\n") % (boost::filesystem::current_path()/file_name).string()).str() );
 #endif
 }
 
@@ -144,6 +144,24 @@ BOOST_AUTO_TEST_CASE( FindBest_Arbitr )
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Arbitr, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Baronessa )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Def, { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 175, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Vamp }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Baronessa, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_BlackKnight )
@@ -291,6 +309,24 @@ BOOST_AUTO_TEST_CASE( FindBest_GornyKorol )
 	FindAndReportBestForChampion( ChampionName::GornyKorol, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Grash )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,   { 20000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { 1800, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ 50 } },
+			{ StatType::Spd,  { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc,  { 180, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Immortal }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Grash, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_Gromoboy )
 {
 	MatchOptions matching(
@@ -399,6 +435,26 @@ BOOST_AUTO_TEST_CASE( FindBest_Killian )
 	FindAndReportBestForChampion( ChampionName::Killian, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Kostolom )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Modrt } },
+			//{ StatType::Atk, { MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 1800, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 50, MatchOptions::StatInfluence::Modrt } },
+			//{ StatType::CDmg, { MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 170 } },
+			{ StatType::Acc, { 170 } },
+		}
+		,{ ArtSet::Vamp }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Kostolom, matching );
+}
+
 //BOOST_AUTO_TEST_CASE( FindBest_Krisk )
 //{
 //	const MatchOptions matching(
@@ -472,6 +528,22 @@ BOOST_AUTO_TEST_CASE( FindBest_Lovec )
 	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Lovec, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Lutopes )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def, { 1600, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
+		}
+		,{  }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Lutopes, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Mashalled )
@@ -562,6 +634,48 @@ BOOST_AUTO_TEST_CASE( FindBest_Razen )
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Razen, matching );
 }
+
+BOOST_AUTO_TEST_CASE( FindBest_Reya_stun )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 2800, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 1900, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Major } },
+			{ StatType::CDmg, { 140, MatchOptions::StatInfluence::Max } },
+			{ StatType::Spd, { 175, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 180, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Stun }
+		,{ MINOR_CHAMPIONS }
+	);
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Speed,
+						  ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Zhivuchest } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Reya, matching );
+}
+
+//BOOST_AUTO_TEST_CASE( FindBest_Reya )
+//{
+//	MatchOptions matching(
+//		{
+//			{ StatType::HP,  { 28000, MatchOptions::StatInfluence::Modrt } },
+//			{ StatType::Atk, { 3300, MatchOptions::StatInfluence::Max } },
+//			{ StatType::Def, { 2200, MatchOptions::StatInfluence::Minor } },
+//			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Major } },
+//			{ StatType::CDmg, { 160, MatchOptions::StatInfluence::Max } },
+//			{ StatType::Spd, { 175, MatchOptions::StatInfluence::Minor } },
+//			{ StatType::Acc, { 180, MatchOptions::StatInfluence::Minor } },
+//		}
+//		,{  }
+//		,{ MINOR_CHAMPIONS }
+//	);
+//	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Speed,
+//						  ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Zhivuchest } );
+//	BOOST_CHECK( matching.IsInputOK() );
+//	FindAndReportBestForChampion( ChampionName::Reya, matching );
+//}
 
 BOOST_AUTO_TEST_CASE( FindBest_Rotos )
 {
@@ -718,6 +832,25 @@ BOOST_AUTO_TEST_CASE( FindBest_VelikiyGalek )
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::VGalek, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Vergis )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,   { 30000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { 2700, MatchOptions::StatInfluence::Major } },
+			{ StatType::CRate,  { 70, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg,  { 100, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd,  { 170, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Vamp }
+		,{}
+		,ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::CRate } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Vergis, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )

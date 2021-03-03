@@ -63,24 +63,23 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, Vamp );
 		CASE_RETURN_STRING( ArtSet, Resist );
 		CASE_RETURN_STRING( ArtSet, Gibel );
-		CASE_RETURN_STRING( ArtSet, Mest );
-		CASE_RETURN_STRING( ArtSet, Fury );
 		CASE_RETURN_STRING( ArtSet, Curing );
-		CASE_RETURN_STRING( ArtSet, Reflex );
+		//CASE_RETURN_STRING( ArtSet, Reflex );
 		CASE_RETURN_STRING( ArtSet, Cursed );
-		CASE_RETURN_STRING( ArtSet, Toxic );
+		//CASE_RETURN_STRING( ArtSet, Toxic );
 		CASE_RETURN_STRING( ArtSet, Frost );
 		CASE_RETURN_STRING( ArtSet, Daze );
 		CASE_RETURN_STRING( ArtSet, Immunitet );
+		CASE_RETURN_STRING( ArtSet, Stun );
 		CASE_RETURN_STRING( ArtSet, Revenge );
 		CASE_RETURN_STRING( ArtSet, Vozmezdie );
 		CASE_RETURN_STRING( ArtSet, Shield );
 		CASE_RETURN_STRING( ArtSet, Doblest );
-		CASE_RETURN_STRING( ArtSet, Beshenstvo );
+		//CASE_RETURN_STRING( ArtSet, Beshenstvo );
 		CASE_RETURN_STRING( ArtSet, Regeneration );
 		CASE_RETURN_STRING( ArtSet, Svirepost );
 		CASE_RETURN_STRING( ArtSet, Savage );
-		CASE_RETURN_STRING( ArtSet, Taunting );
+		//CASE_RETURN_STRING( ArtSet, Taunting );
 		CASE_RETURN_STRING( ArtSet, Cruel );
 		CASE_RETURN_STRING( ArtSet, Immortal );
 		CASE_RETURN_STRING( ArtSet, DivAtk );
@@ -156,7 +155,7 @@ std::string to_string( const Artefact& art, bool format_as_code )
 		}
 		if ( art.Owner != ChampionName::none )
 		{
-			ss << ", {ChampionName::" << to_string( art.Owner );
+			ss << "}, {ChampionName::" << to_string( art.Owner );
 		}
 		ss << "} ),";
 	}
@@ -211,6 +210,7 @@ const char* to_string( const ChampionName& name )
 	{
 		CASE_RETURN_STRING( ChampionName, Alura );
 		CASE_RETURN_STRING( ChampionName, Arbitr );
+		CASE_RETURN_STRING( ChampionName, Baronessa );
 		CASE_RETURN_STRING( ChampionName, BlackKnight );
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
 		CASE_RETURN_STRING( ChampionName, Fakhrakin );
@@ -220,6 +220,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Gala );
 		CASE_RETURN_STRING( ChampionName, Gorgorab );
 		CASE_RETURN_STRING( ChampionName, GornyKorol );
+		CASE_RETURN_STRING( ChampionName, Grash );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
 		CASE_RETURN_STRING( ChampionName, Guard );
 		CASE_RETURN_STRING( ChampionName, Hakkorn );
@@ -230,15 +231,18 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Kael );
 		CASE_RETURN_STRING( ChampionName, Kaiden );
 		CASE_RETURN_STRING( ChampionName, Killian );
+		CASE_RETURN_STRING( ChampionName, Kostolom );
 		CASE_RETURN_STRING( ChampionName, Krisk );
 		CASE_RETURN_STRING( ChampionName, Lekar );
 		CASE_RETURN_STRING( ChampionName, Lovec );
+		CASE_RETURN_STRING( ChampionName, Lutopes );
 		CASE_RETURN_STRING( ChampionName, Mashalled );
 		CASE_RETURN_STRING( ChampionName, Mavzolejnik );
 		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Mu4ka );
 		CASE_RETURN_STRING( ChampionName, Razen );
 		CASE_RETURN_STRING( ChampionName, Revoglas );
+		CASE_RETURN_STRING( ChampionName, Reya );
 		CASE_RETURN_STRING( ChampionName, Rotos );
 		CASE_RETURN_STRING( ChampionName, SerjantA );
 		CASE_RETURN_STRING( ChampionName, Sinesha );
@@ -255,6 +259,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Yuliana );
 		CASE_RETURN_STRING( ChampionName, Zargala );
 		CASE_RETURN_STRING( ChampionName, Zelot );
+		CASE_RETURN_STRING( ChampionName, Yarl );
 	}
 	_ASSERTE( !"unreachable code" );
 	return "";

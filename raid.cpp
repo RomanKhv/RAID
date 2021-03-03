@@ -361,7 +361,7 @@ std::vector<StatType> StatTypesForArt( ArtType art )
 					//      0  4  8   12  16
 					/*4*/{  8, 0,  0,  0,  0 },
 					/*5*/{ 10, 0, 31, 42, 65 },
-					/*6*/{ 12, 0, 38,  0, 80 },
+					/*6*/{ 12, 0, 38, 52, 80 },
 				};
 				static const stat_table_t CDmg_necklace = {
 					//     0   4   8  12  16
@@ -978,6 +978,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Arbitr:
 			return Champion( { 21135, 1068, 1101,  110,  15, 50,  30, 10 }, Element::Void, name );
 			break;
+		case ChampionName::Baronessa:
+			return Champion( { 17670, 914, 1211,  95,  15, 50,  40, 0 }, Element::Red, name );
+			break;
 		case ChampionName::BlackKnight:
 			return Champion( { 22470, 914, 1167,  100,  15, 57,  50, 0 }, Element::Red, name );
 			break;
@@ -1002,6 +1005,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::GornyKorol:
 			return Champion( { 31050, 1432, 1112,  85,  15, 63,  90, 0 }, Element::Red, name );
 			break;
+		case ChampionName::Grash:
+			return Champion( { 13485, 478, 923,  94,  15, 50,  30, 0 }, Element::Green, name );		//50 lvl
+			break;
 		case ChampionName::Gromoboy:
 			return Champion( { 15855, 727, 1443,  97,  15+5, 50,  30, 0 }, Element::Void, name );
 			break;
@@ -1020,8 +1026,14 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Kael:
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Kaiden:
+			return Champion( { 16350, 837, 1376,  95,  15, 50,  30, 15 }, Element::Blue, name );
+			break;
 		case ChampionName::Killian:
 			return Champion( { 13215, 1432, 1266,  98,  15, 63,  30, 10 }, Element::Blue, name );
+			break;
+		case ChampionName::Kostolom:
+			return Champion( { 9720, 1012, 640,  97,  15, 50,  30, 10 }, Element::Red, name );		//50 lvl
 			break;
 		case ChampionName::Krisk:
 			return Champion( { 19485, 760, 1520,  94,  15, 50,  50, 10+10+50 }, Element::Void, name );
@@ -1031,6 +1043,10 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Lovec:
 			return Champion( { 16845, 1002, 1178,  103,  15, 50,  45, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Lutopes:
+			return Champion( { 10560, 696, 769,  92,  15, 50,  30, 0 }, Element::Void, name );		//50 lvl
+			//return Champion( { 14865, 958, 1079,  92,  15, 50,  40, 0 }, Element::Void, name );
 			break;
 		case ChampionName::Mashalled:
 			return Champion( { 17835, 1454, 936,  103,  15+5, 63,  30, 0 }, Element::Green, name );
@@ -1047,11 +1063,15 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Razen:
 			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );
 			break;
+		case ChampionName::Reya:
+			return Champion( { 15195, 1343, 1222,  98,  15+5, 63+10,  40, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::SerjantA:
-			return Champion( { 13110, 599, 818+75,  97,  15, 50,  60, 0+10 }, Element::Red, name );
+			return Champion( { 13110, 599, 818+75,  97,  15, 50,  60, 0+10 }, Element::Red, name );		// 50 lvl
+			//return Champion( { 18495, 859, 1211+75,  97,  15, 50,  75, 0+10 }, Element::Red, name );
 			break;
 		case ChampionName::Skilla:
 			return Champion( { 191980, 859, 1387 + 70,  95,  15 + 5, 63 + 10,  40, 0 }, Element::Blue, name );
@@ -1068,8 +1088,11 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Tyrel:
 			return Champion( { 16185, 881, 1343+75,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Vergis:
+			return Champion( { 16020+810, 925, 1310,  98,  15+5, 50+10,  45, 0 }, Element::Green, name );
+			break;
 		case ChampionName::VGalek:
-			return Champion( { 15195, 1332, 958,  98,  15+5, 60+10,  30, 0+10 }, Element::Blue, name );
+			return Champion( { 15195, 1332, 958,  98,  15 + 5, 60 + 10,  30, 0 + 10 }, Element::Blue, name );
 			break;
 		case ChampionName::VisirOvelis:
 			return Champion( { 16350, 1476, 1013,  101,  15, 63,  40, 0+10 }, Element::Red, name );

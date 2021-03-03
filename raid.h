@@ -85,25 +85,24 @@ enum class ArtSet
 	Rastoropnost,	//Acc+40, Speed+5%
 	//4
 	Vamp,
-	Gibel,
-	Mest,
-	Fury,
-	Curing,
-	Reflex,
-	Cursed,
-	Toxic,
-	Frost,
 	Daze,			//Ступор
+	Cursed,
+	Frost,
+	//Beshenstvo,		//Frenzy
+	Curing,
 	Immunitet,		//Avenging
-	Vozmezdie,
 	Shield,
-	Doblest,
-	Beshenstvo,		//4 Frenzy
-	Regeneration,
 	Svirepost,		//Relentless
 	Savage,			//Жестокость
-	Taunting,		//Насмешка
+	Gibel,
+	Stun,
+	//Taunting,		//Насмешка
 	Revenge,		//Месть
+	Vozmezdie,
+	Doblest,
+	//Reflex,
+	//Toxic,
+	Regeneration,
 
 	count,
 
@@ -130,6 +129,7 @@ enum class ChampionName
 
 	Alura,
 	Arbitr,
+	Baronessa,
 	BlackKnight,
 	ColdHeart,
 	Fakhrakin,
@@ -139,6 +139,7 @@ enum class ChampionName
 	Gala,
 	Gorgorab,
 	GornyKorol,
+	Grash,
 	Gromoboy,
 	Guard,
 	Hakkorn,
@@ -149,15 +150,18 @@ enum class ChampionName
 	Kael,
 	Kaiden,
 	Killian,
+	Kostolom,
 	Krisk,
 	Lekar,
 	Lovec,
+	Lutopes,
 	Mashalled,
 	Mavzolejnik,
 	Molly,
 	Mu4ka,
 	Razen,
 	Revoglas,
+	Reya,
 	Rotos,
 	SerjantA,
 	Sinesha,
@@ -174,6 +178,7 @@ enum class ChampionName
 	Yuliana,
 	Zargala,
 	Zelot,
+	Yarl,
 
 	count
 };
