@@ -101,7 +101,7 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, Deads );
 		CASE_RETURN_STRING( ArtSet, DarkElves );
 		CASE_RETURN_STRING( ArtSet, Renegates );
-		CASE_RETURN_STRING( ArtSet, Dworves );
+		CASE_RETURN_STRING( ArtSet, Dwarves );
 		case ArtSet::None: return {};
 	}
 	_ASSERTE( !"not yet supported" );
@@ -151,13 +151,17 @@ std::string to_string( const Artefact& art, bool format_as_code )
 		ss << ", { ";
 		for ( const Stat& s : art.AddStats )
 		{
-			ss << "{StatType::" << to_string( s.Type ) << "," << s.BaseValue << "}, ";
+			ss << "{StatType::" << to_string( s.Type ) << "," << s.BaseValue;
+			if ( s.ExtValue > 0 )
+				ss << "," << s.ExtValue;
+			ss << "}, ";
 		}
+		ss << "}";
 		if ( art.Owner != ChampionName::none )
 		{
-			ss << "}, {ChampionName::" << to_string( art.Owner );
+			ss << ", ChampionName::" << to_string( art.Owner );
 		}
-		ss << "} ),";
+		ss << " ),";
 	}
 	return ss.str();
 }

@@ -2,13 +2,16 @@
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
 <Type Name="Stat">
-    <DisplayString Condition="Type==StatType::HP_p || Type==StatType::Atk_p || Type==StatType::Def_p">{Type,en}: {Value}%</DisplayString>
+    <Intrinsic Name="is_percent" Expression="Type==StatType::HP_p || Type==StatType::Atk_p || Type==StatType::Def_p"/>
+    <DisplayString Condition="is_percent() &amp;&amp; (ExtValue>0)">{Type,en}: {Value}% ({BaseValue}+{ExtValue})</DisplayString>
+    <DisplayString Condition="is_percent()">{Type,en}: {Value}%</DisplayString>
+    <DisplayString Condition="ExtValue>0">{Type,en}: {Value} ({BaseValue}+{ExtValue})</DisplayString>
     <DisplayString>{Type,en}: {Value}</DisplayString>
 </Type>
 
 <Type Name="Artefact">
     <DisplayString Condition="Type==ArtType::None">{Type,en}</DisplayString>
-    <DisplayString>{Type,en}({Set,en}) - {Stars}*({Level}) - {MainStat,en}</DisplayString>
+    <DisplayString>{Type,en}({Set,en}) - {Stars}*({Level}) - {_MainStat_Actual.Type,en}</DisplayString>
 </Type>
 
 <Type Name="Equipment">

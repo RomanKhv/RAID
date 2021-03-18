@@ -361,7 +361,7 @@ bool ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 		return false;
 
 	ChampionStats arts_bonus_stats;
-	ApplyEquipment( eq, target_champ.BasicStats, arts_bonus_stats, true, matching.ConsiderMaxLevels );
+	ApplyEquipment( eq, target_champ.BasicStats, arts_bonus_stats, true, false, matching.ConsiderMaxLevels );
 
 	const float est = EstimateEquipment( target_champ.TotalStats( arts_bonus_stats ), matching );
 
@@ -528,6 +528,7 @@ void FindBestEquipment2( const std::vector<Artefact>& inventory, const Champion&
 	std::map<ArtType, std::vector<Artefact>> arts_by_type;
 	SeparateInventory( inventory, matching, ch.Name, arts_by_type );
 
+	_ASSERTE( arts_by_type[ArtType::Weapon].size() < 70 );
 	if ( auto v = stl::get_value_ptr( arts_by_type, ArtType::Ring ) )
 		_ASSERTE( v->size() <= 1 );
 	if ( auto v = stl::get_value_ptr( arts_by_type, ArtType::Necklace ) )
@@ -543,18 +544,6 @@ void FindBestEquipment2( const std::vector<Artefact>& inventory, const Champion&
 		std::printf( "Est: %f\n", rhs._Est );
 		eqs.emplace_back( rhs._Eq.as_basic() );
 	}
-}
-
-Equipment FindRealBestEquipment( ChampionExt& ch, const MatchOptions& matching )
-{
-	scope_profile_time prof_time( "FindRealBestEquipment" );
-
-	Equipment best_eq;
-	FindBestEquipment( _MyArts, ch, matching, best_eq );
-
-	ApplyEquipment( best_eq, ch.BasicStats, ch.ArtsBonusStats, false, matching.ConsiderMaxLevels );
-
-	return best_eq;
 }
 
 void FindRealBestEquipment2( const Champion& ch, const MatchOptions& matching, std::vector<Equipment>& eqs )

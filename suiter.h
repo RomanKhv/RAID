@@ -67,6 +67,7 @@ struct MatchOptions
 	bool IsSetAccepted( ArtSet ) const;
 	bool IsArtAccepted( const Artefact&, ChampionName ) const;
 	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
+	bool AreSetsRestrictedToRequired() const;
 
 private:
 	bool IsArtAcceptedByTier( const Artefact& ) const;
@@ -88,7 +89,6 @@ bool EstimateMinCap( int value, int ref_value, int width, float& est );
 float EstimateEquipment( const ChampionStats&, const MatchOptions& );
 void FindBestEquipment( const std::vector<Artefact>&, const Champion&, const MatchOptions&, Equipment& );
 void FindBestEquipment2( const std::vector<Artefact>&, const Champion&, const MatchOptions&, std::vector<Equipment>& );
-Equipment FindRealBestEquipment( ChampionExt&, const MatchOptions& );
 void FindRealBestEquipment2( const Champion&, const MatchOptions&, std::vector<Equipment>& );
 
 /////////////////////////////////////////////////////////////////////////////

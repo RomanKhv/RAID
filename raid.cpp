@@ -271,9 +271,9 @@ ChampionExt::ChampionExt( const Champion& b )
 {
 }
 
-void ChampionExt::ApplyEquipment( const Equipment& eq, bool estimating, bool consider_max_level )
+void ChampionExt::ApplyEquipment( const Equipment& eq, bool estimating, bool consider_glyphs, bool consider_max_level )
 {
-	::ApplyEquipment( eq, BasicStats, ArtsBonusStats, estimating, consider_max_level );
+	::ApplyEquipment( eq, BasicStats, ArtsBonusStats, estimating, consider_glyphs, consider_max_level );
 }
 
 ChampionStats ChampionExt::TotalStats( bool apply_hall_bonus ) const
@@ -547,15 +547,15 @@ bool IsGoodStatForArt( StatType stat, ArtType art )
 }//debug
 /////////////////////////////////////////////////////////////////////////////
 
-void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating )
+void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool consider_glyphs )
 {
 	_ASSERTE( stat.Value > 0 && stat.BaseValue > 0 );
 	if ( Stat::IsBasic( stat.Type ) )	// == IsAdditive
 	{
-		arts_bonus_stats[stat.Type] += stat.get_val( estimating );
+		arts_bonus_stats[stat.Type] += stat.get_val(consider_glyphs);
 	}
 	else {
-		arts_bonus_stats.basic_from_p(stat.Type) += basic_stats.basic_from_p(stat.Type) * stat.get_val(estimating) / 100;
+		arts_bonus_stats.basic_from_p(stat.Type) += basic_stats.basic_from_p(stat.Type) * stat.get_val(consider_glyphs) / 100;
 	}
 	//switch ( stat.Type )
 	//{
@@ -573,7 +573,7 @@ void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStat
 
 void ChampionExt::ApplyStat( const Stat& stat, bool estimating )
 {
-	::ApplyStat( stat, BasicStats, ArtsBonusStats, estimating );
+	::ApplyStat( stat, BasicStats, ArtsBonusStats, !estimating );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -719,7 +719,7 @@ void ApplySetsBonuses( const EquipmentRef& eq, const ChampionStats& basic_stats,
 	}
 }
 
-void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating, bool consider_max_level )
+void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level )
 {
 	if ( !art.Initialized() )
 	{
@@ -729,13 +729,13 @@ void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, Champ
 	if ( !MatchOptions::ConsiderMaxLevelsForNonBasicArts && !art.IsBasic() )
 		consider_max_level = false;
 
-	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats, false );
+	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats, true );
 
 	for ( const Stat& stat : art.AddStats )
-		ApplyStat( stat, basic_stats, arts_bonus_stats, estimating );
+		ApplyStat( stat, basic_stats, arts_bonus_stats, !estimating && consider_glyphs );
 }
 
-void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level )
+void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level )
 {
 	ApplySetsBonuses( eq, basic_stats, art_bonus_stats, estimating );
 
@@ -743,12 +743,12 @@ void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, Cham
 	{
 		if ( art.Initialized() )
 		{
-			ApplyArtBonus( art, basic_stats, art_bonus_stats, estimating, estimating || consider_max_level );
+			ApplyArtBonus( art, basic_stats, art_bonus_stats, estimating, consider_glyphs, estimating || consider_max_level );
 		}
 	}
 }
 
-void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating, bool consider_max_level )
+void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, ChampionStats& arts_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level )
 {
 	ApplySetsBonuses( eq, basic_stats, arts_bonus_stats, estimating );
 
@@ -757,7 +757,7 @@ void ApplyEquipment( const EquipmentRef& eq, const ChampionStats& basic_stats, C
 		if ( art )
 		{
 			_ASSERTE( art->Initialized() );
-			ApplyArtBonus( *art, basic_stats, arts_bonus_stats, estimating, estimating || consider_max_level );
+			ApplyArtBonus( *art, basic_stats, arts_bonus_stats, estimating, consider_glyphs, estimating || consider_max_level );
 		}
 	}
 }
@@ -770,7 +770,7 @@ void ApplyHallBonus( const Champion& ch, ChampionStats& stats )
 	{
 		const int b = hall_bonus[stl::enum_to_int( st )];
 		if ( b > 0 )
-			ApplyStat( { st, b }, ch.BasicStats, stats, false );
+			ApplyStat( { st, b }, ch.BasicStats, stats, true );
 	}
 }
 
@@ -799,10 +799,11 @@ MatchOptions::MatchOptions( std::map<StatType, StatFactor> factors, std::vector<
 	{
 		RequiedSets[set]++;
 	}
-// 	for ( ArtSet set : exclusion_filter )
-// 	{
-// 		ExcludedSets[set] = true;
-// 	}
+	if ( AreSetsRestrictedToRequired() )
+	{
+		AllowSets( std::set<ArtSet>( req_filter.begin(), req_filter.end() ) );
+	}
+
 	for ( ChampionName name : providers )
 	{
 		Undressable[name] = true;
@@ -903,6 +904,9 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	_ASSERTE( ArtTierCap == ArtTier::T1 );
 #endif
 
+	if ( art.IsLower() && Factor( Stat::ToBasic( art.MainStatType() ) ).IgnoreStat() )
+		return false;
+
 	if ( StatOnArt[art.Type].has_value() )
 	{
 		if ( art.MainStatType() != StatOnArt[art.Type] )
@@ -946,14 +950,20 @@ bool MatchOptions::IsEqHasRequiredSets( const EquipmentRef& eq ) const
 	return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
-ChampionStats FinalStats( const Champion& ch, const Equipment& eq )
+bool MatchOptions::AreSetsRestrictedToRequired() const
 {
-	ChampionStats arts_bonus_stats;
-	ApplyEquipment( eq, ch.BasicStats, arts_bonus_stats, false, MatchOptions::ConsiderMaxLevels );
-	return ch.TotalStats( arts_bonus_stats );
+	int n_req_arts = 0;
+	for ( const auto set : RequiedSets )
+	{
+		_ASSERTE( set.second > 0 );
+		n_req_arts += SetSize_fast( set.first ) * set.second;
+	}
+	_ASSERTE( n_req_arts <= 6 );
+	BOOST_CHECK( n_req_arts <= 6 );
+	return n_req_arts == 6;
 }
+
+/////////////////////////////////////////////////////////////////////////////
 
 Equipment GetCurrentEquipmentFor( ChampionName name )
 {
@@ -1061,10 +1071,13 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 12870+810, 688, 542+75,  102,  15, 50,  30, 0 }, Element::Void, name );	//50 lvl
 			break;
 		case ChampionName::Razen:
-			return Champion( { 18330, 1046, 1310,  91,  15, 50,  50, 0 }, Element::Red, name );
+			return Champion( { 18330, 1046, 1310,  91,  15+5, 50+10,  50, 0 }, Element::Red, name );
+			break;
+		case ChampionName::Revoglas:
+			return Champion( { 16515, 1013, 914,  99,  15+5, 50+10,  30, 15+10 }, Element::Void, name );
 			break;
 		case ChampionName::Reya:
-			return Champion( { 15195, 1343, 1222,  98,  15+5, 63+10,  40, 0 }, Element::Blue, name );
+			return Champion( { 15195, 1343, 1222,  98,  15 + 5, 63 + 10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
@@ -1114,19 +1127,19 @@ Champion Champion::ByName( ChampionName name )
 	return Champion( { 0, 0, 0,  0,  0, 0,  0, 0 }, Element::Blue, name );
 }
 
-ChampionStats GetCurrentArtsStatsFor( ChampionName name )
+ChampionStats GetCurrentArtsStatsFor( ChampionName name, bool consider_glyphs )
 {
 	ChampionStats arts_bonus_stats;
 	const Champion ch = Champion::ByName( name );
 	const Equipment current_eq = GetCurrentEquipmentFor( name );
-	ApplyEquipment( current_eq, ch.BasicStats, arts_bonus_stats, false, false );
+	ApplyEquipment( current_eq, ch.BasicStats, arts_bonus_stats, false, consider_glyphs, false );
 	return arts_bonus_stats;
 }
 
-ChampionStats GetCurrentFinalStatsFor( ChampionName name )
+ChampionStats GetCurrentFinalStatsFor( ChampionName name, bool consider_glyphs )
 {
 	const Champion ch = Champion::ByName( name );
-	return ch.TotalStats( GetCurrentArtsStatsFor( name ) );
+	return ch.TotalStats( GetCurrentArtsStatsFor( name, consider_glyphs ) );
 }
 
 #ifdef _DEBUG

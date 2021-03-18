@@ -55,10 +55,12 @@ struct Stat
 	Stat( StatType t, int base, int add ) : Type(t), BaseValue(base), ExtValue(add), Value(base+add) {}
 
 	bool Initialized() const { return Value > 0; }
-	int  get_val(bool estimation) const { return estimation ? BaseValue : Value; }
+	int  get_val(bool full) const { return full ? Value : BaseValue; }
 
 	static const int TypeCount = 8 + 3;
 	static bool IsBasic( const StatType st ) { return stl::enum_to_int(st) <= stl::enum_to_int(StatType::Acc); }
+	static bool IsP( const StatType st ) { return stl::enum_to_int(st) >= stl::enum_to_int(StatType::HP_p); }
+	static StatType ToBasic( const StatType st ) { return IsP(st) ? StatType(stl::enum_to_int(st) - stl::enum_to_int(StatType::HP_p)) : st; }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -118,7 +120,7 @@ enum class ArtSet
 	Deads,
 	DarkElves,
 	Renegates,
-	Dworves,
+	Dwarves,
 
 	_FourBegin = Vamp
 };
@@ -202,6 +204,7 @@ struct Artefact
 	void Reset();
 	bool Initialized() const { return Stars > 0; }
 	bool IsBasic() const { _ASSERTE(Initialized()); return stl::enum_to_int(Type) <= stl::enum_to_int(ArtType::Boots); }
+	bool IsLower() const { _ASSERTE(Initialized()); return stl::enum_to_int(ArtType::Gloves)<=stl::enum_to_int(Type) && stl::enum_to_int(Type)<=stl::enum_to_int(ArtType::Boots); }
 	StatType MainStatType() const { return _MainStat_Actual.Type; }
 	const Stat& GetMainStat( bool consider_max_level ) const;
 
@@ -319,7 +322,7 @@ struct ChampionExt
 
 	ChampionExt( const Champion& );
 	void ApplyStat( const Stat&, bool estimating = false );
-	void ApplyEquipment( const Equipment&, bool estimating, bool consider_max_level );
+	void ApplyEquipment( const Equipment&, bool estimating, bool consider_glyphs, bool consider_max_level );
 	ChampionStats TotalStats( bool apply_hall_bonus = true ) const;
 };
 
@@ -340,12 +343,12 @@ bool IsGoodStatForArt( StatType, ArtType );
 int  StatValueForLevel_fast( ArtType, StatType, int starRank, int level );
 inline int SetSize_fast( ArtSet set ) { return (stl::enum_to_int(set) < stl::enum_to_int(ArtSet::_FourBegin)) ? 2 : 4; }
 
-void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus, bool estimating );
+void ApplyStat( const Stat&, const ChampionStats& basic_stats, ChampionStats& arts_bonus, bool consider_glyphs );
 void ApplySetBonus( ArtSet, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
 void ApplySetsBonuses( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool compensation );
-void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
-void ApplyEquipment( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
-void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_max_level );
+void ApplyArtBonus( const Artefact&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level );
+void ApplyEquipment( const Equipment&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level );
+void ApplyEquipment( const EquipmentRef&, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level );
 void ApplyHallBonus( const Champion&, ChampionStats& );
 
 /////////////////////////////////////////////////////////////////////////////
@@ -364,11 +367,9 @@ extern const Hall _MyHall;
 
 /////////////////////////////////////////////////////////////////////////////
 
-ChampionStats FinalStats( const Champion&, const Equipment& );
-
 extern const std::vector<Artefact> _MyArts;
 Equipment GetCurrentEquipmentFor( ChampionName );
-ChampionStats GetCurrentArtsStatsFor( ChampionName );
-ChampionStats GetCurrentFinalStatsFor( ChampionName );
+ChampionStats GetCurrentArtsStatsFor( ChampionName, bool consider_glyphs );
+ChampionStats GetCurrentFinalStatsFor( ChampionName, bool consider_glyphs );
 
 /////////////////////////////////////////////////////////////////////////////

@@ -147,6 +147,30 @@ BOOST_AUTO_TEST_CASE( test_basics )
 		BOOST_CHECK( !Stat::IsBasic( StatType::Atk_p ) );
 		BOOST_CHECK( !Stat::IsBasic( StatType::Def_p ) );
 
+		BOOST_CHECK( !Stat::IsP( StatType::HP ) );
+		BOOST_CHECK( !Stat::IsP( StatType::Atk ) );
+		BOOST_CHECK( !Stat::IsP( StatType::Def ) );
+		BOOST_CHECK( !Stat::IsP( StatType::Spd ) );
+		BOOST_CHECK( !Stat::IsP( StatType::CRate ) );
+		BOOST_CHECK( !Stat::IsP( StatType::CDmg ) );
+		BOOST_CHECK( !Stat::IsP( StatType::Res ) );
+		BOOST_CHECK( !Stat::IsP( StatType::Acc ) );
+		BOOST_CHECK( Stat::IsP( StatType::HP_p ) );
+		BOOST_CHECK( Stat::IsP( StatType::Atk_p ) );
+		BOOST_CHECK( Stat::IsP( StatType::Def_p ) );
+
+		BOOST_CHECK( Stat::ToBasic( StatType::HP ) == StatType::HP );
+		BOOST_CHECK( Stat::ToBasic( StatType::Atk ) == StatType::Atk );
+		BOOST_CHECK( Stat::ToBasic( StatType::Def ) == StatType::Def );
+		BOOST_CHECK( Stat::ToBasic( StatType::Spd ) == StatType::Spd );
+		BOOST_CHECK( Stat::ToBasic( StatType::CRate ) == StatType::CRate );
+		BOOST_CHECK( Stat::ToBasic( StatType::CDmg ) == StatType::CDmg );
+		BOOST_CHECK( Stat::ToBasic( StatType::Res ) == StatType::Res );
+		BOOST_CHECK( Stat::ToBasic( StatType::Acc ) == StatType::Acc );
+		BOOST_CHECK( Stat::ToBasic( StatType::HP_p ) == StatType::HP );
+		BOOST_CHECK( Stat::ToBasic( StatType::Atk_p ) == StatType::Atk );
+		BOOST_CHECK( Stat::ToBasic( StatType::Def_p ) == StatType::Def );
+
 		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::HP_p ), 1 );
 		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::Atk_p ), 2 );
 		BOOST_CHECK_EQUAL( stats.basic_from_p( StatType::Def_p ), 3 );
@@ -301,7 +325,7 @@ BOOST_AUTO_TEST_CASE( test_InventoryCorrectness )
 	for ( const Artefact& art : _MyArts )
 	{
 		ChampionStats stats;
-		ApplyArtBonus( art, ch.BasicStats, stats, true, false );
+		ApplyArtBonus( art, ch.BasicStats, stats, false, true, false );
 
 		if ( art.Owner != ChampionName::none )
 		{
@@ -369,13 +393,55 @@ BOOST_AUTO_TEST_CASE( find_SetsRestrictions )
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
 		BOOST_CHECK( MatchOptions( {}, { ArtSet::HP, ArtSet::Vamp } ).IsEqHasRequiredSets( convert(eq) ) );
 	}
-
-	MatchOptions mo;
-	mo.ForbiddenSets( { ArtSet::Atk } );
-	BOOST_CHECK( mo.IsSetAccepted( ArtSet::HP ) );
-	BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
-	mo.ForbiddenSets( { ArtSet::Atk, ArtSet::Def } );
-	BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
+	{
+		MatchOptions mo;
+		mo.ForbiddenSets( { ArtSet::Atk } );
+		BOOST_CHECK( mo.IsSetAccepted( ArtSet::HP ) );
+		BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
+		mo.ForbiddenSets( { ArtSet::Atk, ArtSet::Def } );
+		BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
+	}
+	const ChampionName ch = ChampionName::Yuliana;
+	{
+		const MatchOptions mo(
+			{
+				{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Modrt } },
+				{ StatType::CRate,  { 90 } },
+				{ StatType::Acc,  { 200 } },
+			}
+		);
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Helmet, ArtSet::HP, 5, 8, StatType::HP, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Shield, ArtSet::HP, 5, 8, StatType::Def, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Gloves, ArtSet::HP, 5, 8, StatType::CRate, {} ), ch ) );
+		BOOST_CHECK( !mo.IsArtAccepted( Artefact( ArtType::Gloves, ArtSet::HP, 5, 8, StatType::CDmg, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Gloves, ArtSet::HP, 5, 8, StatType::HP_p, {} ), ch ) );
+		BOOST_CHECK( !mo.IsArtAccepted( Artefact( ArtType::Gloves, ArtSet::HP, 5, 8, StatType::Atk_p, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Ring, ArtSet::HolyOrden, 5, 8, StatType::Atk, {}, ch ), ch ) );
+	}
+	{
+		MatchOptions mo(
+			{},
+			{ ArtSet::Shield }
+		);
+		mo.AllowSets( { ArtSet::HP } );
+		BOOST_CHECK( !mo.AreSetsRestrictedToRequired() );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::Shield, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::HP, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( !mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::Atk, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Ring, ArtSet::HolyOrden, 5, 8, StatType::Atk, {}, ch ), ch ) );
+	}
+	{
+		const MatchOptions mo(
+			{},
+			{ ArtSet::Shield, ArtSet::Immortal }
+		);
+		BOOST_CHECK( mo.AreSetsRestrictedToRequired() );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::Shield, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::Immortal, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( !mo.IsArtAccepted( Artefact( ArtType::Weapon, ArtSet::Atk, 5, 8, StatType::Atk, {} ), ch ) );
+		BOOST_CHECK( mo.IsArtAccepted( Artefact( ArtType::Ring, ArtSet::HolyOrden, 5, 8, StatType::Atk, {}, ch ), ch ) );
+	}
 }
 
 BOOST_AUTO_TEST_CASE( test_Iterator )
@@ -873,10 +939,10 @@ BOOST_AUTO_TEST_CASE( test_TuneCoefs )
 
 BOOST_AUTO_TEST_CASE( test_champ_relations )
 {
-	const ChampionStats zaliv = GetCurrentFinalStatsFor( ChampionName::Gorgorab/*Hatun*/ );
-	const ChampionStats raskol = GetCurrentFinalStatsFor( ChampionName::Zargala );
-	const ChampionStats dd = GetCurrentFinalStatsFor( ChampionName::Foly );
-	const ChampionStats dd2 = GetCurrentFinalStatsFor( ChampionName::Rotos );
+	const ChampionStats zaliv = GetCurrentFinalStatsFor( ChampionName::Gorgorab/*Hatun*/, true );
+	const ChampionStats raskol = GetCurrentFinalStatsFor( ChampionName::Zargala, true );
+	const ChampionStats dd = GetCurrentFinalStatsFor( ChampionName::Foly, true );
+	const ChampionStats dd2 = GetCurrentFinalStatsFor( ChampionName::Rotos, true );
 	BOOST_CHECK_GT( zaliv.Spd, raskol.Spd );
 	BOOST_CHECK_GT( raskol.Spd, dd.Spd );
 	BOOST_CHECK_GT( raskol.Spd, dd2.Spd );
@@ -884,34 +950,34 @@ BOOST_AUTO_TEST_CASE( test_champ_relations )
 
 //#ifndef DEBUG_FIND_BEST
 
-BOOST_AUTO_TEST_CASE( test_StatsCalculation )
-{
-	{
-		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
-		const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
-		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, false );
-
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 15207 - 2 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 305 - 1 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 2295 - 2 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 51 + 1 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 47 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 6 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 42 );
-		//BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 90 );
-
-		//ChampionStats hall_stats;
-		//ApplyHallBonus( ch, hall_stats );
-		//BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
-		//BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
-		//BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
-		//BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
-		//BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
-		//BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
-		//BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
-		//BOOST_CHECK_EQUAL( hall_stats.Acc, 40 );
-	}
-}
+//BOOST_AUTO_TEST_CASE( test_StatsCalculation )
+//{
+//	{
+//		ChampionExt ch = Champion::ByName( ChampionName::Gromoboy );
+//		const Equipment eq = GetCurrentEquipmentFor( ChampionName::Gromoboy );
+//		ApplyEquipment( eq, ch.BasicStats, ch.ArtsBonusStats, false, true, false );
+//
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.HP, 15207 - 2 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Atk, 305 - 1 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Def, 2295 - 2 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Spd, 51 + 1 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CRate, 47 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.CDmg, 6 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Res, 42 );
+//		BOOST_CHECK_EQUAL( ch.ArtsBonusStats.Acc, 90 );
+//
+//		ChampionStats hall_stats;
+//		ApplyHallBonus( ch, hall_stats );
+//		BOOST_CHECK_EQUAL( hall_stats.HP, 317 );
+//		BOOST_CHECK_EQUAL( hall_stats.Atk, 15 - 1 );
+//		BOOST_CHECK_EQUAL( hall_stats.Def, 43 );
+//		BOOST_CHECK_EQUAL( hall_stats.Spd, 0 );
+//		BOOST_CHECK_EQUAL( hall_stats.CRate, 0 );
+//		BOOST_CHECK_EQUAL( hall_stats.CDmg, 2 );
+//		BOOST_CHECK_EQUAL( hall_stats.Res, 5 );
+//		BOOST_CHECK_EQUAL( hall_stats.Acc, 40 );
+//	}
+//}
 //#endif
 
 #ifdef _DEBUG
@@ -922,10 +988,9 @@ BOOST_AUTO_TEST_CASE( display_current_set )
 	//const ChampionName name = ChampionName::Gromoboy;
 
 	const Equipment eq = GetCurrentEquipmentFor( name );
-	BOOST_CHECK_GE( eq.Size(), 6 );
 	BOOST_TEST_MESSAGE( "\nCurrent equipment of " << to_string(name) << ":" );
 	BOOST_TEST_MESSAGE( to_string( eq, false ) );
-	const ChampionStats stats = GetCurrentFinalStatsFor( name );
+	const ChampionStats stats = GetCurrentFinalStatsFor( name, false );
 	BOOST_TEST_MESSAGE( to_string( stats ) );
 }
 #endif
