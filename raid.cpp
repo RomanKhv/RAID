@@ -988,6 +988,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Arbitr:
 			return Champion( { 21135, 1068, 1101,  110,  15, 50,  30, 10 }, Element::Void, name );
 			break;
+		case ChampionName::Astralon:
+			return Champion( { 16845, 1619, 837,  102,  15, 63,  30, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Baronessa:
 			return Champion( { 17670, 914, 1211,  95,  15, 50,  40, 0 }, Element::Red, name );
 			break;
@@ -1070,6 +1073,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Mu4ka:
 			return Champion( { 12870+810, 688, 542+75,  102,  15, 50,  30, 0 }, Element::Void, name );	//50 lvl
 			break;
+		case ChampionName::Norog:
+			return Champion( { 16845, 1156, 1299,  106,  15, 50,  50, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Razen:
 			return Champion( { 18330, 1046, 1310,  91,  15+5, 50+10,  50, 0 }, Element::Red, name );
 			break;
@@ -1081,6 +1087,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Seneshal:
+			return Champion( { 19980, 705, 1266,  105,  15, 50,  45, 0 }, Element::Red, name );
 			break;
 		case ChampionName::SerjantA:
 			return Champion( { 13110, 599, 818+75,  97,  15, 50,  60, 0+10 }, Element::Red, name );		// 50 lvl
@@ -1097,6 +1106,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Straholud:
 			return Champion( { 22965, 958, 815,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Taniks:
+			return Champion( { 17010, 1189, 980+75,  100,  15, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Tyrel:
 			return Champion( { 16185, 881, 1343+75,  95,  15+5, 50+10,  45, 0 }, Element::Blue, name );

@@ -214,6 +214,7 @@ const char* to_string( const ChampionName& name )
 	{
 		CASE_RETURN_STRING( ChampionName, Alura );
 		CASE_RETURN_STRING( ChampionName, Arbitr );
+		CASE_RETURN_STRING( ChampionName, Astralon );
 		CASE_RETURN_STRING( ChampionName, Baronessa );
 		CASE_RETURN_STRING( ChampionName, BlackKnight );
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
@@ -244,16 +245,19 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Mavzolejnik );
 		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Mu4ka );
+		CASE_RETURN_STRING( ChampionName, Norog );
 		CASE_RETURN_STRING( ChampionName, Razen );
 		CASE_RETURN_STRING( ChampionName, Revoglas );
 		CASE_RETURN_STRING( ChampionName, Reya );
 		CASE_RETURN_STRING( ChampionName, Rotos );
+		CASE_RETURN_STRING( ChampionName, Seneshal );
 		CASE_RETURN_STRING( ChampionName, SerjantA );
 		CASE_RETURN_STRING( ChampionName, Sinesha );
 		CASE_RETURN_STRING( ChampionName, Skilla );
 		CASE_RETURN_STRING( ChampionName, Sohaty );
 		CASE_RETURN_STRING( ChampionName, SteelSkull );
 		CASE_RETURN_STRING( ChampionName, Straholud );
+		CASE_RETURN_STRING( ChampionName, Taniks );
 		CASE_RETURN_STRING( ChampionName, Tyrel );
 		CASE_RETURN_STRING( ChampionName, Vergis );
 		CASE_RETURN_STRING( ChampionName, VGalek );
