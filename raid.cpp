@@ -1027,6 +1027,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Guard:
 			return Champion( { 15030, 1531, 771,  93,  15+5, 50+10,  30, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::Gurptuk:
+			return Champion( { 18825, 1079, 1244,  100,  15, 50,  50, 0 }, Element::Red, name );
+			break;
 		case ChampionName::Hakkorn:
 			return Champion( { 23790, 848, 1145,  99,  15, 50,  50, 10 }, Element::Blue, name );
 			break;

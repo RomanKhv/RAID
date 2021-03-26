@@ -228,6 +228,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Grash );
 		CASE_RETURN_STRING( ChampionName, Gromoboy );
 		CASE_RETURN_STRING( ChampionName, Guard );
+		CASE_RETURN_STRING( ChampionName, Gurptuk );
 		CASE_RETURN_STRING( ChampionName, Hakkorn );
 		CASE_RETURN_STRING( ChampionName, Hangar );
 		CASE_RETURN_STRING( ChampionName, Hatun );

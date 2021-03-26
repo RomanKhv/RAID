@@ -145,6 +145,7 @@ enum class ChampionName
 	Grash,
 	Gromoboy,
 	Guard,
+	Gurptuk,
 	Hakkorn,
 	Hangar,
 	Hatun,

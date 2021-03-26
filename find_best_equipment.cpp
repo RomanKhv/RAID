@@ -13,13 +13,14 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::BlackKnight;
+extern const ChampionName Champion_to_suitup = ChampionName::Gurptuk;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Cursed,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage/*,ArtSet::Beshenstvo,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Toxic,ArtSet::Reflex,ArtSet::Taunting*/
 
-#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Gala, ChampionName::Hakkorn, ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Killian, \
+#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, ChampionName::Hakkorn, \
+						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Killian, \
 						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
 						ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
 
@@ -366,6 +367,23 @@ BOOST_AUTO_TEST_CASE( FindBest_Guard )
 	matching.AllowSets( { ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Zhivuchest, ArtSet::Immortal } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Guard, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Gurptuk )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,   { 40000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def,  { 2000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd,  { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc,  { 180, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Immortal }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed, ArtSet::DivSpeed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Gurptuk, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Hakkorn )
