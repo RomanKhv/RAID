@@ -1003,6 +1003,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Fakhrakin:
 			return Champion( { 14535, 1244, 1090+75,  100,  15+5, 60+10,  30, 0 }, Element::Green, name );
 			break;
+		case ChampionName::Fatalyst:
+			return Champion( { 19320, 980, 1035,  100,  15, 50,  30, 0 }, Element::Red, name );
+			break;
 		case ChampionName::Fein:
 			return Champion( { 13710, 1663, 727,  99,  15, 57,  30, 0 }, Element::Green, name );
 			break;

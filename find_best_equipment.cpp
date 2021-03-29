@@ -13,16 +13,16 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Gurptuk;
+extern const ChampionName Champion_to_suitup = ChampionName::Fatalyst;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Cursed,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage/*,ArtSet::Beshenstvo,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Toxic,ArtSet::Reflex,ArtSet::Taunting*/
 
-#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, ChampionName::Hakkorn, \
+#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, ChampionName::Hakkorn, \
 						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Killian, \
 						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
-						ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
+						ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -221,6 +221,22 @@ BOOST_AUTO_TEST_CASE( FindBest_Fakhrakin )
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Fakhrakin, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Fatalyst )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { 2500, MatchOptions::StatInfluence::Max } },
+			{ StatType::Spd, { 190, MatchOptions::StatInfluence::Modrt } },
+		}
+		,{  }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Fatalyst, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Fein )
@@ -837,9 +853,27 @@ BOOST_AUTO_TEST_CASE( FindBest_Straholud_no_accuracy )
 	FindAndReportBestForChampion( ChampionName::Straholud, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Taniks )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,   { 30000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def,  { 2300, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate,{ 80, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 180, MatchOptions::StatInfluence::Minor } }
+		}
+		,{}
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CRate, ArtSet::DivCritRate } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Taniks, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 {
-	const MatchOptions matching(
+	MatchOptions matching(
 		{
 			{ StatType::HP,   { MatchOptions::StatInfluence::Modrt } },
 			{ StatType::Def,  { 3000, MatchOptions::StatInfluence::Max } },
@@ -849,9 +883,9 @@ BOOST_AUTO_TEST_CASE( FindBest_Tyrel )
 			{ StatType::Acc, { 180-10 } }
 		}
 		,{ ArtSet::Vamp }
-		,{ ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel }
 		,{ ChampionName::Gromoboy, MINOR_CHAMPIONS }
 	);
+	matching.ForbiddenSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Tyrel, matching );
 }
