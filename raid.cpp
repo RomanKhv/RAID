@@ -13,7 +13,7 @@ bool check_stat_input_error( const Stat& stat )
 		case StatType::HP:			return stat.BaseValue >= 100;
 		case StatType::Atk:			return stat.Value >= 16;
 		case StatType::Def:			return stat.Value >= 15;
-		case StatType::Atk_p:		return stat.BaseValue <= 24;
+		case StatType::Atk_p:		return stat.BaseValue <= 25;
 		case StatType::HP_p:		return stat.BaseValue <= 24;
 		case StatType::Def_p:		return stat.BaseValue <= 22;
 	}
@@ -1048,6 +1048,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Kaiden:
 			return Champion( { 16350, 837, 1376,  95,  15, 50,  30, 15 }, Element::Blue, name );
 			break;
+		case ChampionName::Kantra:
+			return Champion( { 18330, 815, 1542,  99,  15, 50,  40, 20 }, Element::Red, name );
+			break;
 		case ChampionName::Killian:
 			return Champion( { 13215, 1432, 1266,  98,  15, 63,  30, 10 }, Element::Blue, name );
 			break;
@@ -1093,6 +1096,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Rotos:
 			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Senesha:
+			return Champion( { 17340, 892, 1255,  101,  15, 50,  30, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Seneshal:
 			return Champion( { 19980, 705, 1266,  105,  15, 50,  45, 0 }, Element::Red, name );

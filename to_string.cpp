@@ -134,7 +134,11 @@ std::string to_string( const Artefact& art, bool format_as_code )
 			ss << "{ ";
 			for ( const Stat& s : art.AddStats )
 			{
-				ss << "{" << to_string( s.Type ) << "," << s.Value << "}, ";
+				ss << "{" << to_string( s.Type ) << ",";
+				if ( s.ExtValue > 0 )
+					ss << s.BaseValue << "," << s.ExtValue << "}, ";
+				else
+					ss << s.BaseValue << "}, ";
 			}
 			ss << "}";
 		}
@@ -236,6 +240,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Jizoh );
 		CASE_RETURN_STRING( ChampionName, Kael );
 		CASE_RETURN_STRING( ChampionName, Kaiden );
+		CASE_RETURN_STRING( ChampionName, Kantra );
 		CASE_RETURN_STRING( ChampionName, Killian );
 		CASE_RETURN_STRING( ChampionName, Kostolom );
 		CASE_RETURN_STRING( ChampionName, Krisk );
@@ -251,6 +256,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Revoglas );
 		CASE_RETURN_STRING( ChampionName, Reya );
 		CASE_RETURN_STRING( ChampionName, Rotos );
+		CASE_RETURN_STRING( ChampionName, Senesha );
 		CASE_RETURN_STRING( ChampionName, Seneshal );
 		CASE_RETURN_STRING( ChampionName, SerjantA );
 		CASE_RETURN_STRING( ChampionName, Sinesha );

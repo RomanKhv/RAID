@@ -13,16 +13,16 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Fatalyst;
+extern const ChampionName Champion_to_suitup = ChampionName::Senesha;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Cursed,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage/*,ArtSet::Beshenstvo,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Toxic,ArtSet::Reflex,ArtSet::Taunting*/
 
 #define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, ChampionName::Hakkorn, \
-						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Killian, \
+						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Kaiden, ChampionName::Kantra, ChampionName::Killian, \
 						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
-						ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
+						ChampionName::Senesha, ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -455,6 +455,25 @@ BOOST_AUTO_TEST_CASE( FindBest_Kael )
 	FindAndReportBestForChampion( ChampionName::Kael, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Kantra )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 28000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def, { 2700, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 190, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ /*ArtSet::Vamp*/ }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Kantra, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_Killian )
 {
 	MatchOptions matching(
@@ -757,6 +776,26 @@ BOOST_AUTO_TEST_CASE( FindBest_Rotos )
 						  ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Rotos, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Senesha )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 27000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 1800, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 80, MatchOptions::StatInfluence::Major } },
+			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Max } },
+			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
+			//{ StatType::Acc, { 180, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Revenge }
+		,{  }, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Acc, ArtSet::Rastoropnost } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Senesha, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_SerjantA )
