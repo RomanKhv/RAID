@@ -285,15 +285,25 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 	return total_est;
 }
 
+// using t1artstats_t = enum_index_map<ArtType, ArtType::NBasic, enum_index_map<StatType, Stat::TypeCount, bool>;
+// t1artstats_t setup_T15ArtStats()
+// {
+// }
+// const t1artstats_t T15ArtStats = setup_T15ArtStats();
+
+
 ArtTier GetArtTier( const Artefact& art )
 {
-	return ( art.Stars == 6 ) ? ArtTier::T1 : ArtTier::T2;
 // 	//if ( art.Stars <= 4 )
 // 	//	return ArtTier::T3;
-// 
-// 	//if ( art.Type==ArtType::Boots && art.MainStatType()==StatType::Spd )
-// 	//	return ArtTier::T1;
-// 
+
+	//if ( art.Type==ArtType::Boots && art.MainStatType()==StatType::Spd )
+	//	return ArtTier::T1;
+	//if ( art.Type==ArtType::Gloves && art.MainStatType()==StatType::CDmg )
+	//	return ArtTier::T1;
+
+	return ( art.Stars == 6 ) ? ArtTier::T1 : ArtTier::T2;
+	
 // 	for ( const Stat& s : art.AddStats )
 // 	{
 // 		static const int SpeedSubStatThreshold = 17;

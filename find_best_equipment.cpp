@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Senesha;
+extern const ChampionName Champion_to_suitup = ChampionName::Rotos;
 
 #define DISPLAY_BEST_POOL
 
@@ -761,19 +761,20 @@ BOOST_AUTO_TEST_CASE( FindBest_Rotos )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { 3800, MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { 2400, MatchOptions::StatInfluence::Minor } },
-			{ StatType::CRate, { 85, MatchOptions::StatInfluence::Major, 95 } },
-			{ StatType::CDmg, { 210, MatchOptions::StatInfluence::Max } },
-			{ StatType::Spd, { 165, MatchOptions::StatInfluence::Minor } },
+			{ StatType::HP,  { 28000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Atk, { 4100, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 2700, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Major } },
+			{ StatType::CDmg, { 190, MatchOptions::StatInfluence::Max } },
+			{ StatType::Spd, { 180, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Res, { 160, MatchOptions::StatInfluence::Minor } },
 			//{ StatType::Acc, { 100, MatchOptions::StatInfluence::Minor } },
 		}
 		,{  }
-		,{ MINOR_CHAMPIONS }
+		,{ MINOR_CHAMPIONS }, ArtTier::filter_T1Only
 	);
-	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Speed,
-						  ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest } );
+	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CRate, ArtSet::DivCritRate, ArtSet::CritDmg, ArtSet::Speed, ArtSet::DivSpeed,
+						  ArtSet::HP, ArtSet::DivLife/*, ArtSet::Immortal*/, ArtSet::Def, ArtSet::Zhivuchest } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Rotos, matching );
 }

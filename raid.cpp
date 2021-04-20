@@ -916,9 +916,25 @@ bool MatchOptions::IsArtAccepted( const Artefact& art, ChampionName ch_name ) co
 	return true;
 }
 
+enum_index_map<ArtSet, ArtSet::count, bool> setup_T15StarLooseSets()
+{
+	enum_index_map<ArtSet, ArtSet::count, bool> T15StarLooseSets;
+	T15StarLooseSets[ArtSet::HP] = true;
+	T15StarLooseSets[ArtSet::Atk] = true;
+	T15StarLooseSets[ArtSet::Def] = true;
+	return T15StarLooseSets;
+}
+
+const enum_index_map<ArtSet, ArtSet::count, bool> T15StarLooseSets = setup_T15StarLooseSets();
+
 bool MatchOptions::IsArtAcceptedByTier( const Artefact& art ) const
 {
 	const ArtTier at = GetArtTier( art );
+
+	//if ( ArtTierCap==ArtTier::T1 && at==ArtTier::T2 && T15StarLooseSets[art.Set] )
+	//	return false;
+	if ( ArtTierCap == ArtTier::filter_T1Only )
+		return at == ArtTier::T1;
 
 	return stl::enum_to_int(at) >= stl::enum_to_int(ArtTierCap);
 }
@@ -1095,7 +1111,7 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 15195, 1343, 1222,  98,  15 + 5, 63 + 10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Rotos:
-			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10+20,  40, 0 }, Element::Blue, name );
+			return Champion( { 11895, 1520, 1266+75,  90,  15+5, 63+10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Senesha:
 			return Champion( { 17340, 892, 1255,  101,  15, 50,  30, 0 }, Element::Red, name );

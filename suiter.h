@@ -11,6 +11,8 @@
 enum class ArtTier {
 	T1,		// 6lvl
 	T2,		// ...
+	//filters
+	filter_T1Only,
 };
 
 struct MatchOptions
