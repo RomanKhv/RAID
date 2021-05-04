@@ -13,20 +13,18 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Rotos;
+extern const ChampionName Champion_to_suitup = ChampionName::Hakkorn;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Cursed,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage/*,ArtSet::Beshenstvo,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Toxic,ArtSet::Reflex,ArtSet::Taunting*/
 
-#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, ChampionName::Hakkorn, \
+#define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, \
 						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Kaiden, ChampionName::Kantra, ChampionName::Killian, \
 						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
-						ChampionName::Senesha, ChampionName::SerjantA, ChampionName::Skilla, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
+						ChampionName::Senesha, ChampionName::SerjantA, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
 
 /////////////////////////////////////////////////////////////////////////////
-
-const bool ConsiderGlyphsInSuitUpReport = false;
 
 void report_stats_and_eq( const ChampionStats& final_stats, const Equipment& eq, const Champion& target_champ, std::stringstream& log )
 {
@@ -35,7 +33,7 @@ void report_stats_and_eq( const ChampionStats& final_stats, const Equipment& eq,
 	{
 		ChampionExt old_ch = target_champ;
 		const Equipment current_eq = GetCurrentEquipmentFor( target_champ.Name );
-		old_ch.ApplyEquipment( current_eq, false, ConsiderGlyphsInSuitUpReport, MatchOptions::ConsiderMaxLevels );
+		old_ch.ApplyEquipment( current_eq, false, SuitUp::ConsiderGlyphsInReport, MatchOptions::ConsiderMaxLevels );
 		const ChampionStats old_stats = old_ch.TotalStats();
 		log << stats_progress( final_stats, old_stats ) << '\n';
 	}
@@ -81,7 +79,7 @@ void FindAndReportBestForChampion( const ChampionName name, const MatchOptions& 
 		const Equipment& eq = best_eq_pool[i];
 
 		ChampionStats arts_bonus_stats;
-		ApplyEquipment( eq, ch.BasicStats, arts_bonus_stats, false, ConsiderGlyphsInSuitUpReport, matching.ConsiderMaxLevels );
+		ApplyEquipment( eq, ch.BasicStats, arts_bonus_stats, false, SuitUp::ConsiderGlyphsInReport, matching.ConsiderMaxLevels );
 		const ChampionStats final_stats = ch.TotalStats( arts_bonus_stats );
 
 		report_stats_and_eq( final_stats, eq, ch, log );
@@ -406,14 +404,16 @@ BOOST_AUTO_TEST_CASE( FindBest_Hakkorn )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,   { 60000, MatchOptions::StatInfluence::Max } },
-			{ StatType::Def,  { 1900, MatchOptions::StatInfluence::Minor } },
-			{ StatType::Spd,  { 170, MatchOptions::StatInfluence::Minor } },
-			{ StatType::Acc,  { 180, MatchOptions::StatInfluence::Minor } },
+			{ StatType::HP,   { 70000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def,  { 2300, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd,  { 184, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Res,  { 180, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc,  { 150, MatchOptions::StatInfluence::Minor } },
 		}
 		,{ ArtSet::Shield }
+		,{ MINOR_CHAMPIONS }
 	);
-	matching.AllowSets( { ArtSet::Immortal, ArtSet::HP, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed } );
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::HP, ArtSet::DivLife, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Resist, ArtSet::Speed } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Hakkorn, matching );
 }

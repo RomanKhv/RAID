@@ -990,7 +990,7 @@ BOOST_AUTO_TEST_CASE( display_current_set )
 	const Equipment eq = GetCurrentEquipmentFor( name );
 	BOOST_TEST_MESSAGE( "\nCurrent equipment of " << to_string(name) << ":" );
 	BOOST_TEST_MESSAGE( to_string( eq, false ) );
-	const ChampionStats stats = GetCurrentFinalStatsFor( name, false );
+	const ChampionStats stats = GetCurrentFinalStatsFor( name, SuitUp::ConsiderGlyphsInReport );
 	BOOST_TEST_MESSAGE( to_string( stats ) );
 }
 #endif

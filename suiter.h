@@ -126,3 +126,9 @@ struct EqEstPool
 	void join( const EqEstPool& );
 };
 
+/////////////////////////////////////////////////////////////////////////////
+
+struct SuitUp
+{
+	static const bool ConsiderGlyphsInReport = false;
+};
