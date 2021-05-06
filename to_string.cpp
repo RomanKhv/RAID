@@ -259,6 +259,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Senesha );
 		CASE_RETURN_STRING( ChampionName, Seneshal );
 		CASE_RETURN_STRING( ChampionName, SerjantA );
+		CASE_RETURN_STRING( ChampionName, Setalia );
 		CASE_RETURN_STRING( ChampionName, Sinesha );
 		CASE_RETURN_STRING( ChampionName, Skilla );
 		CASE_RETURN_STRING( ChampionName, Sohaty );

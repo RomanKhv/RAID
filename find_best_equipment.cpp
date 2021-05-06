@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Hakkorn;
+extern const ChampionName Champion_to_suitup = ChampionName::Setalia;
 
 #define DISPLAY_BEST_POOL
 
@@ -21,8 +21,8 @@ extern const ChampionName Champion_to_suitup = ChampionName::Hakkorn;
 
 #define MINOR_CHAMPIONS ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, \
 						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Kaiden, ChampionName::Kantra, ChampionName::Killian, \
-						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
-						ChampionName::Senesha, ChampionName::SerjantA, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
+						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Mavzolejnik, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Razen, ChampionName::Revoglas, \
+						ChampionName::Senesha, ChampionName::SerjantA, ChampionName::Setalia, ChampionName::Taniks, ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Zelot, ChampionName::Yarl
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -814,6 +814,23 @@ BOOST_AUTO_TEST_CASE( FindBest_SerjantA )
 	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Def, ArtSet::Zhivuchest } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::SerjantA, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Setalia )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 40000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 150, MatchOptions::StatInfluence::Minor } },
+		}
+		,{  }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Setalia, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Skilla )

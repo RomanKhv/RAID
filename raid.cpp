@@ -15,7 +15,7 @@ bool check_stat_input_error( const Stat& stat )
 		case StatType::Def:			return stat.Value >= 15;
 		case StatType::Atk_p:		return stat.BaseValue <= 25;
 		case StatType::HP_p:		return stat.BaseValue <= 24;
-		case StatType::Def_p:		return stat.BaseValue <= 22;
+		case StatType::Def_p:		return stat.BaseValue <= 24;
 	}
 	return true;
 }
@@ -1058,6 +1058,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Hatun:
 			return Champion( { 15690, 980, 1156,  97,  15, 50,  30, 0 }, Element::Green, name );
 			break;
+		case ChampionName::Jareg:
+			return Champion( { 23460, 683, 1057,  96,  15, 50,  45, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Kael:
 			return Champion( { 13710, 1200, 914,  103,  15, 57,  30, 0 }, Element::Blue, name );
 			break;
@@ -1123,8 +1126,11 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 13110, 599, 818+75,  97,  15, 50,  60, 0+10 }, Element::Red, name );		// 50 lvl
 			//return Champion( { 18495, 859, 1211+75,  97,  15, 50,  75, 0+10 }, Element::Red, name );
 			break;
+		case ChampionName::Setalia:
+			return Champion( { 18000, 1024, 1354,  108,  15, 50,  30, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::Skilla:
-			return Champion( { 191980, 859, 1387 + 70,  95,  15 + 5, 63 + 10,  40, 0 }, Element::Blue, name );
+			return Champion( { 19980, 859, 1387 + 70,  95,  15 + 5, 63 + 10,  40, 0 }, Element::Blue, name );
 			break;
 		case ChampionName::Sohaty:
 			return Champion( { 20970, 859, 1046,  107,  15+5, 50+10,  30, 0+10 }, Element::Green, name );

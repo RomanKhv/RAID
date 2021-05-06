@@ -172,6 +172,7 @@ enum class ChampionName
 	Senesha,
 	Seneshal,
 	SerjantA,
+	Setalia,
 	Sinesha,
 	Skilla,
 	Sohaty,
