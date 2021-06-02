@@ -88,8 +88,8 @@ enum class ArtSet
 	//4
 	Vamp,
 	Daze,			//Ступор
-	Cursed,
 	Frost,
+	Cursed,
 	//Beshenstvo,		//Frenzy
 	Curing,
 	Immunitet,		//Avenging
@@ -98,12 +98,12 @@ enum class ArtSet
 	Savage,			//Жестокость
 	Gibel,
 	Stun,
+	Toxic,
 	//Taunting,		//Насмешка
 	Revenge,		//Месть
 	Vozmezdie,
 	Doblest,
 	//Reflex,
-	//Toxic,
 	Regeneration,
 
 	count,
@@ -149,6 +149,7 @@ enum class ChampionName
 	Hakkorn,
 	Hangar,
 	Hatun,
+	Hope,
 	Jareg,
 	Jizoh,
 	Kael,
@@ -165,12 +166,13 @@ enum class ChampionName
 	Molly,
 	Mu4ka,
 	Norog,
+	Psalmist,
 	Razen,
 	Revoglas,
 	Reya,
 	Rotos,
-	Senesha,
 	Seneshal,
+	Septimus,
 	SerjantA,
 	Setalia,
 	Sinesha,
@@ -185,10 +187,11 @@ enum class ChampionName
 	VisirOvelis,
 	Voitelnica,
 	Vrask,
+	Yarl,
 	Yuliana,
 	Zargala,
 	Zelot,
-	Yarl,
+	Zhivoglot,
 
 	count
 };

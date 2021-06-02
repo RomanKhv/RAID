@@ -75,6 +75,7 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, Vozmezdie );
 		CASE_RETURN_STRING( ArtSet, Shield );
 		CASE_RETURN_STRING( ArtSet, Doblest );
+		CASE_RETURN_STRING( ArtSet, Toxic );
 		//CASE_RETURN_STRING( ArtSet, Beshenstvo );
 		CASE_RETURN_STRING( ArtSet, Regeneration );
 		CASE_RETURN_STRING( ArtSet, Svirepost );
@@ -236,6 +237,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Hakkorn );
 		CASE_RETURN_STRING( ChampionName, Hangar );
 		CASE_RETURN_STRING( ChampionName, Hatun );
+		CASE_RETURN_STRING( ChampionName, Hope );
 		CASE_RETURN_STRING( ChampionName, Jareg );
 		CASE_RETURN_STRING( ChampionName, Jizoh );
 		CASE_RETURN_STRING( ChampionName, Kael );
@@ -252,12 +254,13 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Mu4ka );
 		CASE_RETURN_STRING( ChampionName, Norog );
+		CASE_RETURN_STRING( ChampionName, Psalmist );
 		CASE_RETURN_STRING( ChampionName, Razen );
 		CASE_RETURN_STRING( ChampionName, Revoglas );
 		CASE_RETURN_STRING( ChampionName, Reya );
 		CASE_RETURN_STRING( ChampionName, Rotos );
-		CASE_RETURN_STRING( ChampionName, Senesha );
 		CASE_RETURN_STRING( ChampionName, Seneshal );
+		CASE_RETURN_STRING( ChampionName, Septimus );
 		CASE_RETURN_STRING( ChampionName, SerjantA );
 		CASE_RETURN_STRING( ChampionName, Setalia );
 		CASE_RETURN_STRING( ChampionName, Sinesha );
@@ -272,10 +275,11 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, VisirOvelis );
 		CASE_RETURN_STRING( ChampionName, Voitelnica );
 		CASE_RETURN_STRING( ChampionName, Vrask );
+		CASE_RETURN_STRING( ChampionName, Yarl );
 		CASE_RETURN_STRING( ChampionName, Yuliana );
 		CASE_RETURN_STRING( ChampionName, Zargala );
 		CASE_RETURN_STRING( ChampionName, Zelot );
-		CASE_RETURN_STRING( ChampionName, Yarl );
+		CASE_RETURN_STRING( ChampionName, Zhivoglot );
 	}
 	_ASSERTE( !"unreachable code" );
 	return "";
