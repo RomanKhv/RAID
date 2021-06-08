@@ -10,6 +10,7 @@ Global
 		Debug_Find|x64 = Debug_Find|x64
 		Debug|x64 = Debug|x64
 		Profile|x64 = Profile|x64
+		SuitUp_ClanBoss|x64 = SuitUp_ClanBoss|x64
 		SuitUp|x64 = SuitUp|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -19,6 +20,8 @@ Global
 		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.Debug|x64.Build.0 = Debug|x64
 		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.Profile|x64.ActiveCfg = Profile|x64
 		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.Profile|x64.Build.0 = Profile|x64
+		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.SuitUp_ClanBoss|x64.ActiveCfg = SuitUp_ClanBoss|x64
+		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.SuitUp_ClanBoss|x64.Build.0 = SuitUp_ClanBoss|x64
 		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.SuitUp|x64.ActiveCfg = SuitUp|x64
 		{0DD4AB52-D7EC-4A11-B59C-010C4DA8550A}.SuitUp|x64.Build.0 = SuitUp|x64
 	EndGlobalSection

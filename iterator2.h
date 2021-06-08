@@ -1,4 +1,5 @@
 #pragma once
+#include <boost/container/static_vector.hpp>
 #include "raid.h"
 
 class arts_by_type_iterator2
@@ -9,7 +10,8 @@ public:
 
 	arts_by_type_iterator2( const arts_map_t& m, size_t root_index )
 		: _map(m)
-		, _root_index( root_index )
+		//, _root_index( root_index )
+		, _root_art( m.empty() ? nullptr : &(m.cbegin()->second[root_index]) )
 	{
 	}
 
@@ -34,7 +36,7 @@ public:
 
 		const size_t last_index = _curr_iterators.size() - 1;
 		size_t iter_index = last_index;
-		for ( bool accepted = false; !accepted; )
+		while ( true )
 		{
 			auto& i = _curr_iterators[iter_index];
 			i++;
@@ -51,7 +53,7 @@ public:
 				}
 			}
 			else
-				accepted = true;
+				break;		//accepted
 		}
 
 		_ASSERTE( _map.size() == (1 + _vectors.size()) );
@@ -68,7 +70,8 @@ public:
 		eq.Clear();
 		if ( !finished() )
 		{
-			eq.Arts[_map.cbegin()->first] = front_vec()[_root_index];
+			//eq.Arts[_map.cbegin()->first] = front_vec()[_root_index];
+			eq.Arts[_map.cbegin()->first] = *_root_art;
 
 			for ( size_t i = 0; i < _curr_iterators.size(); ++i )
 				eq[_vectors[i]->first] = *_curr_iterators[i];
@@ -81,7 +84,8 @@ public:
 		eq.Clear();
 		if ( !finished() )
 		{
-			eq.Arts[_map.cbegin()->first] = &(front_vec()[_root_index]);
+			//eq.Arts[_map.cbegin()->first] = &(front_vec()[_root_index]);
+			eq.Arts[_map.cbegin()->first] = _root_art;
 
 			for ( size_t i = 0; i < _curr_iterators.size(); ++i )
 				eq.Arts[_vectors[i]->first] = &(*_curr_iterators[i]);
@@ -109,8 +113,9 @@ private:
 
 private:
 	const arts_map_t& _map;
-	const size_t _root_index;
-	std::vector<const arts_map_t::value_type*> _vectors;
-	std::vector<arts_vec_t::const_iterator> _curr_iterators;
+	//const size_t _root_index;
+	const Artefact* const _root_art;
+	boost::container::static_vector<const arts_map_t::value_type*,9-1> _vectors;
+	boost::container::static_vector<arts_vec_t::const_iterator,9-1> _curr_iterators;
 };
 

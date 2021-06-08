@@ -178,6 +178,16 @@ float EstimateEquipment( const ChampionStats& ch_stats, const MatchOptions& matc
 		if ( f.IgnoreStat() )
 			continue;
 
+#ifdef SUITUP_SPEED_INTERVAL
+		if ( st==StatType::Spd && f.Mode==MatchOptions::StatInfluence::StrictInterval )
+		{
+			if ( ch_stats.SuitsSpdInterval( f.MinCap, f.MaxCap ) )
+				continue;
+			else
+				return 0.f;
+		}
+#endif
+
 		int stat_value = ch_stats[st];
 		const int max_stat_cap = GetActualMaxCap( st, f );
 		if ( max_stat_cap && stat_value > max_stat_cap )
@@ -373,7 +383,8 @@ bool ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 	ChampionStats arts_bonus_stats;
 	ApplyEquipment( eq, target_champ.BasicStats, arts_bonus_stats, true, false, matching.ConsiderMaxLevels );
 
-	const float est = EstimateEquipment( target_champ.TotalStats( arts_bonus_stats ), matching );
+	const ChampionStats final_stats = target_champ.TotalStats( arts_bonus_stats );
+	const float est = EstimateEquipment( final_stats, matching );
 
 	if ( est > best_combination._Est )
 	{
@@ -389,7 +400,7 @@ bool ProcessCombination( const EquipmentRef& eq, const Champion& target_champ, c
 	return false;
 }
 
-void report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_by_type )
+size_t report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_by_type )
 {
 	const size_t n_comb = arts_by_type_iterator::n_combinations( arts_by_type );
 	std::cout << n_comb << " combinations [";
@@ -415,6 +426,8 @@ void report_combinations( const std::map<ArtType, std::vector<Artefact>>& arts_b
 		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
 	if ( const auto* arr = stl::get_value_ptr( arts_by_type, ArtType::Banner ) )
 		_ASSERTE( arr->size() <= 1 );		//TODO: filter by champion nation
+
+	return n_comb;
 }
 
 void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, EqEst& best )
@@ -447,7 +460,7 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 		}
 	);
 #else
-#ifdef NDEBUG
+#if defined NDEBUG && !defined PROFILING
 #error TBB is disabled
 #endif
 	arts_by_type_iterator eq_i( arts_by_type );
@@ -465,6 +478,14 @@ void FindBestEquipment( const std::map<ArtType, std::vector<Artefact>>& arts_by_
 void FindBestEquipment2( const std::map<ArtType, std::vector<Artefact>>& arts_by_type, const Champion& target_champ, const MatchOptions& matching, EqEstPool& best )
 {
 	report_combinations( arts_by_type );
+
+#ifdef SUITUP_SPEED_INTERVAL
+	_ASSERTE( matching.Factor(StatType::Spd).Mode == MatchOptions::StatInfluence::StrictInterval );
+	_ASSERTE( matching.Factor(StatType::Spd).HasMaxCap() );
+	_ASSERTE( matching.Factor(StatType::Spd).MinCap <= matching.Factor(StatType::Spd).MaxCap );
+#else
+	_ASSERTE( matching.Factor(StatType::Spd).Mode != MatchOptions::StatInfluence::StrictInterval );
+#endif
 
 #ifdef USE_TBB
 	best =
@@ -494,7 +515,7 @@ void FindBestEquipment2( const std::map<ArtType, std::vector<Artefact>>& arts_by
 		}
 	);
 #else
-#ifdef NDEBUG
+#if defined NDEBUG && !defined PROFILING
 #error TBB is disabled
 #endif
 	arts_by_type_iterator eq_i( arts_by_type );
@@ -558,7 +579,9 @@ void FindBestEquipment2( const std::vector<Artefact>& inventory, const Champion&
 
 void FindRealBestEquipment2( const Champion& ch, const MatchOptions& matching, std::vector<Equipment>& eqs )
 {
+#ifndef _DEBUG
 	scope_profile_time prof_time( "FindRealBestEquipment" );
+#endif
 
 	FindBestEquipment2( _MyArts, ch, matching, eqs );
 }

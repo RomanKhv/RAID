@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE( find_SetsRestrictions )
 		mo.ForbiddenSets( { ArtSet::Atk, ArtSet::Def } );
 		BOOST_CHECK( !mo.IsSetAccepted( ArtSet::Atk ) );
 	}
-	const ChampionName ch = ChampionName::Yuliana;
+	const ChampionName ch = ChampionName::Juliana;
 	{
 		const MatchOptions mo(
 			{
@@ -979,6 +979,54 @@ BOOST_AUTO_TEST_CASE( test_champ_relations )
 //	}
 //}
 //#endif
+
+#define BOOST_CHECK_INTERVAL( v, mn, mx ) \
+		BOOST_CHECK_GE( v, mn ); \
+		BOOST_CHECK_LE( v, mx );
+
+#ifndef PROFILING
+BOOST_AUTO_TEST_CASE( test_speed_interval )
+{
+	{
+		ChampionExt ch = Champion::ByName( ChampionName::Fakhrakin );
+		ApplyStat( {StatType::Spd,5,2}, ch.BasicStats, ch.ArtsBonusStats, true );
+		const ChampionStats final_stats = ch.TotalStats();
+		BOOST_CHECK( final_stats.SpdExt > 0 );
+		BOOST_CHECK_EQUAL( final_stats.SpdExt, 2 );
+		BOOST_CHECK( !final_stats.SuitsSpdInterval( 100, 106 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 100, 107 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 106, 108 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 107, 108 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 108, 109 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 105, 109 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 108, 120 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 109, 120 ) );
+		BOOST_CHECK( !final_stats.SuitsSpdInterval( 110, 120 ) );
+	}
+	{
+		const int min_spd = 180;
+		const int max_spd = 185;
+		MatchOptions matching(
+			{
+				{ StatType::HP,  { MatchOptions::StatInfluence::Max } },
+				{ StatType::Spd, { min_spd, MatchOptions::StatInfluence::StrictInterval, max_spd } },
+			}
+			, { ArtSet::Immortal }
+		);
+		matching.AllowSets( { ArtSet::Immortal } );
+		BOOST_CHECK( matching.IsInputOK() );
+
+		ChampionExt ch = Champion::ByName( ChampionName::Fakhrakin );
+		std::vector<Equipment> best_eq_pool;
+		FindBestEquipment2( _MyArts, ch, matching, best_eq_pool );
+		BOOST_CHECK( !best_eq_pool.empty() );
+		BOOST_CHECK_LE( best_eq_pool.size(), EqEstPool::DefaultSize );
+		ApplyEquipment( best_eq_pool.front(), ch.BasicStats, ch.ArtsBonusStats, false, true, true );
+		const ChampionStats stats = ch.TotalStats();
+		BOOST_CHECK( stats.SuitsSpdInterval( min_spd, max_spd ) );
+	}
+}
+#endif
 
 #ifdef _DEBUG
 BOOST_AUTO_TEST_CASE( display_current_set )

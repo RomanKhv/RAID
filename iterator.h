@@ -1,4 +1,5 @@
 #pragma once
+#include <boost/container/static_vector.hpp>
 #include "raid.h"
 
 class arts_by_type_iterator
@@ -14,6 +15,8 @@ public:
 
 	bool begin()
 	{
+		if ( _map.empty() )
+			return false;
 		//_progress = 0;
 		for ( const auto& p : _map )
 		{
@@ -103,7 +106,7 @@ private:
 
 private:
 	const arts_map_t& _map;
-	std::vector<const arts_map_t::value_type*> _vectors;
-	std::vector<arts_vec_t::const_iterator> _curr_iterators;
+	boost::container::static_vector<const arts_map_t::value_type*,9> _vectors;
+	boost::container::static_vector<arts_vec_t::const_iterator,9> _curr_iterators;
 };
 

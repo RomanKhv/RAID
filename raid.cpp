@@ -193,6 +193,9 @@ ChampionStats ChampionStats::operator+( const ChampionStats& rhs ) const
 	ChampionStats summ;
 	for ( int i=0; i<Count; ++i )
 		summ.Values[i] = Values[i] + rhs.Values[i];
+#ifdef SUITUP_SPEED_INTERVAL
+	summ.SpdExt = SpdExt + rhs.SpdExt;
+#endif
 	//member_summ<&ChampionStats::HP>( summ, *this, rhs );
 	//member_summ<&ChampionStats::Atk>( summ, *this, rhs );
 	//member_summ<&ChampionStats::Def>( summ, *this, rhs );
@@ -495,7 +498,7 @@ int SetSize( ArtSet set )
 		case ArtSet::HP:
 		case ArtSet::Atk:
 		case ArtSet::Def:
-		case ArtSet::CRate:
+		case ArtSet::CritRate:
 		case ArtSet::CritDmg:
 		case ArtSet::Speed:
 		case ArtSet::Resist:
@@ -552,6 +555,14 @@ void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStat
 	_ASSERTE( stat.Value > 0 && stat.BaseValue > 0 );
 	if ( Stat::IsBasic( stat.Type ) )	// == IsAdditive
 	{
+#ifdef SUITUP_SPEED_INTERVAL
+		if ( consider_glyphs && stat.Type==StatType::Spd )
+		{
+			const int spd_potential = 4 - stat.ExtValue;
+			if ( spd_potential > 0 )
+				arts_bonus_stats.SpdExt += spd_potential;
+		}
+#endif
 		arts_bonus_stats[stat.Type] += stat.get_val(consider_glyphs);
 	}
 	else {
@@ -627,7 +638,7 @@ void ApplySetBonus( ArtSet set, const ChampionStats& basic_stats, ChampionStats&
 				add_percent_bonus<&ChampionStats::Def>( arts_bonus_stats, basic_stats, 15 );
 			}
 			break;
-		case ArtSet::CRate:
+		case ArtSet::CritRate:
 			{
 				arts_bonus_stats.CRate += 12;
 			}
@@ -729,10 +740,18 @@ void ApplyArtBonus( const Artefact& art, const ChampionStats& basic_stats, Champ
 	if ( !MatchOptions::ConsiderMaxLevelsForNonBasicArts && !art.IsBasic() )
 		consider_max_level = false;
 
-	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats, true );
+	_ASSERTE( art.GetMainStat(consider_max_level).ExtValue == 0 );
+	ApplyStat( art.GetMainStat(consider_max_level), basic_stats, arts_bonus_stats, false );
 
 	for ( const Stat& stat : art.AddStats )
-		ApplyStat( stat, basic_stats, arts_bonus_stats, !estimating && consider_glyphs );
+	{
+#ifdef SUITUP_SPEED_INTERVAL
+		const bool add_glyph = (!estimating && consider_glyphs) || stat.Type==StatType::Spd;
+#else
+		const bool add_glyph = !estimating && consider_glyphs;
+#endif
+		ApplyStat( stat, basic_stats, arts_bonus_stats, add_glyph );
+	}
 }
 
 void ApplyEquipment( const Equipment& eq, const ChampionStats& basic_stats, ChampionStats& art_bonus_stats, bool estimating, bool consider_glyphs, bool consider_max_level )
@@ -1073,6 +1092,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Kantra:
 			return Champion( { 18330, 815, 1542,  99,  15, 50,  40, 20 }, Element::Red, name );
 			break;
+		case ChampionName::KSklepa:
+			return Champion( { 16185, 903, 1321+75,  98,  15+5, 50+10,  45, 0 }, Element::Red, name );
+			break;
 		case ChampionName::Killian:
 			return Champion( { 13215, 1432, 1266,  98,  15+5, 63+10,  30, 10 }, Element::Blue, name );
 			break;
@@ -1106,6 +1128,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Norog:
 			return Champion( { 16845, 1156, 1299,  106,  15, 50,  50, 0 }, Element::Blue, name );
+			break;
+		case ChampionName::Prepa:
+			return Champion( { 20145, 826, 1409+75,  93,  15+5, 50+10,  50, 10 }, Element::Green, name );
 			break;
 		case ChampionName::Psalmist:
 			return Champion( { 18990, 1024, 1013,  103,  15, 50,  30, 0 }, Element::Green, name );
@@ -1168,7 +1193,7 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Voitelnica:
 			return Champion( { 14700, 1321, 727,  97,  15+5, 57+10,  30, 0 }, Element::Red, name );
 			break;
-		case ChampionName::Yuliana:
+		case ChampionName::Juliana:
 			return Champion( { 15360, 1398, 881,  103,  15+5, 60,  30, 0+10 }, Element::Blue, name );
 			break;
 		case ChampionName::Zargala:

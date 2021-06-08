@@ -73,7 +73,7 @@ enum class ArtSet
 	Atk,
 	Def,
 	Speed,
-	CRate,
+	CritRate,
 	CritDmg,
 	Resist,
 	Acc,
@@ -152,9 +152,11 @@ enum class ChampionName
 	Hope,
 	Jareg,
 	Jizoh,
+	Juliana,
 	Kael,
 	Kaiden,
 	Kantra,
+	KSklepa,
 	Killian,
 	Kostolom,
 	Krisk,
@@ -166,6 +168,7 @@ enum class ChampionName
 	Molly,
 	Mu4ka,
 	Norog,
+	Prepa,
 	Psalmist,
 	Razen,
 	Revoglas,
@@ -188,7 +191,6 @@ enum class ChampionName
 	Voitelnica,
 	Vrask,
 	Yarl,
-	Yuliana,
 	Zargala,
 	Zelot,
 	Zhivoglot,
@@ -251,6 +253,7 @@ struct ChampionStats
 		};
 		values_t Values;
 	};
+	int SpdExt = 0;
 
 	ChampionStats() : HP(0), Atk(0), Def(0), Spd(0), CRate(0), CDmg(0), Res(0), Acc(0) {}
 	ChampionStats(int hp, int atk, int def, int spd, int crate, int cdmg, int res, int acc);
@@ -259,6 +262,9 @@ struct ChampionStats
 	int& operator[](StatType t)      { _ASSERTE( static_cast<int>(t) < Count ); return Values[static_cast<int>(t)]; }
 	int basic_from_p(StatType t) const { return Values[static_cast<int>(t)-Count]; }
 	int& basic_from_p(StatType t)      { return Values[static_cast<int>(t)-Count]; }
+	bool SuitsSpdInterval( int min_spd, int max_spd ) const {
+		return std::max(Spd,min_spd) <= std::min(Spd+SpdExt,max_spd);
+	}
 
 	typedef const StatType StatList[Count];
 	static const StatList TypeList;

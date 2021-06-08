@@ -6,6 +6,10 @@
 #define USE_TIERS
 #define USE_TARGET_VALUES_AS_REF
 
+#ifdef _DEBUG
+#define SUITUP_SPEED_INTERVAL
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 
 enum class ArtTier {
@@ -23,6 +27,7 @@ struct MatchOptions
 		Modrt = 2,
 		Major = 3,
 		Max = 4,
+		StrictInterval,
 	};
 
 	struct StatFactor

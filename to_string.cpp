@@ -56,7 +56,7 @@ std::string to_string( const ArtSet& set )
 		CASE_RETURN_STRING( ArtSet, HP );
 		CASE_RETURN_STRING( ArtSet, Atk );
 		CASE_RETURN_STRING( ArtSet, Def );
-		CASE_RETURN_STRING( ArtSet, CRate );
+		CASE_RETURN_STRING( ArtSet, CritRate );
 		CASE_RETURN_STRING( ArtSet, CritDmg );
 		CASE_RETURN_STRING( ArtSet, Acc );
 		CASE_RETURN_STRING( ArtSet, Speed );
@@ -240,9 +240,11 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Hope );
 		CASE_RETURN_STRING( ChampionName, Jareg );
 		CASE_RETURN_STRING( ChampionName, Jizoh );
+		CASE_RETURN_STRING( ChampionName, Juliana );
 		CASE_RETURN_STRING( ChampionName, Kael );
 		CASE_RETURN_STRING( ChampionName, Kaiden );
 		CASE_RETURN_STRING( ChampionName, Kantra );
+		CASE_RETURN_STRING( ChampionName, KSklepa );
 		CASE_RETURN_STRING( ChampionName, Killian );
 		CASE_RETURN_STRING( ChampionName, Kostolom );
 		CASE_RETURN_STRING( ChampionName, Krisk );
@@ -254,6 +256,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Mu4ka );
 		CASE_RETURN_STRING( ChampionName, Norog );
+		CASE_RETURN_STRING( ChampionName, Prepa );
 		CASE_RETURN_STRING( ChampionName, Psalmist );
 		CASE_RETURN_STRING( ChampionName, Razen );
 		CASE_RETURN_STRING( ChampionName, Revoglas );
@@ -276,7 +279,6 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Voitelnica );
 		CASE_RETURN_STRING( ChampionName, Vrask );
 		CASE_RETURN_STRING( ChampionName, Yarl );
-		CASE_RETURN_STRING( ChampionName, Yuliana );
 		CASE_RETURN_STRING( ChampionName, Zargala );
 		CASE_RETURN_STRING( ChampionName, Zelot );
 		CASE_RETURN_STRING( ChampionName, Zhivoglot );
