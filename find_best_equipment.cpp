@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Fakhrakin;
+extern const ChampionName Champion_to_suitup = ChampionName::KSklepa;
 
 #define DISPLAY_BEST_POOL
 
@@ -613,7 +613,9 @@ BOOST_AUTO_TEST_CASE( FindBest_KSklepa )
 		,{ ArtSet::Vamp }
 		,{ MINOR_CHAMPIONS, MINOR_CHAMPIONS_CB }
 	);
-	matching.AllowSets( { ArtSet::HP, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost } );
+	//matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest/*, ArtSet::Acc, ArtSet::Rastoropnost*/ } );	// I
+	//matching.AllowSets( { ArtSet::Speed, ArtSet::CritRate, ArtSet::CritDmg, ArtSet::DivCritRate } );													// II
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::CritRate, ArtSet::CritDmg, ArtSet::DivCritRate/*, ArtSet::Acc, ArtSet::Rastoropnost*/ } );		// best_of(I) + best_of(II)
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::KSklepa, matching );
 }
