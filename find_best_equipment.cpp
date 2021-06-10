@@ -242,9 +242,9 @@ BOOST_AUTO_TEST_CASE( FindBest_Fakhrakin )
 		,{ ArtSet::Vamp }
 		,{ MINOR_CHAMPIONS, MINOR_CHAMPIONS_CB }
 	);
-	//matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::Acc, ArtSet::Rastoropnost } );
-	//matching.AllowSets( { ArtSet::Cruel, ArtSet::DivAtk, ArtSet::CritRate, ArtSet::CritDmg, ArtSet::DivCritRate } );
-	matching.AllowSets( { ArtSet::DivLife, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Cruel, ArtSet::CritRate, ArtSet::CritDmg } );
+	//matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::Acc, ArtSet::Rastoropnost } );		// I
+	//matching.AllowSets( { ArtSet::Cruel, ArtSet::DivAtk, ArtSet::CritRate, ArtSet::CritDmg, ArtSet::DivCritRate } );										// II
+	matching.AllowSets( { ArtSet::DivLife, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Cruel, ArtSet::CritRate, ArtSet::CritDmg } );		// best_of(I) + best_of(II)
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Fakhrakin, matching );
 }

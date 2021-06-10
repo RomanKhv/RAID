@@ -1008,7 +1008,10 @@ Equipment GetCurrentEquipmentFor( ChampionName name )
 	{
 		_ASSERTE( art.Initialized() );
 		if ( art.Owner == name )
+		{
+			_ASSERTE( !eq[art.Type].Initialized() );
 			eq[art.Type] = art;
+		}
 	}
 	return eq;
 }
