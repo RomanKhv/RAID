@@ -558,7 +558,7 @@ void ApplyStat( const Stat& stat, const ChampionStats& basic_stats, ChampionStat
 #ifdef SUITUP_SPEED_INTERVAL
 		if ( consider_glyphs && stat.Type==StatType::Spd )
 		{
-			const int spd_potential = 4 - stat.ExtValue;
+			const int spd_potential = MatchOptions::SpdGlyphCap - stat.ExtValue;
 			if ( spd_potential > 0 )
 				arts_bonus_stats.SpdExt += spd_potential;
 		}

@@ -989,18 +989,17 @@ BOOST_AUTO_TEST_CASE( test_speed_interval )
 {
 	{
 		ChampionExt ch = Champion::ByName( ChampionName::Fakhrakin );
-		ApplyStat( {StatType::Spd,5,2}, ch.BasicStats, ch.ArtsBonusStats, true );
+		ApplyStat( {StatType::Spd,5,1}, ch.BasicStats, ch.ArtsBonusStats, true );
 		const ChampionStats final_stats = ch.TotalStats();
 		BOOST_CHECK( final_stats.SpdExt > 0 );
 		BOOST_CHECK_EQUAL( final_stats.SpdExt, 2 );
-		BOOST_CHECK( !final_stats.SuitsSpdInterval( 100, 106 ) );
-		BOOST_CHECK( final_stats.SuitsSpdInterval( 100, 107 ) );
+		BOOST_CHECK( !final_stats.SuitsSpdInterval( 100, 105 ) );
+		BOOST_CHECK( final_stats.SuitsSpdInterval( 100, 106 ) );
 		BOOST_CHECK( final_stats.SuitsSpdInterval( 106, 108 ) );
 		BOOST_CHECK( final_stats.SuitsSpdInterval( 107, 108 ) );
 		BOOST_CHECK( final_stats.SuitsSpdInterval( 108, 109 ) );
 		BOOST_CHECK( final_stats.SuitsSpdInterval( 105, 109 ) );
 		BOOST_CHECK( final_stats.SuitsSpdInterval( 108, 120 ) );
-		BOOST_CHECK( final_stats.SuitsSpdInterval( 109, 120 ) );
 		BOOST_CHECK( !final_stats.SuitsSpdInterval( 110, 120 ) );
 	}
 	{
@@ -1027,6 +1026,20 @@ BOOST_AUTO_TEST_CASE( test_speed_interval )
 	}
 }
 #endif
+
+#define CHECK_SPEED( name, smin, smax ) \
+	const ChampionStats _##name = GetCurrentFinalStatsFor( ChampionName::name, true ); \
+	BOOST_CHECK_LE( smin, _##name.Spd ); \
+	BOOST_CHECK_LE( _##name.Spd, smax );
+
+BOOST_AUTO_TEST_CASE( test_CB_Spd )
+{
+	CHECK_SPEED( Prepa, 171, 173 );
+	CHECK_SPEED( Fakhrakin, 194, 195 );
+	CHECK_SPEED( KSklepa, 227, 238 );
+	//CHECK_SPEED( Razen, 176, 178 );
+	//CHECK_SPEED( VizirOvelis, 177, 178 );
+}
 
 #ifdef _DEBUG
 BOOST_AUTO_TEST_CASE( display_current_set )

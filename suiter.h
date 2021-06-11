@@ -76,6 +76,8 @@ struct MatchOptions
 	bool IsEqHasRequiredSets( const EquipmentRef& ) const;
 	bool AreSetsRestrictedToRequired() const;
 
+	static constexpr int SpdGlyphCap = 3;
+
 private:
 	bool IsArtAcceptedByTier( const Artefact& ) const;
 };
