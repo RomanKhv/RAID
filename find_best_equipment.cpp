@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::Razen;
+extern const ChampionName Champion_to_suitup = ChampionName::VisirOvelis;
 
 #define DISPLAY_BEST_POOL
 
@@ -788,7 +788,7 @@ BOOST_AUTO_TEST_CASE( FindBest_Razen )
 		{
 			{ StatType::HP,  { 33000, MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def, { 3300, MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate, { 75, MatchOptions::StatInfluence::Minor } },	// +30% by 3rd skill
+			{ StatType::CRate, { 75, MatchOptions::StatInfluence::Minor } },	// +30% by Fahrakin's 3rd skill
 			{ StatType::CDmg, { 110, MatchOptions::StatInfluence::Major } },
 			{ StatType::Spd, { 176, MatchOptions::StatInfluence::StrictInterval, 178 } },
 			{ StatType::Acc, { 220, MatchOptions::StatInfluence::Minor } },
@@ -1150,16 +1150,21 @@ BOOST_AUTO_TEST_CASE( FindBest_VisirOvelis )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,   { 35000, MatchOptions::StatInfluence::Modrt } },
-			//{ StatType::Atk, { MatchOptions::StatInfluence::Minor } },
-			{ StatType::Def,  { 2700, MatchOptions::StatInfluence::Major } },
-			{ StatType::Spd,  { 180 } },
-			{ StatType::Acc,  { 230 } },
+			{ StatType::HP,   { 32000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { 2200, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def,  { 3200, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd,  { 174, MatchOptions::StatInfluence::StrictInterval, 178 } },
+			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Minor } },	// +30% by Fahrakin's 3rd skill
+			{ StatType::CDmg,  { 100, MatchOptions::StatInfluence::Max } },
+			{ StatType::Acc,  { 220, MatchOptions::StatInfluence::Minor } },
 		}
 		,{ ArtSet::Vamp }
-		,{ MINOR_CHAMPIONS }
+		,{ MINOR_CHAMPIONS, MINOR_CHAMPIONS_CB }
 	);
-	matching.ForbiddenSets( { ArtSet::DivLife, ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CritDmg, ArtSet::DivCritRate, ArtSet::CritDmg, MINOR_SETS } );
+	matching.RequireSpeedBoots( false );
+	//matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::Acc, ArtSet::Rastoropnost } );			// I
+	//matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::CritRate, ArtSet::CritDmg, ArtSet::DivCritRate } );								// II
+	matching.AllowSets( { ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Cruel, ArtSet::CritRate, ArtSet::CritDmg } );			// best_of(I) + best_of(II)
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::VisirOvelis, matching );
 }
