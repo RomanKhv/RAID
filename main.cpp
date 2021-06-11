@@ -1037,7 +1037,7 @@ BOOST_AUTO_TEST_CASE( test_CB_Spd )
 	CHECK_SPEED( Prepa, 171, 173 );
 	CHECK_SPEED( Fakhrakin, 194, 195 );
 	CHECK_SPEED( KSklepa, 227, 238 );
-	//CHECK_SPEED( Razen, 176, 178 );
+	CHECK_SPEED( Razen, 176, 178 );
 	//CHECK_SPEED( VizirOvelis, 177, 178 );
 }
 

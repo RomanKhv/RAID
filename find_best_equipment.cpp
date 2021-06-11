@@ -13,7 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::KSklepa;
+extern const ChampionName Champion_to_suitup = ChampionName::Razen;
 
 #define DISPLAY_BEST_POOL
 
@@ -22,7 +22,7 @@ extern const ChampionName Champion_to_suitup = ChampionName::KSklepa;
 #define MINOR_CHAMPIONS ChampionName::Astralon, ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Fein, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, \
 						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Kael, ChampionName::Kaiden, ChampionName::Kantra, ChampionName::Killian, ChampionName::Kostolom, \
 						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Mavzolejnik, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Norog, ChampionName::Psalmist, \
-						ChampionName::Razen, ChampionName::Revoglas, ChampionName::Seneshal, ChampionName::Sinesha, ChampionName::SerjantA, ChampionName::Taniks, \
+						ChampionName::Revoglas, ChampionName::Seneshal, ChampionName::Sinesha, ChampionName::SerjantA, ChampionName::Taniks, \
 						ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Yarl, ChampionName::Zargala, ChampionName::Zelot, ChampionName::Zhivoglot
 
 #define MINOR_CHAMPIONS_CB ChampionName::Juliana, ChampionName::SteelSkull, ChampionName::Tyrel
@@ -786,17 +786,17 @@ BOOST_AUTO_TEST_CASE( FindBest_Razen )
 {
 	MatchOptions matching(
 		{
-			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::HP,  { 33000, MatchOptions::StatInfluence::Minor } },
 			{ StatType::Def, { 3300, MatchOptions::StatInfluence::Max } },
-			{ StatType::CRate, { 75, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 75, MatchOptions::StatInfluence::Minor } },	// +30% by 3rd skill
 			{ StatType::CDmg, { 110, MatchOptions::StatInfluence::Major } },
-			{ StatType::Spd, { 190, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 176, MatchOptions::StatInfluence::StrictInterval, 178 } },
 			{ StatType::Acc, { 220, MatchOptions::StatInfluence::Minor } },
 		}
 		,{ ArtSet::Vamp }
-		,{ MINOR_CHAMPIONS }
+		,{ MINOR_CHAMPIONS, MINOR_CHAMPIONS_CB }
 	);
-	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed } );
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed, ArtSet::CritRate, ArtSet::CritDmg, ArtSet::DivCritRate } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Razen, matching );
 }
