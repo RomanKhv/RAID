@@ -1132,6 +1132,9 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Norog:
 			return Champion( { 16845, 1156, 1299,  106,  15, 50,  50, 0 }, Element::Blue, name );
 			break;
+		case ChampionName::OkkultnyVoin:
+			return Champion( { 20640, 1101, 826,  98,  15+5, 50+10,  45, 0 }, Element::Green, name );
+			break;
 		case ChampionName::Prepa:
 			return Champion( { 20145, 826, 1409+75,  93,  15+5, 50+10,  50, 10 }, Element::Green, name );
 			break;

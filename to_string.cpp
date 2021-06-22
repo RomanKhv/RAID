@@ -256,6 +256,7 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Molly );
 		CASE_RETURN_STRING( ChampionName, Mu4ka );
 		CASE_RETURN_STRING( ChampionName, Norog );
+		CASE_RETURN_STRING( ChampionName, OkkultnyVoin );
 		CASE_RETURN_STRING( ChampionName, Prepa );
 		CASE_RETURN_STRING( ChampionName, Psalmist );
 		CASE_RETURN_STRING( ChampionName, Razen );

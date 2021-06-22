@@ -984,7 +984,7 @@ BOOST_AUTO_TEST_CASE( test_champ_relations )
 		BOOST_CHECK_GE( v, mn ); \
 		BOOST_CHECK_LE( v, mx );
 
-#ifndef PROFILING
+#if defined SUITUP_SPEED_INTERVAL && !defined PROFILING
 BOOST_AUTO_TEST_CASE( test_speed_interval )
 {
 	{

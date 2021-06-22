@@ -168,6 +168,7 @@ enum class ChampionName
 	Molly,
 	Mu4ka,
 	Norog,
+	OkkultnyVoin,
 	Prepa,
 	Psalmist,
 	Razen,
