@@ -13,20 +13,21 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-extern const ChampionName Champion_to_suitup = ChampionName::OkkultnyVoin;
+extern const ChampionName Champion_to_suitup = ChampionName::Killian;
 
 #define DISPLAY_BEST_POOL
 
 #define MINOR_SETS ArtSet::Gibel,ArtSet::Cursed,ArtSet::Frost,ArtSet::Daze,ArtSet::Immunitet,ArtSet::Vozmezdie/*,ArtSet::Shield*/,ArtSet::Doblest,ArtSet::Regeneration,ArtSet::Svirepost,ArtSet::Savage/*,ArtSet::Beshenstvo,ArtSet::Mest,ArtSet::Fury,ArtSet::Curing,ArtSet::Toxic,ArtSet::Reflex,ArtSet::Taunting*/
 
-#define MINOR_CHAMPIONS ChampionName::Astralon, ChampionName::Baronessa, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Fein, ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, \
-						ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Kael, ChampionName::Kaiden, ChampionName::Kantra, ChampionName::Killian, ChampionName::Kostolom, \
+#define MINOR_CHAMPIONS ChampionName::Astralon, ChampionName::Baronessa, ChampionName::Bergot, ChampionName::Brago, ChampionName::BlackKnight, ChampionName::Fatalyst, ChampionName::Fein, \
+						ChampionName::Gala, ChampionName::Grash, ChampionName::Gurptuk, ChampionName::Jareg, ChampionName::Jizoh, ChampionName::Juliana, \
+						ChampionName::Kael, ChampionName::Kaiden, ChampionName::Kantra, ChampionName::Killian, ChampionName::Kostolom, \
 						ChampionName::Lovec, ChampionName::Lutopes, ChampionName::Mavzolejnik, ChampionName::Molly, ChampionName::Mu4ka, ChampionName::Norog, \
 						ChampionName::OkkultnyVoin, ChampionName::Psalmist, \
 						ChampionName::Revoglas, ChampionName::Seneshal, ChampionName::Sinesha, ChampionName::SerjantA, ChampionName::SteelSkull, ChampionName::Taniks, \
-						ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Yarl, ChampionName::Zargala, ChampionName::Zelot, ChampionName::Zhivoglot
+						ChampionName::Vergis, ChampionName::Voitelnica, ChampionName::Vrask, ChampionName::Yarl, ChampionName::Zargala, ChampionName::Zelot, ChampionName::Zhivoglot
 
-#define MINOR_CHAMPIONS_CB ChampionName::Juliana, ChampionName::Tyrel
+#define MINOR_CHAMPIONS_CB ChampionName::Tyrel
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -189,6 +190,44 @@ BOOST_AUTO_TEST_CASE( FindBest_Baronessa )
 	FindAndReportBestForChampion( ChampionName::Baronessa, matching );
 }
 
+BOOST_AUTO_TEST_CASE( FindBest_Bergot )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 50000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Modrt } },
+			//{ StatType::CRate, { 70, MatchOptions::StatInfluence::Modrt } },
+			//{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 175, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 190, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Immortal }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Bergot, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Brago )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Def, { 3000, MatchOptions::StatInfluence::Max } },
+			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Major } },
+			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd, { 175, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Acc, { 190, MatchOptions::StatInfluence::Minor } },
+		}
+		,{ ArtSet::Zhivuchest }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed, ArtSet::DivSpeed } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Brago, matching );
+}
+
 BOOST_AUTO_TEST_CASE( FindBest_BlackKnight )
 {
 	MatchOptions matching(
@@ -204,6 +243,24 @@ BOOST_AUTO_TEST_CASE( FindBest_BlackKnight )
 	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Def, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Rastoropnost } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::BlackKnight, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Brogni )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 60000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Atk, { 2000, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Def, { 2200, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Spd, { 190, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::Acc, { 190 } },
+		}
+		,{ ArtSet::Immortal }
+		,{}/*, ArtTier::T2*/
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Rastoropnost } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Brogni, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_ColdHeart )
@@ -225,6 +282,27 @@ BOOST_AUTO_TEST_CASE( FindBest_ColdHeart )
 
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::ColdHeart, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Drakomorph )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 30000, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Atk, { 2600, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { 1800, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 90, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { 130, MatchOptions::StatInfluence::Max } },
+			{ StatType::Spd, { 175 } },
+			{ StatType::Acc, { 190 } },
+		}
+		,{ ArtSet::Vamp }
+		,{ MINOR_CHAMPIONS }
+	);
+	//matching.AllowSets( { ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CritRate, ArtSet::DivCritRate, ArtSet::CritDmg } );
+	matching.AllowSets( { ArtSet::Rastoropnost } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Drakomorph, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Fakhrakin )
@@ -524,20 +602,23 @@ BOOST_AUTO_TEST_CASE( FindBest_Kantra )
 
 BOOST_AUTO_TEST_CASE( FindBest_Killian )
 {
+	// 50 lvl
 	MatchOptions matching(
 		{
 			{ StatType::HP,  { 25000, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::Atk, { 2500, MatchOptions::StatInfluence::Max } },
-			{ StatType::Def, { 2000, MatchOptions::StatInfluence::Minor } },
-			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Modrt } },
-			{ StatType::CDmg, { 100, MatchOptions::StatInfluence::Major } },
+			{ StatType::Atk, { 2000, MatchOptions::StatInfluence::Major } },
+			{ StatType::Def, { 1800, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CRate, { 70, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Minor } },
 			{ StatType::Spd, { 170, MatchOptions::StatInfluence::Minor } },
 			{ StatType::Acc, { 190, MatchOptions::StatInfluence::Minor } },
 		}
 		,{ ArtSet::Vamp }
-		,{}, ArtTier::T2
+		//,{}, ArtTier::T2
+		,{}
 	);
-	matching.AllowSets( { ArtSet::Immortal, ArtSet::Cruel, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed, ArtSet::CritRate, ArtSet::DivCritRate, ArtSet::CritDmg } );
+	matching.AllowSets( { ArtSet::Atk, ArtSet::Cruel, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost } );
+	//matching.AllowSets( { ArtSet::Atk, ArtSet::Cruel, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::Speed, ArtSet::CritRate, ArtSet::DivCritRate, ArtSet::CritDmg } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Killian, matching );
 }
@@ -1224,6 +1305,24 @@ BOOST_AUTO_TEST_CASE( FindBest_Voitelnica )
 	matching.AllowSets( { ArtSet::Atk, ArtSet::DivAtk, ArtSet::Cruel, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::Acc, ArtSet::Rastoropnost, ArtSet::CritRate, ArtSet::DivCritRate, ArtSet::Zhivuchest } );
 	BOOST_CHECK( matching.IsInputOK() );
 	FindAndReportBestForChampion( ChampionName::Voitelnica, matching );
+}
+
+BOOST_AUTO_TEST_CASE( FindBest_Vrask )
+{
+	MatchOptions matching(
+		{
+			{ StatType::HP,  { 60000, MatchOptions::StatInfluence::Max } },
+			{ StatType::Def, { 1800, MatchOptions::StatInfluence::Minor } },
+			{ StatType::CRate, { 95, MatchOptions::StatInfluence::Modrt } },
+			{ StatType::CDmg, { 90, MatchOptions::StatInfluence::Minor } },
+			{ StatType::Spd,  { 180 } },
+		}
+		,{ ArtSet::Immortal }
+		,{}, ArtTier::T2
+	);
+	matching.AllowSets( { ArtSet::HP, ArtSet::DivLife, ArtSet::Immortal, ArtSet::Zhivuchest, ArtSet::Speed, ArtSet::DivSpeed, ArtSet::CritRate, ArtSet::DivCritRate } );
+	BOOST_CHECK( matching.IsInputOK() );
+	FindAndReportBestForChampion( ChampionName::Vrask, matching );
 }
 
 BOOST_AUTO_TEST_CASE( FindBest_Yuliana )

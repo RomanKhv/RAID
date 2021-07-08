@@ -221,8 +221,12 @@ const char* to_string( const ChampionName& name )
 		CASE_RETURN_STRING( ChampionName, Arbitr );
 		CASE_RETURN_STRING( ChampionName, Astralon );
 		CASE_RETURN_STRING( ChampionName, Baronessa );
+		CASE_RETURN_STRING( ChampionName, Bergot );
 		CASE_RETURN_STRING( ChampionName, BlackKnight );
+		CASE_RETURN_STRING( ChampionName, Brago );
+		CASE_RETURN_STRING( ChampionName, Brogni );
 		CASE_RETURN_STRING( ChampionName, ColdHeart );
+		CASE_RETURN_STRING( ChampionName, Drakomorph );
 		CASE_RETURN_STRING( ChampionName, Fakhrakin );
 		CASE_RETURN_STRING( ChampionName, Fatalyst );
 		CASE_RETURN_STRING( ChampionName, Fein );

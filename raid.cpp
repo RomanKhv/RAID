@@ -1032,11 +1032,23 @@ Champion Champion::ByName( ChampionName name )
 		case ChampionName::Baronessa:
 			return Champion( { 17670, 914, 1211,  95,  15, 50,  40, 0 }, Element::Red, name );
 			break;
+		case ChampionName::Bergot:
+			return Champion( { 21810, 716, 1134,  95,  15, 50,  45, 0 }, Element::Green, name );
+			break;
 		case ChampionName::BlackKnight:
 			return Champion( { 22470, 914, 1167,  100,  15, 57,  50, 0 }, Element::Red, name );
 			break;
+		case ChampionName::Brago:
+			return Champion( { 18165, 881, 1487,  99,  15, 50,  50, 10 }, Element::Green, name );
+			break;
+		case ChampionName::Brogni:
+			return Champion( { 22965, 782, 1266,  100,  15, 50,  90, 0 }, Element::Blue, name );
+			break;
 		case ChampionName::ColdHeart:
 			return Champion( { 13710, 1376, 738,  94,  15+5, 57+10,  30, 0 }, Element::Void, name );
+			break;
+		case ChampionName::Drakomorph:
+			return Champion( { 15195, 1520, 1046,  98,  15+5, 63+10,  30, 10 }, Element::Blue, name );
 			break;
 		case ChampionName::Fakhrakin:
 			return Champion( { 14535, 1244, 1090+75,  100,  15+5, 60+10,  30, 0 }, Element::Green, name );
@@ -1099,7 +1111,8 @@ Champion Champion::ByName( ChampionName name )
 			return Champion( { 16185, 903, 1321+75,  98,  15+5, 50+10,  45, 0 }, Element::Red, name );
 			break;
 		case ChampionName::Killian:
-			return Champion( { 13215, 1432, 1266,  98,  15+5, 63+10,  30, 10 }, Element::Blue, name );
+			//return Champion( { 13215, 1432, 1266,  98,  15+5, 63+10,  30, 0+10 }, Element::Blue, name );
+			return Champion( { 9480, 1020, 915,  98,  15+5, 50+10,  30, 0+10 }, Element::Blue, name );		//50 lvl
 			break;
 		case ChampionName::Kostolom:
 			return Champion( { 9720, 1012, 640,  97,  15, 50,  30, 10 }, Element::Red, name );		//50 lvl
@@ -1198,6 +1211,9 @@ Champion Champion::ByName( ChampionName name )
 			break;
 		case ChampionName::Voitelnica:
 			return Champion( { 14700, 1321, 727,  97,  15+5, 57+10,  30, 0 }, Element::Red, name );
+			break;
+		case ChampionName::Vrask:
+			return Champion( { 23460, 870, 870,  97,  15+5, 50+10,  45, 0 }, Element::Green, name );
 			break;
 		case ChampionName::Juliana:
 			return Champion( { 15360, 1398, 881,  103,  15+5, 60,  30, 0+10 }, Element::Blue, name );
